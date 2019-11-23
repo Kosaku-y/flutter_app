@@ -430,8 +430,7 @@ class EventSearchResultPage extends StatefulWidget {
   EventSearchResultPage(this.pref, this.line, this.station);
 
   @override
-  EventSearchResultPageState createState() =>
-      new EventSearchResultPageState(this.pref, this.line, this.station);
+  EventSearchResultPageState createState() => new EventSearchResultPageState();
 }
 
 /*----------------------------------------------
@@ -440,13 +439,10 @@ class EventSearchResultPage extends StatefulWidget {
 
 ----------------------------------------------*/
 class EventSearchResultPageState extends State<EventSearchResultPage> {
-  String pref;
-  String line;
-  String station;
   PageParts set = new PageParts();
   final _mainReference = FirebaseDatabase.instance.reference().child("Events");
 
-  EventSearchResultPageState(this.pref, this.line, this.station);
+  //EventSearchResultPageState(this.pref, this.line, this.station);
 
   var formatter =
       new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
@@ -455,52 +451,82 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
 
   @override
   //初期コールメソッド
-  initState() {
+  void initState() {
     super.initState();
-    setState(() {
-      //createList();
-      if (pref != null && line == null && station == null) {
-        _mainReference.child(pref).onChildAdded.listen(_onEntryAdded);
-      } else if (pref != null && line != null && station != null) {
-        //駅名検索
-        _mainReference
-            .child(pref)
-            .child(station)
-            .onChildAdded
-            .listen(_onEntryAdded);
-      } else if (pref == null && line == null && station == null) {
-        _mainReference.onChildAdded.listen(_onEntryAdded);
-      }
-    });
+    _createList();
   }
 
-  //------------_mainReferenceの子要素の回数呼ばれている所見あり-------------
-  //->DBの階層をEventsとEventManagerをまとめることで解消できそう
-  _onEntryAdded(Event e) {
-    // 3
-    setState(() {
-      print("$pref,$line,$station");
-      Map<dynamic, dynamic> values = e.snapshot.value;
-      //都道府県検索
-      if (pref != null && line == null && station == null) {
-        values.forEach((k, v) {
-          entries.add(new EventEntity.fromMap(v));
-        });
-      }
-      //駅名検索
-      else if (pref != null && line != null && station != null) {
-        entries.add(new EventEntity.fromMap(e.snapshot.value));
-      }
-      //全件検索
-      else if (pref == null && line == null && station == null) {
-        values.forEach((k, v) {
-          v.forEach((k1, v1) {
-            entries.add(new EventEntity.fromMap(v1));
+  _createList() {
+    print("${widget.pref},${widget.line},${widget.station}");
+    //都道府県検索
+    if (widget.pref != null && widget.line == null && widget.station == null) {
+      _mainReference.child(widget.pref).once().then((DataSnapshot result) {
+        result.value.forEach((k, v) {
+          v.forEach((k2, v2) {
+            setState(() {
+              entries.add(new EventEntity.fromMap(v2));
+            });
           });
         });
-      } else {}
-    });
+      });
+      //駅名検索
+    } else if (widget.pref != null &&
+        widget.line != null &&
+        widget.station != null) {
+      //駅名検索
+      _mainReference
+          .child("${widget.pref}/${widget.station}")
+          .once()
+          .then((DataSnapshot result) {
+        result.value.forEach((k, v) {
+          setState(() {
+            entries.add(new EventEntity.fromMap(v));
+          });
+        });
+      });
+    } else if (widget.pref == null &&
+        widget.line == null &&
+        widget.station == null) {
+      _mainReference.once().then((DataSnapshot result) {
+        result.value.forEach((k, v) {
+          v.forEach((k1, v1) {
+            v1.forEach((k2, v2) {
+              setState(() {
+                entries.add(new EventEntity.fromMap(v2));
+              });
+            });
+          });
+        });
+      });
+    }
   }
+
+//  _onEntryAdded(Event e) {
+//    print(widget.pref + "," + widget.line + "," + widget.station);
+//    Map<dynamic, dynamic> values = e.snapshot.value;
+//    //都道府県検索
+//    if (widget.pref != null && widget.line == null && widget.station == null) {
+//      values.forEach((k, v) {
+//        entries.add(new EventEntity.fromMap(v));
+//      });
+//    }
+//    //駅名検索
+//    else if (widget.pref != null &&
+//        widget.line != null &&
+//        widget.station != null) {
+//      entries.add(new EventEntity.fromMap(e.snapshot.value));
+//    }
+//    //全件検索
+//    else if (widget.pref == null &&
+//        widget.line == null &&
+//        widget.station == null) {
+//        values.forEach((k, v) {
+//          v.forEach((k1, v1) {
+//            entries.add(new EventEntity.fromMap(v1));
+//          });
+//        });
+//    } else {}
+//  }
 
   //画面全体のビルド
   @override
@@ -654,7 +680,7 @@ class EventDetailPage extends StatelessWidget {
   EventEntity event;
   EventDetailPage(this.event);
   PageParts set = new PageParts();
-  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
+  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分', "ja_JP");
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -673,10 +699,10 @@ class EventDetailPage extends StatelessWidget {
                 event.recruitMember +
                 "\n"
                     "開始時刻:" +
-                formatter.format(event.startingTime) +
+                event.startingTime +
                 "\n"
                     "終了時刻:" +
-                formatter.format(event.endingTime) +
+                event.endingTime +
                 "\n"
                     "備考:" +
                 event.remarks +

@@ -3,13 +3,19 @@ import 'package:flutter/material.dart';
 /*----------------------------------------------
 プロフィールエンティティクラス
 ----------------------------------------------*/
-
+/*
+* theme
+* Userクラスの変数見直し
+* */
 class User {
-  String gmail_address;
-  String userName;
-  String age;
-  String sex;
-  String rank;
+  String mail = ""; //primarykey
+  String name = "";
+  String age = "";
+  String sex = "";
+  String rank = "";
+  String lineId = "";
+  String score = "";
+  Map event;
 
   Map<int, String> rankMap = {
     5: "青",
@@ -21,6 +27,7 @@ class User {
     320: "銀",
     480: "金"
   };
+
   Map<String, Color> colorMap = {
     "青": Colors.blue,
     "黄": Colors.yellow,
@@ -31,6 +38,51 @@ class User {
     "銀": Color(0xffa0a0a0),
     "金": Color(0xffffd700),
   };
+
+  User();
+
+  User.fromMap(Map map)
+      : name = map["name"],
+        age = map["age"],
+        sex = map["sex"],
+        rank = map["rank"],
+        mail = map["mail"],
+        lineId = map["lineId"],
+        score = map["score"];
+
+  toJson() {
+    print("\n-----------send Data-----------\n"
+        "name:$name\n"
+        "age:$age\n"
+        "sex:$sex\n"
+        "rank:$rank\n"
+        "mail:$mail\n"
+        "lineId:$lineId\n"
+        "score:$score\n"
+        "-------------------------------\n");
+    return {
+      "name": name,
+      "age": age,
+      "sex": sex,
+      "rank": rank,
+      "mail": mail,
+      "lineId": lineId,
+      "score": score,
+    };
+  }
+}
+
+/*----------------------------------------------
+scoreエンティティ
+----------------------------------------------*/
+class Score {
+  String date; //primaryKey
+  String first;
+  String second;
+  String third;
+  String fourth;
+  String balance;
+  String total;
 }
 
 /*----------------------------------------------
@@ -73,8 +125,8 @@ class EventEntity {
   String eventId;
   String recruitMember;
   String station;
-  DateTime startingTime;
-  DateTime endingTime;
+  String startingTime;
+  String endingTime;
   String remarks;
   String userId;
 
@@ -86,9 +138,11 @@ class EventEntity {
         eventId = map["eventId"],
         recruitMember = map["recruitMember"],
         station = map["station"],
-        startingTime =
-            new DateTime.fromMillisecondsSinceEpoch(map["startingTime"]),
-        endingTime = new DateTime.fromMillisecondsSinceEpoch(map["endingTime"]),
+//        startingTime =
+//            new DateTime.fromMillisecondsSinceEpoch(map["startingTime"]),
+//        endingTime = new DateTime.fromMillisecondsSinceEpoch(map["endingTime"]),
+        startingTime = map["startingTime"],
+        endingTime = map["endingTime"],
         remarks = map["remarks"];
 
   //json化,ログ出力メソッド
@@ -107,8 +161,8 @@ class EventEntity {
       "userId": "xxxlancerk@gmail.com",
       "recruitMember": recruitMember,
       "station": station,
-      "startingTime": startingTime.millisecondsSinceEpoch,
-      "endingTime": endingTime.millisecondsSinceEpoch,
+      "startingTime": startingTime,
+      "endingTime": endingTime,
       "remarks": remarks,
     };
   }

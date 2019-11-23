@@ -15,7 +15,7 @@ class PieChartDetailPage extends StatefulWidget {
 class PieChartDetailPageState extends State<PieChartDetailPage> {
   List<charts.Series<Data, String>> seriesPieData;
   PageParts set = new PageParts();
-  User user = User();
+  User user = new User();
   final userReference = FirebaseDatabase.instance.reference().child("gmail");
   int rank = int.parse("21");
   int max, remain;

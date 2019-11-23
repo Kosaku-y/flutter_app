@@ -1,231 +1,386 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'main.dart';
+import 'Entity.dart';
+import 'AccountSetting.dart';
 
-void main() => runApp(new MyApp());
-
-class MyApp extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      title: 'FirebaseAuth',
-      theme: new ThemeData(
-        primarySwatch: Colors.teal,
-      ),
-      home: new MyHomePage(),
-    );
-  }
+  _LoginPageState createState() => new _LoginPageState();
 }
 
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => new _MyHomePageState();
+//ログイン状態Enum
+enum AuthStatus {
+  /*
+  * ログイン状態は以下の3通り
+  * 1.未登録　　　　　：signedUp
+  * 2.ログアウト状態　：notSignedIn
+  * 3.ログイン状態　　：signIn
+  */
+  notSignedIn,
+  signedIn,
+  signedUp
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  final FirebaseAuth _firebaseAutn = FirebaseAuth.instance;
+class _LoginPageState extends State<LoginPage> {
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
+
   final formkey = new GlobalKey<FormState>();
+  FirebaseUser fUser;
+  AuthStatus status = AuthStatus.notSignedIn;
+  bool isLoginChecked = false;
 
   String _email;
   String _password;
+  PageParts set = PageParts();
+  User user = User();
+  String username = 'Your Name';
 
-  Future<bool> mailCheck(String email) async {
-    return email.endsWith('@gmail.com');
-  }
-
-  Future<String> sginInWithEmailAndPassword(
-      String email, String password) async {
-    if (mailCheck(email) == false) {
-      return null;
-    }
-    FirebaseUser user = await _firebaseAutn.signInWithEmailAndPassword(
-        email: email, password: password);
-    return user.uid;
-  }
-
-  Future<String> createUserWithEmailAndPassword(
-      String email, String password) async {
-    if (mailCheck(email) == false) {
-      return null;
-    }
-    FirebaseUser user = await _firebaseAutn.createUserWithEmailAndPassword(
-        email: email, password: password);
-    return user.uid;
-  }
-
-  Future<String> deleteUserWithEmailAndPassword(
-      String email, String password) async {
-    if (mailCheck(email) == false) {
-      return null;
-    }
-    FirebaseUser user = await _firebaseAutn.currentUser();
-    if (user == null) {
-      return null;
-    }
-    String latestuser = user.uid;
-    if (user != null) {
-      await user.delete();
-      return latestuser;
-    }
-    return null;
-  }
-
-  bool validateAndSave() {
-    final form = formkey.currentState;
-    if (form.validate()) {
-      form.save();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  void submit() async {
-    if (validateAndSave()) {
-      try {
-        String userId = await sginInWithEmailAndPassword(_email, _password);
-        if (userId == null) {
-          print('input mail address is not gmail. please input gmail address');
-        }
-        print('Sigind in: $userId');
-      } catch (e) {
-        print(e);
-      }
-    }
-  }
-
-  void regester() async {
-    if (validateAndSave()) {
-      try {
-        String userId = await createUserWithEmailAndPassword(_email, _password);
-        print('Regestered in: $userId');
-      } catch (e) {
-        print(e);
-      }
-    }
-  }
-
-  void regester1() async {
-    if (validateAndSave()) {
-      try {
-        String userId = await createUserWithEmailAndPassword(_email, _password);
-        print('Regestered in: $userId');
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => creationComplete()));
-      } catch (e) {
-        print(e);
-      }
-    }
-  }
-
-  void deleteAccount() async {
-    if (validateAndSave()) {
-      try {
-        String userId = await deleteUserWithEmailAndPassword(_email, _password);
-        if (userId != null) {
-          print('Delete an Account in: $userId');
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => deleteComplete()));
-        } else {
-          print('Delete an Account failed');
-        }
-      } catch (e) {
-        print(e);
-      }
-    }
-  }
-
+  //現在ログイン状態かどうか
+  /*
+  * 情報なし(notSignedIn) => ログイン画面に遷移
+  * 情報あり => 初回かどうかfirebase検索
+  *    初回 => 登録ページに遷移
+  *    2回目以降 => Homeに遷移
+  */
+  //現在のステータス確認
   @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("FirebaseAuth"),
-      ),
-      body: new Container(
-        padding: EdgeInsets.all(20.0),
-        child: new Form(
-          key: formkey,
-          child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: buildInputs() + buildSubmitButtons(),
+  void initState() {
+    //まず前回のキャッシュが残っているかチェック
+    checkFireBaseLogin();
+  }
+
+  void checkFireBaseLogin() async {
+    FirebaseUser currentUser = await _auth.currentUser();
+    setState(() {
+      if (currentUser != null) {
+        checkLogin(currentUser.email.replaceAll(RegExp(r'@[A-Za-z]+.[A-Za-z]+'), ""));
+      }
+    });
+  }
+
+  void checkLogin(String key) async {
+    await _mainReference.child(key).once().then((DataSnapshot result) {
+      //未登録
+      if (result.value == null) {
+        user = User();
+        user.mail = key;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => AccountPage(user, "regist"),
           ),
-        ),
-      ),
+        );
+        return;
+      }
+      //登録
+      if (result.value["name"] == "") {
+        setState() {
+          user = User();
+          user.mail = key;
+          //ページ遷移
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) => AccountPage(user, "regist"),
+            ),
+          );
+        }
+      } else {
+        //登録済み
+        user = User.fromMap(result.value);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => Home(user, "ログインしました"),
+          ),
+        );
+      }
+    });
+  }
+
+  Future setAppUser(String mail) async {}
+
+  Future<FirebaseUser> _handleSignIn() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
     );
+    final FirebaseUser fireUser = (await _auth.signInWithCredential(credential)).user;
+
+    setState(() {
+      username = fireUser.displayName;
+    });
+    return fireUser;
   }
 
-  List<Widget> buildInputs() {
-    return [
-      new TextFormField(
-        decoration: new InputDecoration(labelText: 'Email'),
-        validator: (value) => value.isEmpty ? 'メールアドレスを入力してください' : null,
-        onSaved: (value) => _email = value,
-      ),
-      new TextFormField(
-        decoration: new InputDecoration(labelText: 'PassWord'),
-        validator: (value) => value.isEmpty ? 'パスワードを入力してください' : null,
-        obscureText: true,
-        onSaved: (value) => _password = value,
-      ),
-    ];
+  Future<void> _handleSignOut() async {
+    await _auth.signOut();
+    setState(() {
+      username = 'ログアウトしました';
+    });
   }
 
-  List<Widget> buildSubmitButtons() {
-    return [
-      new RaisedButton(
-        splashColor: Colors.blueGrey,
-        child: new Text('Login', style: new TextStyle(fontSize: 20.0)),
-        onPressed: submit,
-      ),
-      new RaisedButton(
-        splashColor: Colors.blueGrey,
-        child:
-            new Text('Create an Account', style: new TextStyle(fontSize: 20.0)),
-        onPressed: regester1,
-      ),
-      new RaisedButton(
-        splashColor: Colors.red,
-        child:
-            new Text('Delete an Account', style: new TextStyle(fontSize: 20.0)),
-        onPressed: deleteAccount,
-      ),
-    ];
-  }
-}
-
-class creationComplete extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("CREATE USER SUCCESS"),
-      ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Go back login'),
-        ),
-      ),
-    );
+    switch (status) {
+//      case AuthStatus.signedIn:
+//        return Home(user);
+//      //case AuthStatus.notSignedIn:
+      default:
+        return Scaffold(
+          appBar: new AppBar(
+            title: new Text("ログイン", style: TextStyle(color: set.pointColor)),
+            backgroundColor: set.baseColor,
+          ),
+          backgroundColor: set.backGroundColor,
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  '$username',
+                  style: TextStyle(color: set.fontColor, fontSize: 20.0),
+                ),
+                StreamBuilder(
+                    stream: _auth.onAuthStateChanged,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return SignInButton(
+                          Buttons.Google,
+                          text: "sign out",
+                          onPressed: () => _handleSignOut(),
+                        );
+                      } else {
+                        return SignInButton(
+                          Buttons.Google,
+                          text: "Login with Google",
+                          onPressed: () => _handleSignIn()
+                              .then((FirebaseUser fireUser) => setState(() {
+                                    username = fireUser.displayName;
+                                    String key = fireUser.email.replaceAll(RegExp(r'@[A-Za-z]+.[A-Za-z]+'), "");
+                                    checkLogin(key);
+                                  }))
+                              .catchError((e) => print(e)),
+                        );
+                      }
+                    }),
+              ],
+            ),
+          ),
+        );
+//      case AuthStatus.signedUp:
+//        return
+    }
   }
-}
-
-class deleteComplete extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("DELETE USER SUCCESS"),
-      ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Go back login'),
-        ),
-      ),
-    );
-  }
+//  Future<bool> mailCheck(String email) async {
+//    return email.endsWith('@gmail.com');
+//  }
+//
+//  Future<FirebaseUser> _handleSignIn() async {
+//    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+//    final GoogleSignInAuthentication googleAuth =
+//        await googleUser.authentication;
+//
+//    final AuthCredential credential = GoogleAuthProvider.getCredential(
+//      accessToken: googleAuth.accessToken,
+//      idToken: googleAuth.idToken,
+//    );
+//
+//    final FirebaseUser user =
+//        (await _auth.signInWithCredential(credential)).user;
+//    print("signed in " + user.displayName);
+//    return user;
+//  }
+//
+//  Future<String> createUserWithEmailAndPassword(
+//      String email, String password) async {
+//    if (mailCheck(email) == false) {
+//      return null;
+//    }
+//    FirebaseUser user = await _handleSignIn.createUserWithEmailAndPassword(
+//        email: email, password: password);
+//    return user.uid;
+//  }
+//
+//  Future<String> deleteUserWithEmailAndPassword(
+//      String email, String password) async {
+//    if (mailCheck(email) == false) {
+//      return null;
+//    }
+//    FirebaseUser user = await _firebaseAutn.currentUser();
+//    if (user == null) {
+//      return null;
+//    }
+//    String latestuser = user.uid;
+//    if (user != null) {
+//      await user.delete();
+//      return latestuser;
+//    }
+//    return null;
+//  }
+//
+//  bool validateAndSave() {
+//    final form = formkey.currentState;
+//    if (form.validate()) {
+//      form.save();
+//      return true;
+//    } else {
+//      return false;
+//    }
+//  }
+//
+//  void submit() async {
+//    if (validateAndSave()) {
+//      try {
+//        String userId = await sginInWithEmailAndPassword(_email, _password);
+//        if (userId == null) {
+//          print('input mail address is not gmail. please input gmail address');
+//        }
+//        print('Sigind in: $userId');
+//      } catch (e) {
+//        print(e);
+//      }
+//    }
+//  }
+//
+//  void regester() async {
+//    if (validateAndSave()) {
+//      try {
+//        String userId = await createUserWithEmailAndPassword(_email, _password);
+//        print('Regestered in: $userId');
+//      } catch (e) {
+//        print(e);
+//      }
+//    }
+//  }
+//
+//  void regester1() async {
+//    if (validateAndSave()) {
+//      try {
+//        String userId = await createUserWithEmailAndPassword(_email, _password);
+//        print('Regestered in: $userId');
+//        Navigator.push(context,
+//            MaterialPageRoute(builder: (context) => creationComplete()));
+//      } catch (e) {
+//        print(e);
+//      }
+//    }
+//  }
+//
+//  void deleteAccount() async {
+//    if (validateAndSave()) {
+//      try {
+//        String userId = await deleteUserWithEmailAndPassword(_email, _password);
+//        if (userId != null) {
+//          print('Delete an Account in: $userId');
+//          Navigator.push(context,
+//              MaterialPageRoute(builder: (context) => deleteComplete()));
+//        } else {
+//          print('Delete an Account failed');
+//        }
+//      } catch (e) {
+//        print(e);
+//      }
+//    }
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return new Scaffold(
+//      appBar: new AppBar(
+//        title: new Text("FirebaseAuth"),
+//      ),
+//      body: new Container(
+//        padding: EdgeInsets.all(20.0),
+//        child: new Form(
+//          key: formkey,
+//          child: new Column(
+//            crossAxisAlignment: CrossAxisAlignment.stretch,
+//            children: buildInputs() + buildSubmitButtons(),
+//          ),
+//        ),
+//      ),
+//    );
+//  }
+//
+//  List<Widget> buildInputs() {
+//    return [
+//      new TextFormField(
+//        decoration: new InputDecoration(labelText: 'Email'),
+//        validator: (value) => value.isEmpty ? 'メールアドレスを入力してください' : null,
+//        onSaved: (value) => _email = value,
+//      ),
+//      new TextFormField(
+//        decoration: new InputDecoration(labelText: 'PassWord'),
+//        validator: (value) => value.isEmpty ? 'パスワードを入力してください' : null,
+//        obscureText: true,
+//        onSaved: (value) => _password = value,
+//      ),
+//    ];
+//  }
+//
+//  List<Widget> buildSubmitButtons() {
+//    return [
+//      new RaisedButton(
+//        splashColor: Colors.blueGrey,
+//        child: new Text('Login', style: new TextStyle(fontSize: 20.0)),
+//        onPressed: submit,
+//      ),
+//      new RaisedButton(
+//        splashColor: Colors.blueGrey,
+//        child:
+//            new Text('Create an Account', style: new TextStyle(fontSize: 20.0)),
+//        onPressed: regester1,
+//      ),
+//      new RaisedButton(
+//        splashColor: Colors.red,
+//        child:
+//            new Text('Delete an Account', style: new TextStyle(fontSize: 20.0)),
+//        onPressed: deleteAccount,
+//      ),
+//    ];
+//  }
+//}
+//
+//class creationComplete extends StatelessWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    return Scaffold(
+//      appBar: AppBar(
+//        title: Text("CREATE USER SUCCESS"),
+//      ),
+//      body: Center(
+//        child: RaisedButton(
+//          onPressed: () {
+//            Navigator.pop(context);
+//          },
+//          child: Text('Go back login'),
+//        ),
+//      ),
+//    );
+//  }
+//}
+//
+//class deleteComplete extends StatelessWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    return Scaffold(
+//      appBar: AppBar(
+//        title: Text("DELETE USER SUCCESS"),
+//      ),
+//      body: Center(
+//        child: RaisedButton(
+//          onPressed: () {
+//            Navigator.pop(context);
+//          },
+//          child: Text('Go back login'),
+//        ),
+//      ),
+//    );
+//  }
 }

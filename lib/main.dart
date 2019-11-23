@@ -4,12 +4,14 @@ import 'EventSearch.dart';
 import 'Recritment.dart';
 import 'NewHome.dart';
 import 'Entity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'Login.dart';
 
 //ホーム画面のrun
 void main() => runApp(new MaterialApp(
       title: "Home",
-      home: new Home(),
+      home: new LoginPage(),
     ));
 
 /*----------------------------------------------
@@ -17,40 +19,68 @@ void main() => runApp(new MaterialApp(
 ホーム(BottomNavigationBar)クラス
 
 ----------------------------------------------*/
+
+/*
+* to do snackBar
+*
+*
+* */
 class Home extends StatefulWidget {
   @override
+  User user;
+  String message; //前の画面からの遷移の場合はSnackBarで処理結果を表示する
+  Home(this.user, this.message);
+
   State<StatefulWidget> createState() {
-    return new HomeState();
+    return new HomeState(this.user);
   }
 }
 
 class HomeState extends State<Home> {
+  PageController _pageController;
   int currentIndex = 0;
   PageParts set = new PageParts();
+  User user;
+  HomeState(this.user);
 
-  List<Widget> tabs = [
-    NewHomeManage(),
-    //EventManage(key: PageStorageKey('EventManage'),),
-    EventManage(),
-    RecruitmentPage("createNew"),
-    SampleTabItem("Message", Color(0xff160840)),
-  ];
-  Map<Widget, GlobalKey<NavigatorState>> navigatorKeys = {
-    NewHomeManage(): GlobalKey<NavigatorState>(),
-    EventManage(): GlobalKey<NavigatorState>(),
-    RecruitmentPage("createNew"): GlobalKey<NavigatorState>(),
-    SampleTabItem("Message", Color(0xff160840)): GlobalKey<NavigatorState>(),
-  };
+  List<Widget> tabs;
+  Map<Widget, GlobalKey<NavigatorState>> navigatorKeys;
 
   void onTabTapped(int index) {
     setState(() {
       currentIndex = index;
     });
   }
+//  void onTabTapped(int index) {
+//    currentIndex = index;
+//    _pageController.animateToPage(index,
+//        duration: const Duration(milliseconds: 1), curve: Curves.ease);
+//  }
+
+//  @override
+//  void dispose() {
+//    super.dispose();
+//    _pageController.dispose();
+//  }
 
   @override
   void initState() {
     super.initState();
+    tabs = [
+      NewHome(user),
+      //EventManage(key: PageStorageKey('EventManage'),),
+      EventManage(),
+      RecruitmentPage("createNew"),
+      SampleTabItem("Message", Color(0xff160840)),
+      //SampleTabItem("messeage", Colors.black),
+    ];
+
+    navigatorKeys = {
+      NewHome(user): GlobalKey<NavigatorState>(),
+      EventManage(): GlobalKey<NavigatorState>(),
+      RecruitmentPage("createNew"): GlobalKey<NavigatorState>(),
+      SampleTabItem("Message", Color(0xff160840)): GlobalKey<NavigatorState>(),
+    };
   }
 
   @override
@@ -107,6 +137,27 @@ class HomeState extends State<Home> {
                 backgroundColor: set.baseColor,
                 title: new Text("Message")),
           ],
+        ),
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              DrawerHeader(
+                child: Text('Drawer Header'),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+              ),
+              ListTile(
+                title: Text("Logout"),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => LoginPage(),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

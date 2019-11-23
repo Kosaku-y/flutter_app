@@ -18,13 +18,11 @@ class RecruitmentPage extends StatefulWidget {
   String mode;
   RecruitmentPage(this.mode);
   @override
-  RecruitmentPageState createState() => new RecruitmentPageState(mode);
+  RecruitmentPageState createState() => new RecruitmentPageState();
 }
 
 class RecruitmentPageState extends State<RecruitmentPage> {
   PageParts set = new PageParts();
-  String mode;
-  RecruitmentPageState(this.mode);
   //送信用変数
 
   String _selectPref = null;
@@ -33,6 +31,8 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   String _selectRecruitMember = null;
   DateTime _start;
   DateTime _end;
+  // 日時を指定したフォーマットで指定するためのフォーマッター
+  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
   String _remarks;
 
   List lineData = [""];
@@ -57,8 +57,6 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   final _formKey = GlobalKey<FormState>();
   final EventCreate em = new EventCreate();
   final List<String> _numberOfRecruit = <String>['1', '2', '3'];
-  final formatter =
-      new DateFormat('yyyy/MM/dd(E) HH:mm'); // 日時を指定したフォーマットで指定するためのフォーマッター
 
   @override
   void initState() {
@@ -86,7 +84,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
                 padding: EdgeInsets.only(top: 20.0),
                 child: RaisedButton.icon(
                   label: Text("募集する"),
-                  color: Colors.white,
+                  color: set.pointColor,
                   icon: Icon(
                     Icons.event_available,
                     color: set.fontColor,
@@ -163,8 +161,8 @@ class RecruitmentPageState extends State<RecruitmentPage> {
       this._formKey.currentState.save();
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Processing Data')));
-      EventEntity event = new EventEntity(
-          _selectRecruitMember, _selectStation, _start, _end, _remarks);
+      EventEntity event = new EventEntity(_selectRecruitMember, _selectStation,
+          formatter.format(_start), formatter.format(_end), _remarks);
       em.addEvent(_selectPref, _selectLine, event);
     }
   }
@@ -190,7 +188,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: set.pointColor),
           enableInteractiveSelection: false,
           controller: _memberController,
           decoration: InputDecoration(
@@ -236,7 +234,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: set.pointColor),
           enableInteractiveSelection: false,
           validator: (String value) {
             if (value.isEmpty) {
@@ -259,7 +257,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
             hintText: 'Choose a prefecture',
             labelText: '*都道府県',
             labelStyle: TextStyle(color: set.fontColor),
-            fillColor: Colors.white,
+            fillColor: set.pointColor,
           ),
         ),
       ),
@@ -287,7 +285,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: set.pointColor),
           enableInteractiveSelection: false,
           cursorColor: Colors.pink,
           controller: _lineController,
@@ -338,7 +336,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: set.pointColor),
           enableInteractiveSelection: false,
           controller: _stationController,
           decoration: InputDecoration(
@@ -373,9 +371,9 @@ class RecruitmentPageState extends State<RecruitmentPage> {
         DatePicker.showDateTimePicker(context,
             showTitleActions: true,
             theme: DatePickerTheme(
-                backgroundColor: Colors.black,
-                itemStyle: TextStyle(color: Colors.white),
-                doneStyle: TextStyle(color: Colors.white)),
+                backgroundColor: set.pointColor,
+                itemStyle: TextStyle(color: set.pointColor),
+                doneStyle: TextStyle(color: set.pointColor)),
             onChanged: (date) {}, onConfirm: (date) {
           setState(() {
             _start = date;
@@ -385,7 +383,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: set.pointColor),
           enableInteractiveSelection: false,
           controller: _startingController,
           decoration: InputDecoration(
@@ -414,9 +412,9 @@ class RecruitmentPageState extends State<RecruitmentPage> {
         DatePicker.showDateTimePicker(context,
             showTitleActions: true,
             theme: DatePickerTheme(
-                backgroundColor: Colors.black,
-                itemStyle: TextStyle(color: Colors.white),
-                doneStyle: TextStyle(color: Colors.white)),
+                backgroundColor: set.pointColor,
+                itemStyle: TextStyle(color: set.pointColor),
+                doneStyle: TextStyle(color: set.pointColor)),
             onChanged: (date) {}, onConfirm: (date) {
           setState(() {
             _end = date;
@@ -426,7 +424,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: set.pointColor),
           enableInteractiveSelection: false,
           controller: _endingController,
           decoration: InputDecoration(
@@ -457,7 +455,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   Widget _remarksField() {
     return new Container(
       child: new TextFormField(
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: set.pointColor),
           decoration: InputDecoration(
             icon: Icon(
               Icons.note,
