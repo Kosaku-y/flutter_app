@@ -7,11 +7,12 @@ import 'Entity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'Login.dart';
+import 'Chat.dart';
 
 //ホーム画面のrun
 void main() => runApp(new MaterialApp(
       title: "Home",
-      home: new LoginPage(),
+      home: new LoginPage("Login"),
     ));
 
 /*----------------------------------------------
@@ -20,11 +21,6 @@ void main() => runApp(new MaterialApp(
 
 ----------------------------------------------*/
 
-/*
-* to do snackBar
-*
-*
-* */
 class Home extends StatefulWidget {
   @override
   User user;
@@ -71,7 +67,7 @@ class HomeState extends State<Home> {
       //EventManage(key: PageStorageKey('EventManage'),),
       EventManage(),
       RecruitmentPage("createNew"),
-      SampleTabItem("Message", Color(0xff160840)),
+      ChatPage(user),
       //SampleTabItem("messeage", Colors.black),
     ];
 
@@ -79,19 +75,17 @@ class HomeState extends State<Home> {
       NewHome(user): GlobalKey<NavigatorState>(),
       EventManage(): GlobalKey<NavigatorState>(),
       RecruitmentPage("createNew"): GlobalKey<NavigatorState>(),
-      SampleTabItem("Message", Color(0xff160840)): GlobalKey<NavigatorState>(),
+      ChatPage(user): GlobalKey<NavigatorState>(),
     };
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async =>
-          !await navigatorKeys[currentIndex].currentState.maybePop(),
+      onWillPop: () async => !await navigatorKeys[currentIndex].currentState.maybePop(),
       child: Scaffold(
         appBar: new AppBar(
-          title:
-              new Text("Matching App", style: TextStyle(color: set.fontColor)),
+          title: new Text("Matching App", style: TextStyle(color: set.fontColor)),
           backgroundColor: set.baseColor,
 //            actions: <Widget>[
 //              IconButton(
@@ -123,19 +117,12 @@ class HomeState extends State<Home> {
               title: new Text('Home'),
             ),
             BottomNavigationBarItem(
-              icon:
-                  new Icon(const IconData(59574, fontFamily: 'MaterialIcons')),
+              icon: new Icon(const IconData(59574, fontFamily: 'MaterialIcons')),
               backgroundColor: set.baseColor,
               title: new Text('Search'),
             ),
-            BottomNavigationBarItem(
-                icon: new Icon(Icons.person_add),
-                backgroundColor: set.baseColor,
-                title: new Text('Recruitment')),
-            BottomNavigationBarItem(
-                icon: new Icon(Icons.message),
-                backgroundColor: set.baseColor,
-                title: new Text("Message")),
+            BottomNavigationBarItem(icon: new Icon(Icons.person_add), backgroundColor: set.baseColor, title: new Text('Recruitment')),
+            BottomNavigationBarItem(icon: new Icon(Icons.message), backgroundColor: set.baseColor, title: new Text("Message")),
           ],
         ),
         drawer: Drawer(
@@ -148,14 +135,15 @@ class HomeState extends State<Home> {
                 ),
               ),
               ListTile(
-                title: Text("Logout"),
-                trailing: Icon(Icons.arrow_forward),
-                onTap: () => Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => LoginPage(),
-                  ),
-                ),
-              ),
+                  title: Text("Logout"),
+                  trailing: Icon(Icons.arrow_forward),
+                  onTap: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => LoginPage("Logout"),
+                      ),
+                    );
+                  }),
             ],
           ),
         ),
@@ -216,13 +204,7 @@ class MainState extends State<Main> {
         child: new Center(
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new Text('メイン',
-                  style: new TextStyle(
-                      color: Colors.white,
-                      fontSize: 36.0,
-                      fontWeight: FontWeight.bold))
-            ],
+            children: <Widget>[new Text('メイン', style: new TextStyle(color: Colors.white, fontSize: 36.0, fontWeight: FontWeight.bold))],
           ),
         ),
       ),
@@ -245,13 +227,7 @@ class SampleTabItem extends StatelessWidget {
         child: new Center(
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new Text(this.title,
-                  style: new TextStyle(
-                      color: Colors.white,
-                      fontSize: 36.0,
-                      fontWeight: FontWeight.bold))
-            ],
+            children: <Widget>[new Text(this.title, style: new TextStyle(color: Colors.white, fontSize: 36.0, fontWeight: FontWeight.bold))],
           ),
         ),
       ),

@@ -1,0 +1,14 @@
+/*
+* To do
+*   sexpicker
+*   文言日本語化
+*   変数整理
+*   非同期処理(Indicator)
+*   db処理trycatch
+    * theme
+    * Userクラスの変数見直し
+* Home画面の遷移後の snackBar
+*
+*
+* */
+* */

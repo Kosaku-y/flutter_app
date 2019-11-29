@@ -9,6 +9,8 @@ import 'AccountSetting.dart';
 
 class LoginPage extends StatefulWidget {
   @override
+  String mode;
+  LoginPage(this.mode);
   _LoginPageState createState() => new _LoginPageState();
 }
 
@@ -34,6 +36,9 @@ class _LoginPageState extends State<LoginPage> {
   FirebaseUser fUser;
   AuthStatus status = AuthStatus.notSignedIn;
   bool isLoginChecked = false;
+  final TextEditingController _tokenController = TextEditingController();
+  final TextEditingController _tokenSecretController = TextEditingController();
+  String _message = '';
 
   String _email;
   String _password;
@@ -51,8 +56,10 @@ class _LoginPageState extends State<LoginPage> {
   //現在のステータス確認
   @override
   void initState() {
-    //まず前回のキャッシュが残っているかチェック
-    checkFireBaseLogin();
+    if (widget.mode == "Login") {
+      //まず前回のキャッシュが残っているかチェック
+      checkFireBaseLogin();
+    } else {}
   }
 
   void checkFireBaseLogin() async {
@@ -66,20 +73,18 @@ class _LoginPageState extends State<LoginPage> {
 
   void checkLogin(String key) async {
     await _mainReference.child(key).once().then((DataSnapshot result) {
-      //未登録
       if (result.value == null) {
-        user = User();
-        user.mail = key;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (BuildContext context) => AccountPage(user, "regist"),
-          ),
-        );
-        return;
+        status = AuthStatus.signedUp;
+      } else {
+        if (result.value["name"] == "") {
+          status = AuthStatus.signedUp;
+        } else {
+          status = AuthStatus.signedIn;
+        }
       }
-      //登録
-      if (result.value["name"] == "") {
-        setState() {
+
+      switch (status) {
+        case AuthStatus.signedUp:
           user = User();
           user.mail = key;
           //ページ遷移
@@ -88,22 +93,24 @@ class _LoginPageState extends State<LoginPage> {
               builder: (BuildContext context) => AccountPage(user, "regist"),
             ),
           );
-        }
-      } else {
-        //登録済み
-        user = User.fromMap(result.value);
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => Home(user, "ログインしました"),
-          ),
-        );
+          break;
+        case AuthStatus.signedIn:
+          user = User.fromMap(result.value);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => Home(user, "ログインしました"),
+            ),
+          );
+          break;
+        case AuthStatus.notSignedIn:
+          break;
       }
     });
   }
 
   Future setAppUser(String mail) async {}
 
-  Future<FirebaseUser> _handleSignIn() async {
+  Future<FirebaseUser> _googleSignin() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.getCredential(
@@ -118,11 +125,35 @@ class _LoginPageState extends State<LoginPage> {
     return fireUser;
   }
 
+  // Example code of how to sign in with Twitter.
+  Future<FirebaseUser> _signInWithTwitter() async {
+    final AuthCredential credential = TwitterAuthProvider.getCredential(authToken: _tokenController.text, authTokenSecret: _tokenSecretController.text);
+    final FirebaseUser fireUser = (await _auth.signInWithCredential(credential)).user;
+//    assert(user.email != null);
+//    assert(user.displayName != null);
+//    assert(!user.isAnonymous);
+//    assert(await user.getIdToken() != null);
+    setState(() {
+      username = fireUser.displayName;
+    });
+    return fireUser;
+//    assert(user.uid == currentUser.uid);
+//    setState(() {
+//      if (user != null) {
+//        _message = 'Successfully signed in with Twitter. ' + user.uid;
+//      } else {
+//        _message = 'Failed to sign in with Twitter. ';
+//      }
+//    });
+  }
+
   Future<void> _handleSignOut() async {
     await _auth.signOut();
     setState(() {
       username = 'ログアウトしました';
+      status = AuthStatus.notSignedIn;
     });
+    print("user sign out now");
   }
 
   @override
@@ -146,6 +177,20 @@ class _LoginPageState extends State<LoginPage> {
                   '$username',
                   style: TextStyle(color: set.fontColor, fontSize: 20.0),
                 ),
+//                FutureBuilder(
+//                  future: _handleSignIn(),
+//                  builder:  (context, snapshot) {
+//                    if (snapshot.hasData) {
+//                      return
+//                    };
+//                  },
+//                ),
+                SignInButton(
+                  Buttons.Twitter,
+                  text: "Login with Twitter",
+                  onPressed: () => _signInWithTwitter(),
+                ),
+
                 StreamBuilder(
                     stream: _auth.onAuthStateChanged,
                     builder: (context, snapshot) {
@@ -159,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                         return SignInButton(
                           Buttons.Google,
                           text: "Login with Google",
-                          onPressed: () => _handleSignIn()
+                          onPressed: () => _googleSignin()
                               .then((FirebaseUser fireUser) => setState(() {
                                     username = fireUser.displayName;
                                     String key = fireUser.email.replaceAll(RegExp(r'@[A-Za-z]+.[A-Za-z]+'), "");

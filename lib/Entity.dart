@@ -1,12 +1,11 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 /*----------------------------------------------
 プロフィールエンティティクラス
 ----------------------------------------------*/
-/*
-* theme
-* Userクラスの変数見直し
-* */
+
 class User {
   String mail = ""; //primarykey
   String name = "";
@@ -17,16 +16,7 @@ class User {
   String score = "";
   Map event;
 
-  Map<int, String> rankMap = {
-    5: "青",
-    10: "黄",
-    20: "緑",
-    40: "紫",
-    80: "赤",
-    160: "銅",
-    320: "銀",
-    480: "金"
-  };
+  Map<int, String> rankMap = {5: "青", 10: "黄", 20: "緑", 40: "紫", 80: "赤", 160: "銅", 320: "銀", 480: "金"};
 
   Map<String, Color> colorMap = {
     "青": Colors.blue,
@@ -95,6 +85,13 @@ class PageParts {
   var fontColor = Color(0xff00A968);
   var pointColor = Colors.white;
 
+  Widget indicator() {
+    return SpinKitWave(
+      color: pointColor,
+      size: 50.0,
+    );
+  }
+
   Widget backButton({Function() onTap}) {
     return RaisedButton.icon(
       label: Text("戻る"),
@@ -130,8 +127,7 @@ class EventEntity {
   String remarks;
   String userId;
 
-  EventEntity(this.recruitMember, this.station, this.startingTime,
-      this.endingTime, this.remarks);
+  EventEntity(this.recruitMember, this.station, this.startingTime, this.endingTime, this.remarks);
 
   EventEntity.fromMap(Map map)
       : userId = map["userId"],
@@ -256,10 +252,35 @@ class Station {
   Station({this.stationCode, this.stationName});
 
   factory Station.fromJson(Map<String, dynamic> json) {
-    return Station(
-        stationCode: json['station_cd'] as int,
-        stationName: json['station_name'] as String);
+    return Station(stationCode: json['station_cd'] as int, stationName: json['station_name'] as String);
   }
-  Map<String, dynamic> toJson() =>
-      {'station_name': stationName, 'station_cd': stationCode};
+  Map<String, dynamic> toJson() => {'station_name': stationName, 'station_cd': stationCode};
+}
+
+/*----------------------------------------------
+
+駅エンティティクラス
+
+----------------------------------------------*/
+class ChatEntity {
+  String key;
+  DateTime dateTime;
+  String message;
+  String fromUserId;
+
+  ChatEntity(this.dateTime, this.message);
+
+  ChatEntity.fromSnapShot(DataSnapshot snapshot)
+      : key = snapshot.key,
+        dateTime = new DateTime.fromMillisecondsSinceEpoch(snapshot.value["date"]),
+        message = snapshot.value["message"],
+        fromUserId = snapshot.value["fromUserId"];
+
+  toJson() {
+    return {
+      "date": dateTime.millisecondsSinceEpoch,
+      "message": message,
+      "fromUserId": fromUserId,
+    };
+  }
 }

@@ -6,15 +6,6 @@ import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart
 import 'Entity.dart';
 import 'main.dart';
 
-/*
-* To do
-*   sexpicker
-*   文言日本語化
-*   変数整理
-*   非同期処理(Indicator)
-*   db処理trycatch
-* */
-
 class AccountPage extends StatefulWidget {
   User user;
   String status;
@@ -35,14 +26,11 @@ class _AccountPage extends State<AccountPage> {
   String _userLineId;
   String _userSex;
 
-  TextEditingController _userNameInputController =
-      new TextEditingController(text: '');
-  TextEditingController _userAgeInputController =
-      new TextEditingController(text: '');
+  TextEditingController _userNameInputController = new TextEditingController(text: '');
+  TextEditingController _userAgeInputController = new TextEditingController(text: '');
   TextEditingController _userLineIdInputController;
   //TextEditingController userGmailInputController;
-  TextEditingController _userSexInputController =
-      new TextEditingController(text: '');
+  TextEditingController _userSexInputController = new TextEditingController(text: '');
 
   final _formKey = GlobalKey<FormState>();
 
@@ -74,14 +62,11 @@ class _AccountPage extends State<AccountPage> {
   setTextEditingController() {
     print(count);
     if (count == 1) {
-      _userNameInputController = new TextEditingController(
-          text: entries['user_name'] != null ? entries['user_name'] : '');
-      _userAgeInputController = new TextEditingController(
-          text: entries['age'] != null ? entries['age'] : '');
+      _userNameInputController = new TextEditingController(text: entries['user_name'] != null ? entries['user_name'] : '');
+      _userAgeInputController = new TextEditingController(text: entries['age'] != null ? entries['age'] : '');
 //      userLineIdInputController = new TextEditingController(
 //          text: entries['line_id'] != null ? entries['line_id'] : '');
-      _userSexInputController = new TextEditingController(
-          text: entries['sex'] != null ? entries['sex'] : '');
+      _userSexInputController = new TextEditingController(text: entries['sex'] != null ? entries['sex'] : '');
     }
     count += 1;
   }
@@ -91,13 +76,14 @@ class _AccountPage extends State<AccountPage> {
     user.name = _userName;
     user.age = _userAge;
     user.sex = _userSex;
+    user.mail = address;
 
     if (widget.status == "regist") {
       await mainReference.child("Gmail").child(address).set(user.toJson());
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => Home(widget.user, "登録完了しました"),
+          builder: (context) => Home(user, "登録完了しました"),
         ),
       );
     } else {}
@@ -180,9 +166,7 @@ class _AccountPage extends State<AccountPage> {
               Icons.note, //変更必要
               color: set.fontColor,
             ),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
             hintText: 'userName',
             labelText: 'ユーザーネーム',
             labelStyle: TextStyle(color: set.fontColor),
@@ -227,9 +211,7 @@ class _AccountPage extends State<AccountPage> {
             labelText: '年齢',
             labelStyle: TextStyle(color: set.fontColor),
             contentPadding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
           ),
         ),
       ),
@@ -265,9 +247,7 @@ class _AccountPage extends State<AccountPage> {
               Icons.wc,
               color: set.fontColor,
             ),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
             hintText: 'Choose your sex',
             labelText: '性別',
             labelStyle: TextStyle(color: set.fontColor),
