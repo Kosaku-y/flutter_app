@@ -67,12 +67,12 @@ class HomeState extends State<Home> {
     super.initState();
     tabs = [
       NewHome(user), //EventManage(key: PageStorageKey('EventManage'),),
-      EventManage(), RoomPage(user), SettingPage(user), //SampleTabItem("messeage", Colors.black),
+      EventManagePage(), RoomPage(user), SettingPage(user), //SampleTabItem("messeage", Colors.black),
     ];
 
     navigatorKeys = {
       NewHome(user): GlobalKey<NavigatorState>(),
-      EventManage(): GlobalKey<NavigatorState>(),
+      EventManagePage(): GlobalKey<NavigatorState>(),
       RoomPage(user): GlobalKey<NavigatorState>(),
       SettingPage(user): GlobalKey<NavigatorState>(),
     };

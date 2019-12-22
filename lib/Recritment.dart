@@ -164,7 +164,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   }
 
   Widget _recruitMemberPicker() {
-    return new GestureDetector(
+    return new InkWell(
       onTap: () {
         DataPicker.showDatePicker(
           context,
@@ -207,7 +207,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   }
 
   Widget _prefPicker() {
-    return new GestureDetector(
+    return new InkWell(
       onTap: () {
         DataPicker.showDatePicker(
           context,
@@ -257,7 +257,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   }
 
   Widget _linePicker() {
-    return new GestureDetector(
+    return new InkWell(
       onTap: () {
         DataPicker.showDatePicker(
           context,
@@ -306,7 +306,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   }
 
   Widget _stationPicker() {
-    return new GestureDetector(
+    return new InkWell(
       onTap: () {
         DataPicker.showDatePicker(
           context,
@@ -354,7 +354,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   }
 
   Widget _startTimePicker() {
-    return new GestureDetector(
+    return new InkWell(
       onTap: () {
         DatePicker.showDateTimePicker(context, showTitleActions: true, theme: DatePickerTheme(backgroundColor: Colors.white, itemStyle: TextStyle(color: Colors.black), doneStyle: TextStyle(color: Colors.black)), onChanged: (date) {}, onConfirm: (date) {
           setState(() {
@@ -387,7 +387,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   }
 
   Widget _endTimePicker() {
-    return new GestureDetector(
+    return new InkWell(
       onTap: () {
         DatePicker.showDateTimePicker(context, showTitleActions: true, theme: DatePickerTheme(backgroundColor: Colors.white, itemStyle: TextStyle(color: Colors.black), doneStyle: TextStyle(color: Colors.black)), onChanged: (date) {}, onConfirm: (date) {
           setState(() {
@@ -438,6 +438,10 @@ class RecruitmentPageState extends State<RecruitmentPage> {
             labelText: '備考',
             labelStyle: TextStyle(color: set.fontColor),
           ),
+          keyboardType: TextInputType.multiline,
+          textInputAction: TextInputAction.newline,
+          maxLength: 100,
+          maxLines: 5,
           onSaved: (String value) {
             _remarks = value;
           }),

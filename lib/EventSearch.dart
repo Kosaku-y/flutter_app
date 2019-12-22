@@ -9,23 +9,23 @@ import 'dart:convert';
 import 'Entity.dart';
 import 'Recritment.dart';
 
-/*----------------------------------------------
-
-イベント管理用クラス
-
-----------------------------------------------*/
-class EventManage extends StatelessWidget {
-  @override
-  //EventManage({Key key}) : super(key: key);
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: EventManagePage(),
-      routes: <String, WidgetBuilder>{
-        '/home': (BuildContext context) => new EventManagePage(),
-      },
-    );
-  }
-}
+//*----------------------------------------------
+//
+//イベント管理用クラス
+//
+//----------------------------------------------*/
+//class EventManage extends StatelessWidget {
+//  @override
+//  //EventManage({Key key}) : super(key: key);
+//  Widget build(BuildContext context) {
+//    return MaterialApp(
+//      home: EventManagePage(),
+//      routes: <String, WidgetBuilder>{
+//        '/home': (BuildContext context) => new EventManagePage(),
+//      },
+//    );
+//  }
+//}
 
 /*----------------------------------------------
 
@@ -172,7 +172,6 @@ class EventManagePageState extends State<EventManagePage> {
   //フォーム送信用メソッド
   void _submission() {
     if (this._formKey.currentState.validate()) {
-      //Navigator.of(context).pushNamed("/subpage");
       if (_eventId != null) {
       } else {
         Navigator.push(

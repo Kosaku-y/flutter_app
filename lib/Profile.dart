@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'Entity.dart';
 
 class ProfilePage extends StatelessWidget {
-
   ProfilePage(User user, int mode, String userId);
 
   final int OTHER = 1;

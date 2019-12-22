@@ -90,7 +90,7 @@ class PageParts {
     scaffoldBackgroundColor: Color(0xff00152d),
     bottomAppBarColor: Color(0xff160840),
     selectedRowColor: Color(0xff00A968),
-    dividerColor: Colors.white,
+    dividerColor: Color(0xff00A968),
   );
 
   ThemeData light = new ThemeData.light();
