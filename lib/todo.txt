@@ -7,6 +7,7 @@
 *   db処理trycatch
     * theme
     * Userクラスの変数見直し
+    * profile画面の作成
 * Home画面の遷移後の snackBar
 *
 *

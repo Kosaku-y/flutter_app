@@ -39,33 +39,16 @@ class _AccountPage extends State<AccountPage> {
 
   @override
   initState() {
-//    var _mainReference = FirebaseDatabase.instance
-//        .reference()
-//        .child("gmail")
-//        .child(widget.userAddress);
-//    super.initState();
-//    _mainReference.onChildAdded.listen(_onEntryAdded);
     if (widget.status == "regist") {
       setState(() {});
     } else {}
   }
-
-//  @override
-//  _onEntryAdded(Event e) {
-//    if (this.mounted) {
-//      setState(() {
-//        entries[e.snapshot.key] = e.snapshot.value;
-//      });
-//    }
-//  }
 
   setTextEditingController() {
     print(count);
     if (count == 1) {
       _userNameInputController = new TextEditingController(text: entries['user_name'] != null ? entries['user_name'] : '');
       _userAgeInputController = new TextEditingController(text: entries['age'] != null ? entries['age'] : '');
-//      userLineIdInputController = new TextEditingController(
-//          text: entries['line_id'] != null ? entries['line_id'] : '');
       _userSexInputController = new TextEditingController(text: entries['sex'] != null ? entries['sex'] : '');
     }
     count += 1;

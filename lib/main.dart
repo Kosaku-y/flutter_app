@@ -8,12 +8,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'Login.dart';
 import 'Chat.dart';
+import 'SettingPage.dart';
 
 //ホーム画面のrun
-void main() => runApp(new MaterialApp(
+void main() {
+  PageParts parts = PageParts();
+  return runApp(
+    new MaterialApp(
       title: "Home",
       home: new LoginPage("Login"),
-    ));
+      theme: parts.defaultTheme,
+    ),
+  );
+}
 
 /*----------------------------------------------
 
@@ -35,9 +42,10 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> {
   PageController _pageController;
   int currentIndex = 0;
-  PageParts set = new PageParts();
   User user;
   HomeState(this.user);
+
+  PageParts set = PageParts();
 
   List<Widget> tabs;
   Map<Widget, GlobalKey<NavigatorState>> navigatorKeys;
@@ -47,11 +55,6 @@ class HomeState extends State<Home> {
       currentIndex = index;
     });
   }
-//  void onTabTapped(int index) {
-//    currentIndex = index;
-//    _pageController.animateToPage(index,
-//        duration: const Duration(milliseconds: 1), curve: Curves.ease);
-//  }
 
 //  @override
 //  void dispose() {
@@ -63,19 +66,15 @@ class HomeState extends State<Home> {
   void initState() {
     super.initState();
     tabs = [
-      NewHome(user),
-      //EventManage(key: PageStorageKey('EventManage'),),
-      EventManage(),
-      RecruitmentPage("createNew"),
-      ChatPage(user),
-      //SampleTabItem("messeage", Colors.black),
+      NewHome(user), //EventManage(key: PageStorageKey('EventManage'),),
+      EventManage(), RoomPage(user), SettingPage(user), //SampleTabItem("messeage", Colors.black),
     ];
 
     navigatorKeys = {
       NewHome(user): GlobalKey<NavigatorState>(),
       EventManage(): GlobalKey<NavigatorState>(),
-      RecruitmentPage("createNew"): GlobalKey<NavigatorState>(),
-      ChatPage(user): GlobalKey<NavigatorState>(),
+      RoomPage(user): GlobalKey<NavigatorState>(),
+      SettingPage(user): GlobalKey<NavigatorState>(),
     };
   }
 
@@ -85,71 +84,34 @@ class HomeState extends State<Home> {
       onWillPop: () async => !await navigatorKeys[currentIndex].currentState.maybePop(),
       child: Scaffold(
         appBar: new AppBar(
-          title: new Text("Matching App", style: TextStyle(color: set.fontColor)),
           backgroundColor: set.baseColor,
-//            actions: <Widget>[
-//              IconButton(
-//                icon: Icon(
-//                  Icons.person_add,
-//                  color: set.pointColor,
-//                ),
-//              ),
-//            ]
+          title: new Text("Matching App"),
         ),
-//        body: Stack(children: <Widget>[
-//          _buildOffstageNavigator(NewHomeManage()),
-//          _buildOffstageNavigator(EventManage()),
-//          _buildOffstageNavigator(RecruitmentPage("createNew")),
-//          _buildOffstageNavigator(SampleTabItem("Message", Color(0xff160840))),
-//        ]),
         body: tabs[currentIndex],
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: set.baseColor,
+          fixedColor: set.fontColor,
           onTap: onTabTapped,
           type: BottomNavigationBarType.fixed,
-          fixedColor: set.fontColor,
           unselectedItemColor: Colors.white,
-          backgroundColor: set.baseColor,
           currentIndex: currentIndex,
           items: [
             BottomNavigationBarItem(
               icon: new Icon(Icons.home),
-              backgroundColor: set.baseColor,
               title: new Text('Home'),
             ),
             BottomNavigationBarItem(
               icon: new Icon(const IconData(59574, fontFamily: 'MaterialIcons')),
-              backgroundColor: set.baseColor,
               title: new Text('Search'),
             ),
-            BottomNavigationBarItem(icon: new Icon(Icons.person_add), backgroundColor: set.baseColor, title: new Text('Recruitment')),
-            BottomNavigationBarItem(icon: new Icon(Icons.message), backgroundColor: set.baseColor, title: new Text("Message")),
+            BottomNavigationBarItem(icon: new Icon(Icons.message), title: new Text("Message")),
+            BottomNavigationBarItem(icon: new Icon(Icons.settings), title: new Text('Setting')),
           ],
-        ),
-        drawer: Drawer(
-          child: ListView(
-            children: <Widget>[
-              DrawerHeader(
-                child: Text('Drawer Header'),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-              ),
-              ListTile(
-                  title: Text("Logout"),
-                  trailing: Icon(Icons.arrow_forward),
-                  onTap: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => LoginPage("Logout"),
-                      ),
-                    );
-                  }),
-            ],
-          ),
         ),
       ),
     );
   }
+}
 
 //  Widget _buildOffstageNavigator(Widget widget) {
 //    return Offstage(
@@ -168,19 +130,6 @@ class HomeState extends State<Home> {
 //        ,
 //    );
 //  }
-}
-
-//class TabNavigator extends StatelessWidget {
-//  TabNavigator({this.navigatorKey, this.widget});
-//  final GlobalKey<NavigatorState> navigatorKey;
-//  final Widget widget;
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    var routeBuilders = _routeBuilders(context);
-//    return Navigator();
-//  }
-//}
 
 /*----------------------------------------------
 
@@ -215,14 +164,12 @@ class MainState extends State<Main> {
 class SampleTabItem extends StatelessWidget {
   final String title;
   final Color color;
-  PageParts set = PageParts();
 
   SampleTabItem(this.title, this.color) : super();
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      backgroundColor: set.backGroundColor,
       body: new Container(
         child: new Center(
           child: new Column(

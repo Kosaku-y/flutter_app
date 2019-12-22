@@ -9,11 +9,86 @@ import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 
-class ChatPage extends StatefulWidget {
+class RoomPage extends StatefulWidget {
   User fromUser;
-  User toUser;
+  RoomPage(this.fromUser);
 
-  ChatPage(this.fromUser);
+  @override
+  _RoomPage createState() => new _RoomPage();
+}
+
+class _RoomPage extends State<RoomPage> {
+  PageParts set = PageParts();
+  final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
+  List<String> rooms = new List();
+
+  @override
+  initState() {
+    super.initState();
+    _mainReference.child("${widget.fromUser.mail}/message").onChildAdded.listen(_onEntryAdded);
+  }
+
+  _onEntryAdded(Event e) {
+    setState(() {
+      rooms.add(e.snapshot.key);
+    });
+  }
+
+  // 画面全体のビルド
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: set.backGroundColor,
+      body: Container(
+          child: new Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                return _buildRow(index);
+              },
+              itemCount: rooms.length,
+            ),
+          ),
+        ],
+      )),
+    );
+  }
+
+  // 投稿されたメッセージの1行を表示するWidgetを生成
+  Widget _buildRow(int index) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            this.context,
+            MaterialPageRoute(
+                // パラメータを渡す
+                builder: (context) => new ChatPage(widget.fromUser.mail, rooms[index])));
+      },
+      child: new Column(children: <Widget>[
+        Card(
+          color: set.backGroundColor,
+          child: ListTile(
+            title: Text(
+              rooms[index],
+              style: TextStyle(
+                fontSize: 20.0,
+                color: set.pointColor,
+              ),
+            ),
+          ),
+        ),
+        Divider(color: set.pointColor),
+      ]),
+    );
+  }
+}
+
+class ChatPage extends StatefulWidget {
+  String fromUserId;
+  String toUserId;
+
+  ChatPage(this.fromUserId, this.toUserId);
   @override
   _ChatPage createState() => new _ChatPage();
 }
@@ -28,7 +103,7 @@ class _ChatPage extends State<ChatPage> {
   @override
   initState() {
     super.initState();
-    _mainReference.child("${widget.fromUser.mail}").onChildAdded.listen(_onEntryAdded);
+    _mainReference.child("${widget.fromUserId}/message/${widget.toUserId}").onChildAdded.listen(_onEntryAdded);
   }
 
   _onEntryAdded(Event e) {
@@ -65,7 +140,17 @@ class _ChatPage extends State<ChatPage> {
 
   // 投稿されたメッセージの1行を表示するWidgetを生成
   Widget _buildRow(int index) {
-    return Card(child: ListTile(title: Text(entries[index].message)));
+    return Card(
+      color: set.backGroundColor,
+      child: ListTile(
+        title: Text(
+          entries[index].message,
+          style: TextStyle(
+            color: set.pointColor,
+          ),
+        ),
+      ),
+    );
   }
 
   // 投稿メッセージの入力部分のWidgetを生成
@@ -83,7 +168,9 @@ class _ChatPage extends State<ChatPage> {
         CupertinoButton(
           child: Text("Send"),
           onPressed: () {
-            _mainReference.child("${widget.fromUser.mail}/message").set(ChatEntity(DateTime.now(), _textEditController.text).toJson());
+            _mainReference.child("${widget.fromUserId}/message/${widget.toUserId}").push().set(ChatEntity(DateTime.now(), _textEditController.text).toJson());
+            print("send message :${_textEditController.text}");
+            _mainReference.child("${widget.toUserId}/message/${widget.fromUserId}").push().set(ChatEntity(DateTime.now(), _textEditController.text).toJson());
             print("send message :${_textEditController.text}");
             _textEditController.clear();
             // キーボードを閉じる

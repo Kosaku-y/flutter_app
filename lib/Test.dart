@@ -45,9 +45,9 @@ class AppState extends State<App> {
         _buildOffstageNavigator(TabItem.green),
         _buildOffstageNavigator(TabItem.blue),
       ]),
-      bottomNavigationBar: BottomNavigation(
-        currentTab: currentTab,
-        onSelectTab: _selectTab,
+      bottomNavigationBar: BottomNavigationBar(
+        current: currentTab,
+        onSelect: _selectTab,
       ),
     );
   }
@@ -76,21 +76,15 @@ class TabNavigator extends StatelessWidget {
   void _push(BuildContext context, {int materialIndex: 500}) {
     var routeBuilders = _routeBuilders(context, materialIndex: materialIndex);
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                routeBuilders[TabNavigatorRoutes.detail](context)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => routeBuilders[TabNavigatorRoutes.detail](context)));
   }
 
-  Map<String, WidgetBuilder> _routeBuilders(BuildContext context,
-      {int materialIndex: 500}) {
+  Map<String, WidgetBuilder> _routeBuilders(BuildContext context, {int materialIndex: 500}) {
     return {
       TabNavigatorRoutes.root: (context) => ColorsListPage(
             color: TabHelper.color(tabItem),
             title: TabHelper.description(tabItem),
-            onPush: (materialIndex) =>
-                _push(context, materialIndex: materialIndex),
+            onPush: (materialIndex) => _push(context, materialIndex: materialIndex),
           ),
       TabNavigatorRoutes.detail: (context) => ColorDetailPage(
             color: TabHelper.color(tabItem),
@@ -108,8 +102,7 @@ class TabNavigator extends StatelessWidget {
         key: navigatorKey,
         initialRoute: TabNavigatorRoutes.root,
         onGenerateRoute: (routeSettings) {
-          return MaterialPageRoute(
-              builder: (context) => routeBuilders[routeSettings.name](context));
+          return MaterialPageRoute(builder: (context) => routeBuilders[routeSettings.name](context));
         });
   }
 }
@@ -135,18 +128,7 @@ class ColorsListPage extends StatelessWidget {
         ));
   }
 
-  final List<int> materialIndices = [
-    900,
-    800,
-    700,
-    600,
-    500,
-    400,
-    300,
-    200,
-    100,
-    50
-  ];
+  final List<int> materialIndices = [900, 800, 700, 600, 500, 400, 300, 200, 100, 50];
 
   Widget _buildList() {
     return ListView.builder(

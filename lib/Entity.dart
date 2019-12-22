@@ -85,6 +85,18 @@ class PageParts {
   var fontColor = Color(0xff00A968);
   var pointColor = Colors.white;
 
+  ThemeData defaultTheme = ThemeData(
+    backgroundColor: Color(0xff00152d),
+    scaffoldBackgroundColor: Color(0xff00152d),
+    bottomAppBarColor: Color(0xff160840),
+    selectedRowColor: Color(0xff00A968),
+    dividerColor: Colors.white,
+  );
+
+  ThemeData light = new ThemeData.light();
+
+  ThemeData dark = new ThemeData.dark();
+
   Widget indicator() {
     return SpinKitWave(
       color: pointColor,

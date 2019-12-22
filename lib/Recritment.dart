@@ -45,14 +45,12 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   Map lineMap;
   Map stationMap;
 
-  TextEditingController _startingController =
-      new TextEditingController(text: '');
+  TextEditingController _startingController = new TextEditingController(text: '');
   TextEditingController _endingController = new TextEditingController(text: '');
   TextEditingController _memberController = new TextEditingController(text: '');
   TextEditingController _prefController = new TextEditingController(text: '');
   TextEditingController _lineController = new TextEditingController(text: '');
-  TextEditingController _stationController =
-      new TextEditingController(text: '');
+  TextEditingController _stationController = new TextEditingController(text: '');
 
   final _formKey = GlobalKey<FormState>();
   final EventCreate em = new EventCreate();
@@ -159,10 +157,8 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   void _submission() {
     if (this._formKey.currentState.validate()) {
       this._formKey.currentState.save();
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('Processing Data')));
-      EventEntity event = new EventEntity(_selectRecruitMember, _selectStation,
-          formatter.format(_start), formatter.format(_end), _remarks);
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
+      EventEntity event = new EventEntity(_selectRecruitMember, _selectStation, formatter.format(_start), formatter.format(_end), _remarks);
       em.addEvent(_selectPref, _selectLine, event);
     }
   }
@@ -196,9 +192,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
               Icons.people,
               color: set.fontColor,
             ),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
             hintText: 'Choose a number of recruiting member',
             hintStyle: TextStyle(color: set.fontColor),
             labelText: '*募集人数',
@@ -251,9 +245,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
               Icons.place,
               color: set.fontColor,
             ),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
             hintText: 'Choose a prefecture',
             labelText: '*都道府県',
             labelStyle: TextStyle(color: set.fontColor),
@@ -294,9 +286,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
               Icons.train,
               color: set.fontColor,
             ),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
             hintText: 'Choose a line',
             labelText: '*路線',
             labelStyle: TextStyle(color: set.fontColor),
@@ -347,9 +337,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
             hintText: 'Choose a station',
             labelText: '*駅',
             labelStyle: TextStyle(color: set.fontColor),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
           ),
           validator: (String value) {
             if (value.isEmpty) {
@@ -368,13 +356,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   Widget _startTimePicker() {
     return new GestureDetector(
       onTap: () {
-        DatePicker.showDateTimePicker(context,
-            showTitleActions: true,
-            theme: DatePickerTheme(
-                backgroundColor: set.pointColor,
-                itemStyle: TextStyle(color: set.pointColor),
-                doneStyle: TextStyle(color: set.pointColor)),
-            onChanged: (date) {}, onConfirm: (date) {
+        DatePicker.showDateTimePicker(context, showTitleActions: true, theme: DatePickerTheme(backgroundColor: Colors.white, itemStyle: TextStyle(color: Colors.black), doneStyle: TextStyle(color: Colors.black)), onChanged: (date) {}, onConfirm: (date) {
           setState(() {
             _start = date;
             _startingController.text = formatter.format(_start);
@@ -391,9 +373,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
               Icons.calendar_today,
               color: set.fontColor,
             ),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
             hintText: 'Choose a starting Time',
             labelText: '*開始日時',
             labelStyle: TextStyle(color: set.fontColor),
@@ -409,13 +389,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   Widget _endTimePicker() {
     return new GestureDetector(
       onTap: () {
-        DatePicker.showDateTimePicker(context,
-            showTitleActions: true,
-            theme: DatePickerTheme(
-                backgroundColor: set.pointColor,
-                itemStyle: TextStyle(color: set.pointColor),
-                doneStyle: TextStyle(color: set.pointColor)),
-            onChanged: (date) {}, onConfirm: (date) {
+        DatePicker.showDateTimePicker(context, showTitleActions: true, theme: DatePickerTheme(backgroundColor: Colors.white, itemStyle: TextStyle(color: Colors.black), doneStyle: TextStyle(color: Colors.black)), onChanged: (date) {}, onConfirm: (date) {
           setState(() {
             _end = date;
             _endingController.text = formatter.format(_end);
@@ -432,9 +406,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
               Icons.calendar_today,
               color: set.fontColor,
             ),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
             hintText: 'Choose a station',
             labelText: '*終了日時',
             labelStyle: TextStyle(color: set.fontColor),
@@ -461,9 +433,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
               Icons.note,
               color: set.fontColor,
             ),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
             hintText: 'add remarks',
             labelText: '備考',
             labelStyle: TextStyle(color: set.fontColor),

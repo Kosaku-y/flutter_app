@@ -93,6 +93,7 @@ class _LoginPageState extends State<LoginPage> {
               builder: (BuildContext context) => AccountPage(user, "regist"),
             ),
           );
+
           break;
         case AuthStatus.signedIn:
           user = User.fromMap(result.value);
@@ -101,6 +102,7 @@ class _LoginPageState extends State<LoginPage> {
               builder: (context) => Home(user, "ログインしました"),
             ),
           );
+
           break;
         case AuthStatus.notSignedIn:
           break;

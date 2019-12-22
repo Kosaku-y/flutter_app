@@ -59,10 +59,8 @@ class EventManagePageState extends State<EventManagePage> {
 
   TextEditingController _prefController = new TextEditingController(text: '');
   TextEditingController _lineController = new TextEditingController(text: '');
-  TextEditingController _stationController =
-      new TextEditingController(text: '');
-  TextEditingController _eventIdController =
-      new TextEditingController(text: '');
+  TextEditingController _stationController = new TextEditingController(text: '');
+  TextEditingController _eventIdController = new TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -155,15 +153,13 @@ class EventManagePageState extends State<EventManagePage> {
   //期限切れイベント削除用メソッド
   void _delete() {
     DateTime now = DateTime.now();
-    final _mainReference =
-        FirebaseDatabase.instance.reference().child("Events");
+    final _mainReference = FirebaseDatabase.instance.reference().child("Events");
     _mainReference.once().then((DataSnapshot snapshot) {
       Map<dynamic, dynamic> values = snapshot.value;
       values.forEach((k, v) {
         v.forEach((k1, v1) {
           v1.forEach((k2, v2) {
-            if (DateTime.fromMillisecondsSinceEpoch(v2["endingTime"])
-                .isBefore(now)) {
+            if (DateTime.fromMillisecondsSinceEpoch(v2["endingTime"]).isBefore(now)) {
               _mainReference.child(k).child(k1).child(k2).remove();
               printMap("remove", v2);
             }
@@ -183,8 +179,7 @@ class EventManagePageState extends State<EventManagePage> {
             this.context,
             MaterialPageRoute(
                 // パラメータを渡す
-                builder: (context) => new EventSearchResultPage(
-                    _selectPref, _selectLine, _selectStation)));
+                builder: (context) => new EventSearchResultPage(_selectPref, _selectLine, _selectStation)));
       }
     }
   }
@@ -223,9 +218,7 @@ class EventManagePageState extends State<EventManagePage> {
             hintText: 'Choose a prefecture',
             labelText: '都道府県',
             labelStyle: TextStyle(color: set.fontColor),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
           ),
           validator: (String value) {
             if (changePref == 2) {
@@ -272,9 +265,7 @@ class EventManagePageState extends State<EventManagePage> {
             hintText: 'Choose a line',
             labelText: '路線',
             labelStyle: TextStyle(color: set.fontColor),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
           ),
           validator: (String value) {
             if (changeLine == 2) {
@@ -322,9 +313,7 @@ class EventManagePageState extends State<EventManagePage> {
             hintText: 'Choose a station',
             labelText: '駅名',
             labelStyle: TextStyle(color: set.fontColor),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
           ),
           validator: (String value) {
             if (changeStation == 2) {
@@ -348,9 +337,7 @@ class EventManagePageState extends State<EventManagePage> {
           hintText: 'input eventID',
           labelText: 'イベントID(管理者用)',
           labelStyle: TextStyle(color: set.fontColor),
-          enabledBorder: UnderlineInputBorder(
-              borderRadius: BorderRadius.circular(1.0),
-              borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+          enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
         ),
         validator: (String value) {
           return null;
@@ -444,8 +431,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
 
   //EventSearchResultPageState(this.pref, this.line, this.station);
 
-  var formatter =
-      new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
+  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
   EventCreate em = new EventCreate();
   List<EventEntity> entries = new List();
 
@@ -470,23 +456,16 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
         });
       });
       //駅名検索
-    } else if (widget.pref != null &&
-        widget.line != null &&
-        widget.station != null) {
+    } else if (widget.pref != null && widget.line != null && widget.station != null) {
       //駅名検索
-      _mainReference
-          .child("${widget.pref}/${widget.station}")
-          .once()
-          .then((DataSnapshot result) {
+      _mainReference.child("${widget.pref}/${widget.station}").once().then((DataSnapshot result) {
         result.value.forEach((k, v) {
           setState(() {
             entries.add(new EventEntity.fromMap(v));
           });
         });
       });
-    } else if (widget.pref == null &&
-        widget.line == null &&
-        widget.station == null) {
+    } else if (widget.pref == null && widget.line == null && widget.station == null) {
       _mainReference.once().then((DataSnapshot result) {
         result.value.forEach((k, v) {
           v.forEach((k1, v1) {
@@ -501,33 +480,6 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
     }
   }
 
-//  _onEntryAdded(Event e) {
-//    print(widget.pref + "," + widget.line + "," + widget.station);
-//    Map<dynamic, dynamic> values = e.snapshot.value;
-//    //都道府県検索
-//    if (widget.pref != null && widget.line == null && widget.station == null) {
-//      values.forEach((k, v) {
-//        entries.add(new EventEntity.fromMap(v));
-//      });
-//    }
-//    //駅名検索
-//    else if (widget.pref != null &&
-//        widget.line != null &&
-//        widget.station != null) {
-//      entries.add(new EventEntity.fromMap(e.snapshot.value));
-//    }
-//    //全件検索
-//    else if (widget.pref == null &&
-//        widget.line == null &&
-//        widget.station == null) {
-//        values.forEach((k, v) {
-//          v.forEach((k1, v1) {
-//            entries.add(new EventEntity.fromMap(v1));
-//          });
-//        });
-//    } else {}
-//  }
-
   //画面全体のビルド
   @override
   Widget build(BuildContext context) {
@@ -537,10 +489,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
           padding: const EdgeInsets.all(20.0),
           child: new Column(
             children: <Widget>[
-              Text('検索結果：' + entries.length.toString() + '件',
-                  style: TextStyle(
-                      color: set.fontColor,
-                      backgroundColor: set.backGroundColor)),
+              Text('検索結果：' + entries.length.toString() + '件', style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
               Expanded(
                 child: ListView.builder(
                   //padding: const EdgeInsets.all(16.0),
@@ -596,8 +545,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                   child: Text(
                     entries[index].station + "駅",
                     style: TextStyle(
@@ -608,8 +556,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
                   ),
                 ),
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                   child: Text(
                     entries[index].userId,
                     style: TextStyle(
@@ -619,8 +566,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
                   ),
                 ),
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                   child: Text(
                     "EventID :" + entries[index].eventId.toString(),
                     style: TextStyle(
@@ -645,8 +591,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
 ----------------------------------------------*/
 class EventCreate {
   var mainReference = FirebaseDatabase.instance.reference().child("Events");
-  var managerReference =
-      FirebaseDatabase.instance.reference().child("EventManager");
+  var managerReference = FirebaseDatabase.instance.reference().child("EventManager");
   //var userReference = FirebaseDatabase.instance.reference().child("User");
   var userReference = FirebaseDatabase.instance.reference().child("gmail");
   int eventId;
@@ -659,11 +604,7 @@ class EventCreate {
       String newEventId = (eventId + 1).toString();
       managerReference.set({"eventId": "$newEventId"});
       event.eventId = newEventId;
-      mainReference
-          .child(pref)
-          .child(event.station)
-          .child(eventId.toString())
-          .set(event.toJson());
+      mainReference.child(pref).child(event.station).child(eventId.toString()).set(event.toJson());
     });
   }
 
@@ -680,7 +621,7 @@ class EventDetailPage extends StatelessWidget {
   EventEntity event;
   EventDetailPage(this.event);
   PageParts set = new PageParts();
-  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分', "ja_JP");
+  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
 
   Widget build(BuildContext context) {
     return Scaffold(
