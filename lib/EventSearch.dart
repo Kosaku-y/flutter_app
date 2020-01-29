@@ -6,26 +6,10 @@ import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'Entity.dart';
+import 'package:flutter_app2/Entity/Entity.dart';
 import 'Recritment.dart';
-
-//*----------------------------------------------
-//
-//イベント管理用クラス
-//
-//----------------------------------------------*/
-//class EventManage extends StatelessWidget {
-//  @override
-//  //EventManage({Key key}) : super(key: key);
-//  Widget build(BuildContext context) {
-//    return MaterialApp(
-//      home: EventManagePage(),
-//      routes: <String, WidgetBuilder>{
-//        '/home': (BuildContext context) => new EventManagePage(),
-//      },
-//    );
-//  }
-//}
+import 'package:csv/csv.dart';
+import 'dart:io';
 
 /*----------------------------------------------
 
@@ -114,7 +98,7 @@ class EventManagePageState extends State<EventManagePage> {
           MaterialPageRoute(
             settings: const RouteSettings(name: "/detail"),
             builder: (context) {
-              return RecruitmentPage("createNew");
+              return RecruitmentPage(0);
             },
             fullscreenDialog: true,
           ),
@@ -355,19 +339,23 @@ class EventManagePageState extends State<EventManagePage> {
         changeLine = 2;
         changeStation = 2;
       }
-      int prefNum = int.parse(Pref.pref[newValue]);
+
       lineMap = new Map<String, int>();
-      var url = 'http://www.ekidata.jp/api/p/' + prefNum.toString() + '.json';
-      //APIコール
-      http.get(url).then((response) {
-        var body = response.body.substring(50, response.body.length - 58);
-        var mapLine = jsonDecode(body);
-        mapLine["line"].forEach((i) {
-          lineMap[i["line_name"]] = i["line_cd"];
-        });
-        //lineMap.forEach((key,value) => lineData.add(key));
-        lineData = lineMap.keys.toList();
-      });
+      final input = new File('assets/csv/line.csv').openRead();
+      final fields = input.transform(utf8.decoder).transform(new CsvToListConverter()).toList();
+      int prefNum = int.parse(Pref.pref[newValue]);
+
+//      var url = 'http://www.ekidata.jp/api/p/' + prefNum.toString() + '.json';
+//      //APIコール
+//      http.get(url).then((response) {
+//        var body = response.body.substring(50, response.body.length - 58);
+//        var mapLine = jsonDecode(body);
+//        mapLine["line"].forEach((i) {
+//          lineMap[i["line_name"]] = i["line_cd"];
+//        });
+//        //lineMap.forEach((key,value) => lineData.add(key));
+//        lineData = lineMap.keys.toList();
+//      });
     });
   }
 

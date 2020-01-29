@@ -3,12 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'EventSearch.dart';
 import 'Recritment.dart';
 import 'NewHome.dart';
-import 'Entity.dart';
+import 'package:flutter_app2/Entity/Entity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'Login.dart';
 import 'Chat.dart';
 import 'SettingPage.dart';
+import 'Widget/Login_page.dart';
 
 //ホーム画面のrun
 void main() {
@@ -16,7 +17,7 @@ void main() {
   return runApp(
     new MaterialApp(
       title: "Home",
-      home: new LoginPage("Login"),
+      home: new LoginForm(),
       theme: parts.defaultTheme,
     ),
   );
@@ -67,7 +68,9 @@ class HomeState extends State<Home> {
     super.initState();
     tabs = [
       NewHome(user), //EventManage(key: PageStorageKey('EventManage'),),
-      EventManagePage(), RoomPage(user), SettingPage(user), //SampleTabItem("messeage", Colors.black),
+      EventManagePage(),
+      RoomPage(user),
+      SettingPage(user), //SampleTabItem("messeage", Colors.black),
     ];
 
     navigatorKeys = {
@@ -112,24 +115,6 @@ class HomeState extends State<Home> {
     );
   }
 }
-
-//  Widget _buildOffstageNavigator(Widget widget) {
-//    return Offstage(
-//      offstage: tabs[currentIndex] != widget,
-////      child: Navigator(
-////        navigatorKey: navigatorKeys[widget],
-////        tabItem: tabItem,
-////      ),
-//      child:Navigator(
-//        key:  navigatorKeys[widget],
-//        initialRoute: TabNavigatorRoutes.root,
-//        onGenerateRoute: (routeSettings) {
-//          return MaterialPageRoute(
-//              builder: (context) => routeBuilders[routeSettings.name](context));
-//        });
-//        ,
-//    );
-//  }
 
 /*----------------------------------------------
 

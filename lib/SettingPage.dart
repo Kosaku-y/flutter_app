@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'Entity.dart';
+import 'package:flutter_app2/Entity/Entity.dart';
 import 'Login.dart';
 
 class SettingPage extends StatelessWidget {

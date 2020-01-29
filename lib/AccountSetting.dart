@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
-import 'Entity.dart';
+import 'package:flutter_app2/Entity/Entity.dart';
 import 'main.dart';
 
 class AccountPage extends StatefulWidget {
@@ -23,13 +23,10 @@ class _AccountPage extends State<AccountPage> {
   //送信用変数
   String _userName;
   String _userAge;
-  String _userLineId;
   String _userSex;
 
   TextEditingController _userNameInputController = new TextEditingController(text: '');
   TextEditingController _userAgeInputController = new TextEditingController(text: '');
-  TextEditingController _userLineIdInputController;
-  //TextEditingController userGmailInputController;
   TextEditingController _userSexInputController = new TextEditingController(text: '');
 
   final _formKey = GlobalKey<FormState>();
@@ -59,7 +56,7 @@ class _AccountPage extends State<AccountPage> {
     user.name = _userName;
     user.age = _userAge;
     user.sex = _userSex;
-    user.mail = address;
+    user.userId = address;
 
     if (widget.status == "regist") {
       await mainReference.child("Gmail").child(address).set(user.toJson());
@@ -97,7 +94,7 @@ class _AccountPage extends State<AccountPage> {
             onPressed: () {
               if (_formKey.currentState.validate()) {
                 this._formKey.currentState.save();
-                submit(widget.user.mail);
+                submit(widget.user.userId);
               }
             },
           ),
@@ -162,7 +159,7 @@ class _AccountPage extends State<AccountPage> {
   }
 
   Widget agePicker() {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         DataPicker.showDatePicker(
           context,
@@ -202,7 +199,7 @@ class _AccountPage extends State<AccountPage> {
   }
 
   Widget sexPicker() {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         DataPicker.showDatePicker(
           context,

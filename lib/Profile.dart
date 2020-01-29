@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'Entity.dart';
+import 'package:flutter_app2/Entity/Entity.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage(User user, int mode, String userId);

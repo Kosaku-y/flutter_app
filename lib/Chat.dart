@@ -4,7 +4,7 @@
 * @auther KosakuYamauchi
 * */
 import 'package:flutter/material.dart';
-import 'Entity.dart';
+import 'package:flutter_app2/Entity/Entity.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,6 +17,9 @@ class RoomPage extends StatefulWidget {
   _RoomPage createState() => new _RoomPage();
 }
 
+/*----------------------------------------------
+　ルームページクラス
+----------------------------------------------*/
 class _RoomPage extends State<RoomPage> {
   PageParts set = PageParts();
   final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
@@ -25,7 +28,7 @@ class _RoomPage extends State<RoomPage> {
   @override
   initState() {
     super.initState();
-    _mainReference.child("${widget.fromUser.mail}/message").onChildAdded.listen(_onEntryAdded);
+    _mainReference.child("${widget.fromUser.userId}/message").onChildAdded.listen(_onEntryAdded);
   }
 
   _onEntryAdded(Event e) {
@@ -63,7 +66,7 @@ class _RoomPage extends State<RoomPage> {
             this.context,
             MaterialPageRoute(
                 // パラメータを渡す
-                builder: (context) => new ChatPage(widget.fromUser.mail, rooms[index])));
+                builder: (context) => new ChatPage(widget.fromUser.userId, rooms[index])));
       },
       child: new Column(children: <Widget>[
         Card(
@@ -84,6 +87,9 @@ class _RoomPage extends State<RoomPage> {
   }
 }
 
+/*----------------------------------------------
+　チャットページクラス
+----------------------------------------------*/
 class ChatPage extends StatefulWidget {
   String fromUserId;
   String toUserId;

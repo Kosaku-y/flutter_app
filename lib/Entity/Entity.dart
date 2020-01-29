@@ -7,7 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 ----------------------------------------------*/
 
 class User {
-  String mail = ""; //primarykey
+  String userId = ""; //primarykey
   String name = "";
   String age = "";
   String sex = "";
@@ -36,7 +36,7 @@ class User {
         age = map["age"],
         sex = map["sex"],
         rank = map["rank"],
-        mail = map["mail"],
+        userId = map["mail"],
         lineId = map["lineId"],
         score = map["score"];
 
@@ -46,7 +46,7 @@ class User {
         "age:$age\n"
         "sex:$sex\n"
         "rank:$rank\n"
-        "mail:$mail\n"
+        "mail:$userId\n"
         "lineId:$lineId\n"
         "score:$score\n"
         "-------------------------------\n");
@@ -55,7 +55,7 @@ class User {
       "age": age,
       "sex": sex,
       "rank": rank,
-      "mail": mail,
+      "mail": userId,
       "lineId": lineId,
       "score": score,
     };
@@ -138,6 +138,7 @@ class EventEntity {
   String endingTime;
   String remarks;
   String userId;
+  String name;
 
   EventEntity(this.recruitMember, this.station, this.startingTime, this.endingTime, this.remarks);
 
@@ -271,7 +272,7 @@ class Station {
 
 /*----------------------------------------------
 
-駅エンティティクラス
+チャットエンティティクラス
 
 ----------------------------------------------*/
 class ChatEntity {

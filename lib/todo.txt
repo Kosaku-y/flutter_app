@@ -3,7 +3,7 @@
 *   文言日本語化
 *   変数整理
 *   非同期処理(Indicator)
-*   db処理trycatch
+*   db処理 try-catch
     * theme
     * Userクラスの変数見直し
     * profile画面の作成

@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'EventSearch.dart';
-import 'Entity.dart';
+import 'package:flutter_app2/Entity/Entity.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
+import 'package:csv/csv.dart';
+import 'dart:io';
 
 /*----------------------------------------------
 
@@ -15,7 +17,10 @@ import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart
 ----------------------------------------------*/
 class RecruitmentPage extends StatefulWidget {
   // アロー関数を用いて、Stateを呼ぶ
-  String mode;
+  int mode;
+  final int NEW = 1;
+  final int MODIFIED = 0;
+
   RecruitmentPage(this.mode);
   @override
   RecruitmentPageState createState() => new RecruitmentPageState();
@@ -23,14 +28,15 @@ class RecruitmentPage extends StatefulWidget {
 
 class RecruitmentPageState extends State<RecruitmentPage> {
   PageParts set = new PageParts();
-  //送信用変数
 
+  //送信用変数
   String _selectPref = null;
   String _selectLine = null;
   String _selectStation = null;
   String _selectRecruitMember = null;
   DateTime _start;
   DateTime _end;
+
   // 日時を指定したフォーマットで指定するためのフォーマッター
   var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
   String _remarks;
@@ -59,6 +65,14 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   @override
   void initState() {
     super.initState();
+
+    setState(() async {
+      final input = new File('assets/csv/line.csv').openRead();
+      final fields = await input.transform(utf8.decoder).transform(new CsvToListConverter()).toList();
+      lineMap = new Map<String, int>();
+    });
+
+    if (widget.mode == widget.MODIFIED) {}
   }
 
   Widget build(BuildContext context) {
@@ -77,7 +91,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
               _stationPicker(), //駅名Picker
               _startTimePicker(), //開始日時プルダウン
               _endTimePicker(), //終了日時プルダウン
-              _remarksField(),
+              _remarksField(), //備考
               Padding(
                 padding: EdgeInsets.only(top: 20.0),
                 child: RaisedButton.icon(
@@ -104,20 +118,32 @@ class RecruitmentPageState extends State<RecruitmentPage> {
         changeLine = 2;
         changeStation = 2;
       }
-      int prefNum = int.parse(Pref.pref[newValue]);
+
       lineMap = new Map<String, int>();
-      var url = 'http://www.ekidata.jp/api/p/' + prefNum.toString() + '.json';
-      http.get(url).then((response) {
-        var body = response.body.substring(50, response.body.length - 58);
-        var mapLine = jsonDecode(body);
-        mapLine["line"].forEach((i) {
-          lineMap[i["line_name"]] = i["line_cd"];
-        });
-        //lineMap.forEach((key,value) => lineData.add(key));
-        lineData = lineMap.keys.toList();
-      });
     });
   }
+
+//  void _prefChange(String newValue) {
+//    setState(() {
+//      changePref = 1;
+//      if (changeLine != 0 || changeStation != 0) {
+//        changeLine = 2;
+//        changeStation = 2;
+//      }
+//      int prefNum = int.parse(Pref.pref[newValue]);
+//      lineMap = new Map<String, int>();
+//      var url = 'http://www.ekidata.jp/api/p/' + prefNum.toString() + '.json';
+//      http.get(url).then((response) {
+//        var body = response.body.substring(50, response.body.length - 58);
+//        var mapLine = jsonDecode(body);
+//        mapLine["line"].forEach((i) {
+//          lineMap[i["line_name"]] = i["line_cd"];
+//        });
+//        //lineMap.forEach((key,value) => lineData.add(key));
+//        lineData = lineMap.keys.toList();
+//      });
+//    });
+//  }
 
   void _lineChange(String newValue) {
     setState(() {
@@ -153,7 +179,6 @@ class RecruitmentPageState extends State<RecruitmentPage> {
     });
   }
 
-  //フォーム送信用
   void _submission() {
     if (this._formKey.currentState.validate()) {
       this._formKey.currentState.save();

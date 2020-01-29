@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'main.dart';
-import 'Entity.dart';
+import 'package:flutter_app2/Entity/Entity.dart';
 import 'AccountSetting.dart';
 
 class LoginPage extends StatefulWidget {
@@ -86,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
       switch (status) {
         case AuthStatus.signedUp:
           user = User();
-          user.mail = key;
+          user.userId = key;
           //ページ遷移
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -210,7 +210,8 @@ class _LoginPageState extends State<LoginPage> {
                               .then((FirebaseUser fireUser) => setState(() {
                                     username = fireUser.displayName;
                                     String key = fireUser.email.replaceAll(RegExp(r'@[A-Za-z]+.[A-Za-z]+'), "");
-                                    checkLogin(key);
+                                    String dotChange = key.replaceAll(".", "[dot]");
+                                    checkLogin(dotChange);
                                   }))
                               .catchError((e) => print(e)),
                         );

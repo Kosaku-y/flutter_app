@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'Entity.dart';
+import 'package:flutter_app2/Entity/Entity.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'DashBoardElement.dart';
 
@@ -71,71 +71,48 @@ class NewHomeState extends State<NewHome> {
           children: <Widget>[
             Container(
               padding: const EdgeInsets.all(2.0),
-              child: Text('ようこそ ${widget.user.name}さん',
-                  style: TextStyle(
-                      color: set.fontColor,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20.0)),
+              child: Text('ようこそ ${widget.user.name}さん', style: TextStyle(color: set.fontColor, fontWeight: FontWeight.w700, fontSize: 20.0)),
             ),
             _buildTile(
               Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text('お知らせ',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20.0)),
-                          Text('新着$totalInfo件',
-                              style: TextStyle(
-                                  color: set.fontColor, fontSize: 12.0)),
-                          //                          Text('$totalInfo件', style: TextStyle(color: Colors.blueAccent)),
-                        ],
-                      ),
-                      Material(
-                          //                        color: Colors.blue,
-                          color: set.fontColor,
-                          borderRadius: BorderRadius.circular(24.0),
-                          child: Center(
-                              child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Icon(Icons.info,
-                                color: Colors.white, size: 30.0),
-                          )))
-                    ]),
+                      Text('お知らせ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0)),
+                      Text('新着$totalInfo件', style: TextStyle(color: set.fontColor, fontSize: 12.0)),
+                      //                          Text('$totalInfo件', style: TextStyle(color: Colors.blueAccent)),
+                    ],
+                  ),
+                  Material(
+                      //                        color: Colors.blue,
+                      color: set.fontColor,
+                      borderRadius: BorderRadius.circular(24.0),
+                      child: Center(
+                          child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Icon(Icons.info, color: Colors.white, size: 30.0),
+                      )))
+                ]),
               ),
             ),
             _buildTile(
               Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Material(
-                          color: set.fontColor,
-                          shape: CircleBorder(),
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Image.asset('assets/piece/0m5.png'),
-                          )),
-                      Padding(padding: EdgeInsets.only(bottom: 12.0)),
-                      Text('How to 役',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 20.0)),
-                      Text('役を覚えよう',
-                          style:
-                              TextStyle(color: set.fontColor, fontSize: 12.0)),
-                    ]),
+                child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Material(
+                      color: set.fontColor,
+                      shape: CircleBorder(),
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Image.asset('assets/piece/0m5.png'),
+                      )),
+                  Padding(padding: EdgeInsets.only(bottom: 12.0)),
+                  Text('How to 役', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0)),
+                  Text('役を覚えよう', style: TextStyle(color: set.fontColor, fontSize: 12.0)),
+                ]),
               ),
               onTap: () => Navigator.push(
                 this.context,
@@ -151,21 +128,12 @@ class NewHomeState extends State<NewHome> {
 //                  mainAxisAlignment: MainAxisAlignment.start,
 //                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('Player rank',
-                        style: TextStyle(
-                            fontSize: 24.0, fontWeight: FontWeight.bold)),
+                    Text('Player rank', style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
                     Text.rich(
                       TextSpan(
                         children: <TextSpan>[
-                          TextSpan(
-                              text: '現在のランク:',
-                              style: TextStyle(
-                                  color: set.fontColor, fontSize: 12.0)),
-                          TextSpan(
-                              text: '$rankColorString',
-                              style: TextStyle(
-                                  color: widget.user.colorMap[rankColorString],
-                                  fontSize: 12.0)),
+                          TextSpan(text: '現在のランク:', style: TextStyle(color: set.fontColor, fontSize: 12.0)),
+                          TextSpan(text: '$rankColorString', style: TextStyle(color: widget.user.colorMap[rankColorString], fontSize: 12.0)),
                         ],
                       ),
                     ),
@@ -185,63 +153,49 @@ class NewHomeState extends State<NewHome> {
             _buildTile(
               Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Material(
-                          color: set.fontColor,
-                          shape: CircleBorder(),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Icon(Icons.show_chart,
-                                color: Colors.white, size: 30.0),
-                          )),
-                      Padding(padding: EdgeInsets.only(bottom: 12.0)),
-                      Text('戦績',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 20.0)),
-                      Text(
-                        '勝敗分析をしよう',
-                        style: TextStyle(color: set.fontColor, fontSize: 12.0),
-                      ),
-                    ]),
+                child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Material(
+                      color: set.fontColor,
+                      shape: CircleBorder(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Icon(Icons.show_chart, color: Colors.white, size: 30.0),
+                      )),
+                  Padding(padding: EdgeInsets.only(bottom: 12.0)),
+                  Text('戦績', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0)),
+                  Text(
+                    '勝敗分析をしよう',
+                    style: TextStyle(color: set.fontColor, fontSize: 12.0),
+                  ),
+                ]),
               ),
             ),
             _buildTile(
               Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text('一言コメント欄',
-                              style: TextStyle(
-                                  color: set.fontColor, fontSize: 12.0)),
-                          Text('開発中',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20.0,
-                              ))
-                        ],
-                      ),
-                      Material(
-                          color: set.fontColor,
-                          borderRadius: BorderRadius.circular(24.0),
-                          child: Center(
-                              child: Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: Icon(Icons.store,
-                                color: Colors.white, size: 30.0),
-                          )))
-                    ]),
+                      Text('一言コメント欄', style: TextStyle(color: set.fontColor, fontSize: 12.0)),
+                      Text('開発中',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20.0,
+                          ))
+                    ],
+                  ),
+                  Material(
+                      color: set.fontColor,
+                      borderRadius: BorderRadius.circular(24.0),
+                      child: Center(
+                          child: Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Icon(Icons.store, color: Colors.white, size: 30.0),
+                      )))
+                ]),
               ),
               //onTap: () => Navigator.of(context).push(),
             )
