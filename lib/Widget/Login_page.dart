@@ -1,64 +1,136 @@
 import 'package:flutter_app2/Bloc/Login_Bloc.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 
+import '../AccountSetting.dart';
 import '../main.dart';
 
-class LoginForm extends StatefulWidget {
-  const LoginForm();
+/*----------------------------------------------
+ログインページ
+----------------------------------------------*/
+
+class LoginPage extends StatefulWidget {
+  const LoginPage();
 
   @override
-  State<LoginForm> createState() => LoginFormState();
+  State<LoginPage> createState() => LoginPageState();
 }
 
-class LoginFormState extends State<LoginForm> {
-  LoginBloc loginBloc;
+/* * *
+*　　currentUser.sink.add
+*   (user)->
+*     firebase.sink.add(userID)->
+*     (userID) -> ログイン(ページ遷移)
+*
+*     (userID) -> 新規登録(ページ遷移)
+*   (null)->none
+*
+*   Googleボタン押下(googleLogin.sink.add)->
+*     →(user)->
+*     firebase.sink.add(userID)->
+*     (userId) -> ログイン(ページ遷移)
+*     (userId) -> 新規登録(ページ遷移)
+*     →null 失敗
+*
+*
+* */
+class LoginPageState extends State<LoginPage> {
+  PageParts set = PageParts();
+  LoginBloc loginBloc = LoginBloc();
 
   @override
   void initState() {
     super.initState();
-    loginBloc = Provider.of<LoginBloc>(context);
+    loginBloc.stateSink.add(null);
+    loginBloc.currentTempUserStream.listen((tempUser) async {
+      //サインイン完了でマイページへ
+      if (tempUser.status == AuthStatus.signedIn) {
+        User user = User.newUser(tempUser);
+        print("自動ログイン完了");
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => BottomNavigationPage(user: user, message: "ログインしました"),
+          ),
+        );
+        //初回登録フォームへ
+      } else if (tempUser.status == AuthStatus.signedUp) {
+        User user = User.newUser(tempUser);
+        print("ユーザー情報が見つかりませんでした");
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => AccountSettingPage(user: user, status: "regist"),
+          ),
+        );
+      }
+    });
+  }
+  /*
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loginBloc.fireBaseLoginSink.add();
     loginBloc.loginStateStream.listen((onData) {
       //サインイン完了でマイページへ
       if (onData == AuthStatus.signedIn) {
         print("自動ログイン完了");
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => Home(null, "ログインしました"),
+            builder: (context) => LaunchPage(user: user, message: "ログインしました"),
           ),
         );
         //初回登録フォームへ
       } else if (onData == AuthStatus.signedUp) {}
     });
   }
+  */
 
   @override
   Widget build(BuildContext context) {
-    final loginBloc = Provider.of<LoginBloc>(context);
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: StreamBuilder<AuthStatus>(
-        stream: loginBloc.currentStatusStream,
-        initialData: loginBloc.loginStateStream.value,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Center(
-              child: const CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Text("エラーが発生しました" + snapshot.error.toString());
-          } else {
-            return SignInButton(
-              Buttons.Google,
-              text: "Login with Google",
-              //onPressed: () =>
-            );
-          }
-        },
-      ),
-    );
+    return Scaffold(
+        appBar: new AppBar(
+          title: new Text("ログイン", style: TextStyle(color: set.pointColor)),
+          backgroundColor: set.baseColor,
+        ),
+        backgroundColor: set.backGroundColor,
+        body: Padding(
+          padding: const EdgeInsets.all(80),
+          child: StreamBuilder<TempUser>(
+              stream: loginBloc.currentTempUserStream,
+              builder: (context, snapshot) {
+                print("loginBloc.currentStatusStream");
+                if (snapshot.hasData) {
+                  return Center(
+                    child: const CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text("エラーが発生しました" + snapshot.error.toString());
+                } else {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      SignInButton(
+                        Buttons.Google,
+                        text: "Login with Google",
+                        onPressed: () => loginBloc.googleLoginSink.add(null),
+                      ),
+                      SignInButton(
+                        Buttons.Twitter,
+                        text: "Login with Twitter",
+                        onPressed: () => null,
+                      ),
+                      SignInButton(
+                        Buttons.Apple,
+                        text: "Login with Apple",
+                        onPressed: () => null,
+                      ),
+                    ],
+                  );
+                }
+              }),
+        ));
   }
 
   @override

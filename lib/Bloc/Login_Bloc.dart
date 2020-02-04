@@ -2,49 +2,60 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_app2/Repository/Login_Repository.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginBloc {
+  //final _currentTempUserController = PublishSubject<TempUser>();
+  final _currentTempUserController = BehaviorSubject<TempUser>.seeded(null);
+
+  //loginPage側で現在のTmpUserを流す用のStream
+
   final _googleLoginController = StreamController();
-  final _currentStatusController = StreamController();
-  final _loginState = BehaviorSubject<AuthStatus>.seeded(AuthStatus.notSignedIn);
-  //初期値を設けたい場合はBehaviourSubject
+  //loginRepositoryからGoogleログイン受け取るためのStream
+  final _stateController = StreamController();
+  //loginRepositoryからfireBase上のログイン結果を受け取るためのStream
+
   final loginRepository = LoginRepository();
 
   LoginBloc() {
-    //Googleログインが必要な時にコールされる
-    _googleLoginController.stream.listen((onData) async {
-      try {
-        var currentUser = await loginRepository.signInWithGoogle();
-        if (currentUser != null) {
-          AuthStatus currentStatus = await loginRepository.checkFireBaseLogin(currentUser);
-          _loginState.add(currentStatus);
-        } else {
-          _loginState.add(AuthStatus.notSignedIn);
-        }
-      } catch (_) {}
-    });
     //現在のステータス確認,毎回コールされる
-    _currentStatusController.stream.listen((status) async {
+    _stateController.stream.listen((onData) async {
       try {
         var currentUser = await loginRepository.isSignedIn();
         if (currentUser != null) {
-          AuthStatus currentStatus = await loginRepository.checkFireBaseLogin(currentUser);
-          _loginState.add(currentStatus);
+          var tempUser = await loginRepository.checkFireBaseLogin(currentUser);
+          _currentTempUserController.add(tempUser);
+          print("firebaseログイン完了:bloc");
         } else {
-          _loginState.add(AuthStatus.notSignedIn);
+          print("firebaseログイン失敗:bloc");
+        }
+      } catch (_) {}
+    });
+
+    //Googleログインが必要な時にコールされる
+    _googleLoginController.stream.listen((onData) async {
+      try {
+        var fireBaseUser = await loginRepository.signInWithGoogle();
+        if (fireBaseUser != null) {
+          TempUser tempUser = await loginRepository.checkFireBaseLogin(fireBaseUser);
+          _currentTempUserController.add(tempUser);
+          print("ログイン完了:bloc");
+        } else {
+          print("googleログイン失敗:bloc");
         }
       } catch (_) {}
     });
   }
 
   Sink get googleLoginSink => _googleLoginController.sink;
-  Sink get currentStatusSink => _currentStatusController.sink;
+  Sink get stateSink => _stateController.sink;
 
-  ValueObservable<AuthStatus> get loginStateStream => _loginState.stream;
-  Stream<AuthStatus> get currentStatusStream => _currentStatusController.stream;
+  ValueObservable<TempUser> get currentTempUserStream => _currentTempUserController.stream;
+  Stream get googleLoginStream => _googleLoginController.stream;
 
   void dispose() {
+    _stateController.close();
     _googleLoginController.close();
-    _currentStatusController.close();
+    _currentTempUserController.close();
   }
 }

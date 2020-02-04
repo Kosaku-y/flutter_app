@@ -4,10 +4,12 @@
 * @auther KosakuYamauchi
 * */
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/Entity/Entity.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'Entity/Chat.dart';
+import 'Entity/PageParts.dart';
+import 'Entity/User.dart';
 
 class RoomPage extends StatefulWidget {
   User fromUser;
@@ -109,7 +111,10 @@ class _ChatPage extends State<ChatPage> {
   @override
   initState() {
     super.initState();
-    _mainReference.child("${widget.fromUserId}/message/${widget.toUserId}").onChildAdded.listen(_onEntryAdded);
+    _mainReference
+        .child("${widget.fromUserId}/message/${widget.toUserId}")
+        .onChildAdded
+        .listen(_onEntryAdded);
   }
 
   _onEntryAdded(Event e) {
@@ -138,7 +143,9 @@ class _ChatPage extends State<ChatPage> {
           Divider(
             height: 4.0,
           ),
-          Container(decoration: BoxDecoration(color: Theme.of(context).cardColor), child: _buildInputArea())
+          Container(
+              decoration: BoxDecoration(color: Theme.of(context).cardColor),
+              child: _buildInputArea())
         ],
       )),
     );
@@ -174,9 +181,15 @@ class _ChatPage extends State<ChatPage> {
         CupertinoButton(
           child: Text("Send"),
           onPressed: () {
-            _mainReference.child("${widget.fromUserId}/message/${widget.toUserId}").push().set(ChatEntity(DateTime.now(), _textEditController.text).toJson());
+            _mainReference
+                .child("${widget.fromUserId}/message/${widget.toUserId}")
+                .push()
+                .set(ChatEntity(DateTime.now(), _textEditController.text).toJson());
             print("send message :${_textEditController.text}");
-            _mainReference.child("${widget.toUserId}/message/${widget.fromUserId}").push().set(ChatEntity(DateTime.now(), _textEditController.text).toJson());
+            _mainReference
+                .child("${widget.toUserId}/message/${widget.fromUserId}")
+                .push()
+                .set(ChatEntity(DateTime.now(), _textEditController.text).toJson());
             print("send message :${_textEditController.text}");
             _textEditController.clear();
             // キーボードを閉じる

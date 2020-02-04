@@ -6,7 +6,9 @@ import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_app2/Entity/Entity.dart';
+import 'Entity/Event.dart';
+import 'Entity/PageParts.dart';
+import 'Entity/EventPlace.dart';
 import 'Recritment.dart';
 import 'package:csv/csv.dart';
 import 'dart:io';
@@ -158,11 +160,19 @@ class EventManagePageState extends State<EventManagePage> {
     if (this._formKey.currentState.validate()) {
       if (_eventId != null) {
       } else {
+//        Navigator.of(context).push<Widget>(
+//          AppRoute(
+//            builder: (context) {
+//              return new EventSearchResultPage(_selectPref, _selectLine, _selectStation)
+//            },
+//            ),
+//          );
         Navigator.push(
             this.context,
             MaterialPageRoute(
                 // パラメータを渡す
-                builder: (context) => new EventSearchResultPage(_selectPref, _selectLine, _selectStation)));
+                builder: (context) =>
+                    new EventSearchResultPage(_selectPref, _selectLine, _selectStation)));
       }
     }
   }
@@ -201,7 +211,9 @@ class EventManagePageState extends State<EventManagePage> {
             hintText: 'Choose a prefecture',
             labelText: '都道府県',
             labelStyle: TextStyle(color: set.fontColor),
-            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(
+                borderRadius: BorderRadius.circular(1.0),
+                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
           ),
           validator: (String value) {
             if (changePref == 2) {
@@ -248,7 +260,9 @@ class EventManagePageState extends State<EventManagePage> {
             hintText: 'Choose a line',
             labelText: '路線',
             labelStyle: TextStyle(color: set.fontColor),
-            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(
+                borderRadius: BorderRadius.circular(1.0),
+                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
           ),
           validator: (String value) {
             if (changeLine == 2) {
@@ -296,7 +310,9 @@ class EventManagePageState extends State<EventManagePage> {
             hintText: 'Choose a station',
             labelText: '駅名',
             labelStyle: TextStyle(color: set.fontColor),
-            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(
+                borderRadius: BorderRadius.circular(1.0),
+                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
           ),
           validator: (String value) {
             if (changeStation == 2) {
@@ -320,7 +336,9 @@ class EventManagePageState extends State<EventManagePage> {
           hintText: 'input eventID',
           labelText: 'イベントID(管理者用)',
           labelStyle: TextStyle(color: set.fontColor),
-          enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+          enabledBorder: UnderlineInputBorder(
+              borderRadius: BorderRadius.circular(1.0),
+              borderSide: BorderSide(color: set.fontColor, width: 3.0)),
         ),
         validator: (String value) {
           return null;
@@ -476,7 +494,8 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
           padding: const EdgeInsets.all(20.0),
           child: new Column(
             children: <Widget>[
-              Text('検索結果：' + entries.length.toString() + '件', style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
+              Text('検索結果：' + entries.length.toString() + '件',
+                  style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
               Expanded(
                 child: ListView.builder(
                   //padding: const EdgeInsets.all(16.0),
@@ -513,11 +532,8 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
     //リストの要素一つづつにonTapを付加して、詳細ページに飛ばす
     return new GestureDetector(
       onTap: () {
-        Navigator.push(
-            this.context,
-            MaterialPageRoute(
-                // パラメータを渡す
-                builder: (context) => new EventDetailPage(entries[index])));
+        Navigator.of(context).push<Widget>(
+            MaterialPageRoute(builder: (context) => new EventDetailPage(entries[index])));
       },
       child: new SizedBox(
         child: new Card(

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:flutter_app2/Entity/Entity.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'Entity/PageParts.dart';
+import 'Entity/User.dart';
 
 class PieChartDetailPage extends StatefulWidget {
   @override
@@ -73,8 +74,11 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
               Text.rich(
                 TextSpan(
                   children: <TextSpan>[
-                    TextSpan(text: '現在のランク:', style: TextStyle(color: set.fontColor, fontSize: 20.0)),
-                    TextSpan(text: '$rankColorString', style: TextStyle(color: user.colorMap[rankColorString], fontSize: 25.0)),
+                    TextSpan(
+                        text: '現在のランク:', style: TextStyle(color: set.fontColor, fontSize: 20.0)),
+                    TextSpan(
+                        text: '$rankColorString',
+                        style: TextStyle(color: user.colorMap[rankColorString], fontSize: 25.0)),
                   ],
                 ),
               ),
@@ -93,7 +97,12 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
   }
 
   Widget pieChart() {
-    return charts.PieChart(seriesPieData, animate: true, animationDuration: Duration(seconds: 2), defaultRenderer: new charts.ArcRendererConfig(arcWidth: 70, arcRendererDecorators: [new charts.ArcLabelDecorator(labelPosition: charts.ArcLabelPosition.inside)]));
+    return charts.PieChart(seriesPieData,
+        animate: true,
+        animationDuration: Duration(seconds: 2),
+        defaultRenderer: new charts.ArcRendererConfig(arcWidth: 70, arcRendererDecorators: [
+          new charts.ArcLabelDecorator(labelPosition: charts.ArcLabelPosition.inside)
+        ]));
   }
 }
 
@@ -120,7 +129,8 @@ class MahjongHandPage extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: new Column(
             children: <Widget>[
-              Text('役一覧', style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
+              Text('役一覧',
+                  style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
               Expanded(
                 child: ListView.builder(
                   itemBuilder: (BuildContext context, int index) {
@@ -179,7 +189,10 @@ class MahjongHandPage extends StatelessWidget {
                             margin: const EdgeInsets.only(bottom: 4.0),
                             child: Text(
                               entries[index].handName,
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: set.fontColor),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                  color: set.fontColor),
                             ),
                           ),
                           Container(

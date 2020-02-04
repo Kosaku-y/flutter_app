@@ -3,9 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'Entity/PageParts.dart';
 import 'main.dart';
-import 'package:flutter_app2/Entity/Entity.dart';
 import 'AccountSetting.dart';
+import 'Entity/User.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -88,18 +89,18 @@ class _LoginPageState extends State<LoginPage> {
           user = User();
           user.userId = key;
           //ページ遷移
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (BuildContext context) => AccountPage(user, "regist"),
-            ),
-          );
+//          Navigator.of(context).push(
+//            MaterialPageRoute(
+//              builder: (BuildContext context) => AccountPage(user, "regist"),
+//            ),
+//          );
 
           break;
         case AuthStatus.signedIn:
           user = User.fromMap(result.value);
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => Home(user, "ログインしました"),
+              builder: (context) => BottomNavigationPage(user: user, message: "ログインしました"),
             ),
           );
 
@@ -129,7 +130,8 @@ class _LoginPageState extends State<LoginPage> {
 
   // Example code of how to sign in with Twitter.
   Future<FirebaseUser> _signInWithTwitter() async {
-    final AuthCredential credential = TwitterAuthProvider.getCredential(authToken: _tokenController.text, authTokenSecret: _tokenSecretController.text);
+    final AuthCredential credential = TwitterAuthProvider.getCredential(
+        authToken: _tokenController.text, authTokenSecret: _tokenSecretController.text);
     final FirebaseUser fireUser = (await _auth.signInWithCredential(credential)).user;
 //    assert(user.email != null);
 //    assert(user.displayName != null);
@@ -209,7 +211,8 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () => _googleSignin()
                               .then((FirebaseUser fireUser) => setState(() {
                                     username = fireUser.displayName;
-                                    String key = fireUser.email.replaceAll(RegExp(r'@[A-Za-z]+.[A-Za-z]+'), "");
+                                    String key = fireUser.email
+                                        .replaceAll(RegExp(r'@[A-Za-z]+.[A-Za-z]+'), "");
                                     String dotChange = key.replaceAll(".", "[dot]");
                                     checkLogin(dotChange);
                                   }))

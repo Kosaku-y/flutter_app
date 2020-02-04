@@ -8,7 +8,6 @@ import 'package:flutter_app2/Entity/AuthStatus.dart';
 class LoginRepository {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
-  AuthStatus status = AuthStatus.notSignedIn;
 
   LoginRepository({FirebaseAuth firebaseAuth, GoogleSignIn googleSignin})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
@@ -46,22 +45,20 @@ class LoginRepository {
   }*/
 
   //fireBaseサインイン部分
-  Future<AuthStatus> checkFireBaseLogin(FirebaseUser currentUser) async {
+  Future<TempUser> checkFireBaseLogin(FirebaseUser currentUser) async {
     final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
 
     //メールアドレス正規化
     var userId = makeUserId(currentUser.email);
+    var tempUser;
     await _mainReference.child(userId).once().then((DataSnapshot result) {
-      if (result.value == null) {
-        return AuthStatus.signedUp;
+      if (result.value == null || result.value == "") {
+        tempUser = TempUser(status: AuthStatus.signedUp, userId: userId);
       } else {
-        if (result.value["name"] == "") {
-          return AuthStatus.signedUp;
-        } else {
-          return AuthStatus.signedIn;
-        }
+        tempUser = TempUser(status: AuthStatus.signedIn, userId: userId);
       }
     });
+    return tempUser;
   }
 
   Future<FirebaseUser> isSignedIn() async {

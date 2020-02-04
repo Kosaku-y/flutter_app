@@ -3,19 +3,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
-import 'package:flutter_app2/Entity/Entity.dart';
+import 'Entity/PageParts.dart';
+import 'Entity/User.dart';
 import 'main.dart';
 
-class AccountPage extends StatefulWidget {
+class AccountSettingPage extends StatefulWidget {
   User user;
   String status;
 
-  AccountPage(this.user, this.status);
+  AccountSettingPage({User user, String status});
   @override
   _AccountPage createState() => new _AccountPage();
 }
 
-class _AccountPage extends State<AccountPage> {
+class _AccountPage extends State<AccountSettingPage> {
   final title = 'Account';
   PageParts set = PageParts();
   var mainReference = FirebaseDatabase.instance.reference().child("User");
@@ -44,9 +45,12 @@ class _AccountPage extends State<AccountPage> {
   setTextEditingController() {
     print(count);
     if (count == 1) {
-      _userNameInputController = new TextEditingController(text: entries['user_name'] != null ? entries['user_name'] : '');
-      _userAgeInputController = new TextEditingController(text: entries['age'] != null ? entries['age'] : '');
-      _userSexInputController = new TextEditingController(text: entries['sex'] != null ? entries['sex'] : '');
+      _userNameInputController =
+          new TextEditingController(text: entries['user_name'] != null ? entries['user_name'] : '');
+      _userAgeInputController =
+          new TextEditingController(text: entries['age'] != null ? entries['age'] : '');
+      _userSexInputController =
+          new TextEditingController(text: entries['sex'] != null ? entries['sex'] : '');
     }
     count += 1;
   }
@@ -63,7 +67,7 @@ class _AccountPage extends State<AccountPage> {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => Home(user, "登録完了しました"),
+          builder: (context) => BottomNavigationPage(user: user, message: "登録完了しました"),
         ),
       );
     } else {}
@@ -146,7 +150,9 @@ class _AccountPage extends State<AccountPage> {
               Icons.note, //変更必要
               color: set.fontColor,
             ),
-            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(
+                borderRadius: BorderRadius.circular(1.0),
+                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
             hintText: 'userName',
             labelText: 'ユーザーネーム',
             labelStyle: TextStyle(color: set.fontColor),
@@ -191,7 +197,9 @@ class _AccountPage extends State<AccountPage> {
             labelText: '年齢',
             labelStyle: TextStyle(color: set.fontColor),
             contentPadding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
-            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(
+                borderRadius: BorderRadius.circular(1.0),
+                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
           ),
         ),
       ),
@@ -227,7 +235,9 @@ class _AccountPage extends State<AccountPage> {
               Icons.wc,
               color: set.fontColor,
             ),
-            enabledBorder: UnderlineInputBorder(borderRadius: BorderRadius.circular(1.0), borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            enabledBorder: UnderlineInputBorder(
+                borderRadius: BorderRadius.circular(1.0),
+                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
             hintText: 'Choose your sex',
             labelText: '性別',
             labelStyle: TextStyle(color: set.fontColor),

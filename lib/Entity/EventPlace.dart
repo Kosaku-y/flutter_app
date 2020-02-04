@@ -58,3 +58,36 @@ class Pref {
   Map<String, int> lineMap = new Map();
   Pref(this.prefCode, this.prefName);
 }
+
+/*----------------------------------------------
+
+路線エンティティクラス
+
+----------------------------------------------*/
+class Line {
+  int lineCode;
+  String lineName;
+  Station station;
+  static Map<String, int> stationMap;
+  Line();
+
+  Map<String, dynamic> toJson() => {'line_name': lineName, 'line_cd': lineCode};
+}
+
+/*----------------------------------------------
+
+駅エンティティクラス
+
+----------------------------------------------*/
+class Station {
+  int stationCode;
+  String stationName;
+
+  Station({this.stationCode, this.stationName});
+
+  factory Station.fromJson(Map<String, dynamic> json) {
+    return Station(
+        stationCode: json['station_cd'] as int, stationName: json['station_name'] as String);
+  }
+  Map<String, dynamic> toJson() => {'station_name': stationName, 'station_cd': stationCode};
+}

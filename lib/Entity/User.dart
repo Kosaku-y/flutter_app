@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'AuthStatus.dart';
 
-class User {
+class User extends TempUser {
   String _userId = "";
+
   String get userId => _userId;
+
   set userId(String value) {
     _userId = value;
   } //primarykey
@@ -15,7 +18,16 @@ class User {
   String _score = "";
   Map _event;
 
-  Map<int, String> rankMap = {5: "青", 10: "黄", 20: "緑", 40: "紫", 80: "赤", 160: "銅", 320: "銀", 480: "金"};
+  Map<int, String> rankMap = {
+    5: "青",
+    10: "黄",
+    20: "緑",
+    40: "紫",
+    80: "赤",
+    160: "銅",
+    320: "銀",
+    480: "金"
+  };
 
   Map<String, Color> colorMap = {
     "青": Colors.blue,
@@ -29,6 +41,8 @@ class User {
   };
 
   User();
+
+  User.newUser(TempUser tempUser) : _userId = tempUser.userID;
 
   User.fromMap(Map map)
       : _name = map["name"],
