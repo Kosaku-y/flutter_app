@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'Entity/PageParts.dart';
-import 'Login.dart';
+
 import 'Entity/User.dart';
+import 'Repository/Login_Repository.dart';
+import 'Widget/Login_page.dart';
 
 class SettingPage extends StatelessWidget {
+  LoginRepository repository = LoginRepository();
   PageParts set = PageParts();
   User user;
-  SettingPage(this.user);
+  SettingPage({Key key, this.user});
   // 画面全体のビルド
   @override
   Widget build(BuildContext context) {
@@ -21,10 +24,11 @@ class SettingPage extends StatelessWidget {
                 style: TextStyle(color: set.pointColor),
               ),
               trailing: Icon(Icons.arrow_forward),
-              onTap: () {
+              onTap: () async {
+                await repository.signOut();
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (BuildContext context) => LoginPage("Logout"),
+                    builder: (BuildContext context) => LoginPage(),
                   ),
                 );
               }),

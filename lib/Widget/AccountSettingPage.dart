@@ -2,33 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
-import 'Entity/PageParts.dart';
-import 'Entity/User.dart';
-import 'main.dart';
+
+import '../main.dart';
 
 class AccountSettingPage extends StatefulWidget {
   User user;
   String status;
 
-  AccountSettingPage({User user, String status});
+  AccountSettingPage({Key key, @required this.user, @required this.status}) : super(key: key);
+
   @override
-  _AccountPage createState() => new _AccountPage();
+  _AccountSettingPageState createState() => new _AccountSettingPageState();
 }
 
-class _AccountPage extends State<AccountSettingPage> {
+class _AccountSettingPageState extends State<AccountSettingPage> {
   final title = 'Account';
   PageParts set = PageParts();
   var mainReference = FirebaseDatabase.instance.reference().child("User");
 
-  //送信用変数
-  String _userName;
-  String _userAge;
-  String _userSex;
-
-  TextEditingController _userNameInputController = new TextEditingController(text: '');
-  TextEditingController _userAgeInputController = new TextEditingController(text: '');
-  TextEditingController _userSexInputController = new TextEditingController(text: '');
+  TextEditingController _nameInputController = new TextEditingController(text: '');
+  TextEditingController _ageInputController = new TextEditingController(text: '');
+  TextEditingController _sexInputController = new TextEditingController(text: '');
 
   final _formKey = GlobalKey<FormState>();
 
@@ -37,30 +34,18 @@ class _AccountPage extends State<AccountSettingPage> {
 
   @override
   initState() {
+    super.initState();
     if (widget.status == "regist") {
       setState(() {});
     } else {}
   }
 
-  setTextEditingController() {
-    print(count);
-    if (count == 1) {
-      _userNameInputController =
-          new TextEditingController(text: entries['user_name'] != null ? entries['user_name'] : '');
-      _userAgeInputController =
-          new TextEditingController(text: entries['age'] != null ? entries['age'] : '');
-      _userSexInputController =
-          new TextEditingController(text: entries['sex'] != null ? entries['sex'] : '');
-    }
-    count += 1;
-  }
-
   void submit(String address) async {
-    User user = User();
-    user.name = _userName;
-    user.age = _userAge;
-    user.sex = _userSex;
-    user.userId = address;
+    User user = widget.user;
+    user.name = _nameInputController.text;
+    user.age = _ageInputController.text;
+    user.sex = _sexInputController.text;
+    user.rank = "0";
 
     if (widget.status == "regist") {
       await mainReference.child("Gmail").child(address).set(user.toJson());
@@ -92,7 +77,7 @@ class _AccountPage extends State<AccountSettingPage> {
         backgroundColor: set.baseColor,
         actions: [
           FlatButton(
-            child: Text("Save"),
+            child: Text("登録(ホームへ)"),
             color: Colors.green,
             textColor: Colors.white,
             onPressed: () {
@@ -102,21 +87,17 @@ class _AccountPage extends State<AccountSettingPage> {
               }
             },
           ),
-          /*キャンセルボタン
-          leading: FlatButton(
-            padding: EdgeInsets.only(left: 10.0),
-            child: Text("Cancel"),
+          FlatButton(
+            child: Text("キャンセル"),
             color: Colors.green,
             textColor: Colors.white,
             onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => Main(widget.userAddress),
-                ),
-              );
+              if (_formKey.currentState.validate()) {
+                this._formKey.currentState.save();
+                submit(widget.user.userId);
+              }
             },
           ),
-          */
         ],
       ),
       backgroundColor: set.backGroundColor,
@@ -158,8 +139,7 @@ class _AccountPage extends State<AccountSettingPage> {
             labelStyle: TextStyle(color: set.fontColor),
           ),
           onSaved: (String value) {
-            _userNameInputController.text = value;
-            _userName = value;
+            _nameInputController.text = value;
           }),
     );
   }
@@ -176,8 +156,7 @@ class _AccountPage extends State<AccountSettingPage> {
           onConfirm: (value) {
             if (value != "") {
               setState(() {
-                _userAgeInputController.text = value;
-                _userAge = value;
+                _ageInputController.text = value;
               });
             }
           },
@@ -187,13 +166,13 @@ class _AccountPage extends State<AccountSettingPage> {
         child: new TextFormField(
           style: TextStyle(color: set.pointColor),
           enableInteractiveSelection: false,
-          controller: _userAgeInputController,
+          controller: _ageInputController,
           decoration: InputDecoration(
             icon: Icon(
               IconData(57959, fontFamily: 'MaterialIcons'),
               color: set.fontColor,
             ),
-            hintText: 'Choose your age',
+            hintText: '年齢を選択してください',
             labelText: '年齢',
             labelStyle: TextStyle(color: set.fontColor),
             contentPadding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
@@ -218,8 +197,7 @@ class _AccountPage extends State<AccountSettingPage> {
           onConfirm: (value) {
             if (value != "") {
               setState(() {
-                _userSexInputController.text = value;
-                _userSex = value;
+                _sexInputController.text = value;
               });
             }
           },
@@ -229,7 +207,7 @@ class _AccountPage extends State<AccountSettingPage> {
         child: new TextFormField(
           style: TextStyle(color: set.pointColor),
           enableInteractiveSelection: false,
-          controller: _userSexInputController,
+          controller: _sexInputController,
           decoration: InputDecoration(
             icon: Icon(
               Icons.wc,
@@ -238,7 +216,7 @@ class _AccountPage extends State<AccountSettingPage> {
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: set.fontColor, width: 3.0)),
-            hintText: 'Choose your sex',
+            hintText: '性別を選択してください',
             labelText: '性別',
             labelStyle: TextStyle(color: set.fontColor),
             contentPadding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
@@ -246,5 +224,10 @@ class _AccountPage extends State<AccountSettingPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

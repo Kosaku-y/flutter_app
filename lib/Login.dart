@@ -5,7 +5,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'Entity/PageParts.dart';
 import 'main.dart';
-import 'AccountSetting.dart';
+import 'package:flutter_app2/Widget/AccountSettingPage.dart';
 import 'Entity/User.dart';
 
 class LoginPage extends StatefulWidget {

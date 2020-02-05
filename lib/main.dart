@@ -73,7 +73,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
       Home(widget.user),
       EventManagePage(),
       RoomPage(widget.user),
-      SettingPage(widget.user),
+      SettingPage(user: widget.user),
     ];
 
     _navigatorKeys = {
@@ -88,7 +88,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('demo'),
+        title: Text('Home'),
         backgroundColor: set.baseColor,
       ),
       body: Stack(
@@ -140,7 +140,7 @@ class TabNavigator extends StatelessWidget {
         '/NewHome': (context) => new Home(user),
         '/EventManage': (context) => new EventManagePage(),
         '/Room': (context) => new RoomPage(user),
-        '/Setting': (context) => new SettingPage(user)
+        '/Setting': (context) => new SettingPage(user: user)
       };
 
   @override

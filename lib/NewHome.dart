@@ -19,8 +19,7 @@ class HomeState extends State<Home> {
   //後々はここでrankかUserを渡したい
 
   PieChartDetailPageState pie = new PieChartDetailPageState();
-  int userRank = 21;
-  String userName = "Kosaku";
+  int userRank;
   String rankColorString;
 
   @override
@@ -32,6 +31,7 @@ class HomeState extends State<Home> {
         break;
       }
     }
+    userRank = int.parse(widget.user.rank);
     pie.seriesPieData = List<charts.Series<Data, String>>();
     pie.generateData();
   }

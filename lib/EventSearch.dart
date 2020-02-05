@@ -160,13 +160,6 @@ class EventManagePageState extends State<EventManagePage> {
     if (this._formKey.currentState.validate()) {
       if (_eventId != null) {
       } else {
-//        Navigator.of(context).push<Widget>(
-//          AppRoute(
-//            builder: (context) {
-//              return new EventSearchResultPage(_selectPref, _selectLine, _selectStation)
-//            },
-//            ),
-//          );
         Navigator.push(
             this.context,
             MaterialPageRoute(
