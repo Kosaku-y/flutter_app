@@ -45,19 +45,17 @@ class LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     loginBloc.stateSink.add(null);
-    loginBloc.currentTempUserStream.listen((tempUser) async {
+    loginBloc.currentTempUserStream.listen((user) async {
       //サインイン完了でマイページへ
-      if (tempUser.status == AuthStatus.signedIn) {
-        User user = User.newUser(tempUser);
+      if (user.status == AuthStatus.signedIn) {
         print("自動ログイン完了");
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => BottomNavigationPage(user: user, message: "ログインしました"),
+            builder: (context) => MainPage(user: user, message: "ログインしました"),
           ),
         );
         //初回登録フォームへ
-      } else if (tempUser.status == AuthStatus.signedUp) {
-        User user = User.newUser(tempUser);
+      } else if (user.status == AuthStatus.signedUp) {
         print("ユーザー情報が見つかりませんでした");
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
@@ -97,7 +95,7 @@ class LoginPageState extends State<LoginPage> {
         backgroundColor: set.backGroundColor,
         body: Padding(
           padding: const EdgeInsets.all(80),
-          child: StreamBuilder<TempUser>(
+          child: StreamBuilder<User>(
               stream: loginBloc.currentTempUserStream,
               builder: (context, snapshot) {
                 print("loginBloc.currentStatusStream");

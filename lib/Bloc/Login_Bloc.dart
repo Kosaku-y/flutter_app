@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_app2/Entity/User.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_app2/Repository/Login_Repository.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
@@ -6,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginBloc {
   //final _currentTempUserController = PublishSubject<TempUser>();
-  final _currentTempUserController = BehaviorSubject<TempUser>.seeded(null);
+  final _currentTempUserController = BehaviorSubject<User>.seeded(null);
 
   //loginPage側で現在のTmpUserを流す用のStream
 
@@ -50,7 +51,7 @@ class LoginBloc {
   Sink get googleLoginSink => _googleLoginController.sink;
   Sink get stateSink => _stateController.sink;
 
-  ValueObservable<TempUser> get currentTempUserStream => _currentTempUserController.stream;
+  ValueObservable<User> get currentTempUserStream => _currentTempUserController.stream;
   Stream get googleLoginStream => _googleLoginController.stream;
 
   void dispose() {

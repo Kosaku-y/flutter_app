@@ -5,7 +5,7 @@ import 'EventSearch.dart';
 import 'NewHome.dart';
 import 'Chat.dart';
 import 'SettingPage.dart';
-import 'Widget/Login_page.dart';
+import 'Widget/LoginPage.dart';
 import 'Entity/User.dart';
 
 //ホーム画面のrun
@@ -22,49 +22,33 @@ void main() {
 
 /*----------------------------------------------
 
-BottomNavigationBar定義 enum
+ホーム(MainPage)クラス
 
 ----------------------------------------------*/
 
-enum TabItem {
-  NewHome,
-  EventManage,
-  RoomPage,
-  Setting,
-}
-/*----------------------------------------------
-
-ホーム(BottomNavigationBar)クラス
-
-----------------------------------------------*/
-
-class BottomNavigationPage extends StatefulWidget {
-  @override
+class MainPage extends StatefulWidget {
   User user;
   String message; //前の画面からの遷移の場合はSnackBarで処理結果を表示する
-  BottomNavigationPage({Key key, @required this.user, @required this.message}) : super(key: key);
+  MainPage({Key key, @required this.user, @required this.message}) : super(key: key);
   @override
-  _BottomNavigationPageState createState() => _BottomNavigationPageState();
+  _MainPageState createState() => _MainPageState();
 }
 
-class _BottomNavigationPageState extends State<BottomNavigationPage> {
-  int _currentIndex = 0;
+class _MainPageState extends State<MainPage> {
+  TabItem _currentTab = TabItem.NewHome;
   List<Widget> tabs;
   PageParts set = PageParts();
   Map<TabItem, GlobalKey<NavigatorState>> _navigatorKeys;
 
-  final items = <BottomNavigationBarItem>[
-    BottomNavigationBarItem(
-      icon: new Icon(Icons.home),
-      title: new Text('Home'),
-    ),
-    BottomNavigationBarItem(
-      icon: new Icon(const IconData(59574, fontFamily: 'MaterialIcons')),
-      title: new Text('Search'),
-    ),
-    BottomNavigationBarItem(icon: new Icon(Icons.message), title: new Text("Message")),
-    BottomNavigationBarItem(icon: new Icon(Icons.settings), title: new Text('Setting')),
-  ];
+  void onSelect(TabItem tabItem) {
+    if (_currentTab == tabItem) {
+      _navigatorKeys[tabItem].currentState.popUntil((route) => route.isFirst);
+    } else {
+      setState(() {
+        _currentTab = tabItem;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -84,40 +68,58 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     };
   }
 
+  Future<bool> onWillPop() async {
+    final isFirstRoute = !await _navigatorKeys[_currentTab].currentState.maybePop();
+    if (isFirstRoute) {
+      if (_currentTab != TabItem.NewHome) {
+        onSelect(TabItem.NewHome);
+      }
+      return false;
+    }
+    return isFirstRoute;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-        backgroundColor: set.baseColor,
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            _buildTabItem(
+              TabItem.NewHome,
+              '/NewHome',
+            ),
+            _buildTabItem(
+              TabItem.EventManage,
+              '/EventManage',
+            ),
+            _buildTabItem(
+              TabItem.RoomPage,
+              '/RoomPage',
+            ),
+            _buildTabItem(
+              TabItem.Setting,
+              '/Setting',
+            ),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigation(
+          currentTab: _currentTab,
+          onSelect: onSelect,
+        ),
       ),
-      body: Stack(
-        children: <Widget>[
-          IndexedStack(
-            index: _currentIndex,
-            children: tabs,
-          ),
-        ],
-      ),
-      bottomNavigationBar: _buildBottomNavigator(context),
     );
   }
 
-  Widget _buildBottomNavigator(BuildContext context) {
-    return BottomNavigationBar(
-      items: items,
-      backgroundColor: set.baseColor,
-      fixedColor: set.fontColor,
-      type: BottomNavigationBarType.fixed,
-      unselectedItemColor: Colors.white,
-      currentIndex: _currentIndex,
-      onTap: (index) {
-        if (_currentIndex != index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        }
-      },
+  Widget _buildTabItem(TabItem tabItem, String root) {
+    return Offstage(
+      offstage: _currentTab != tabItem,
+      child: TabNavigator(
+        navigationKey: _navigatorKeys[tabItem],
+        tabItem: tabItem,
+        routerName: root,
+      ),
     );
   }
 }
@@ -156,6 +158,62 @@ class TabNavigator extends StatelessWidget {
             return routerBuilder[routerName](context);
           },
         );
+      },
+    );
+  }
+}
+
+/*----------------------------------------------
+
+BottomNavigationBar定義 enum
+
+----------------------------------------------*/
+
+enum TabItem {
+  NewHome,
+  EventManage,
+  RoomPage,
+  Setting,
+}
+
+/*----------------------------------------------
+
+BottomNavigationBarのWidgetクラス
+
+----------------------------------------------*/
+
+class BottomNavigation extends StatelessWidget {
+  const BottomNavigation({
+    Key key,
+    this.currentTab,
+    this.onSelect,
+  }) : super(key: key);
+
+  final TabItem currentTab;
+  final ValueChanged<TabItem> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    PageParts set = PageParts();
+    return BottomNavigationBar(
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: new Icon(Icons.home),
+          title: new Text('Home'),
+        ),
+        BottomNavigationBarItem(
+          icon: new Icon(const IconData(59574, fontFamily: 'MaterialIcons')),
+          title: new Text('Search'),
+        ),
+        BottomNavigationBarItem(icon: new Icon(Icons.message), title: new Text("Message")),
+        BottomNavigationBarItem(icon: new Icon(Icons.settings), title: new Text('Setting')),
+      ],
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: set.baseColor,
+      fixedColor: set.fontColor,
+      unselectedItemColor: Colors.white,
+      onTap: (index) {
+        onSelect(TabItem.values[index]);
       },
     );
   }

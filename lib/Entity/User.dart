@@ -3,7 +3,6 @@ import 'AuthStatus.dart';
 
 class User extends TempUser {
   String _userId = "";
-
   String get userId => _userId;
 
   set userId(String value) {
@@ -17,6 +16,7 @@ class User extends TempUser {
   String _lineId = "";
   String _score = "";
   Map _event;
+  AuthStatus _status;
 
   Map<int, String> rankMap = {
     5: "青",
@@ -41,15 +41,14 @@ class User extends TempUser {
   };
 
   User();
+  User.tmpUser(this._status, this._userId) : _rank = "0";
 
-  User.newUser(TempUser tempUser) : _userId = tempUser.userID;
-
-  User.fromMap(Map map)
-      : _name = map["name"],
+  User.fromMap(String userId, Map map)
+      : _userId = userId,
+        _name = map["name"],
         _age = map["age"],
         _sex = map["sex"],
         _rank = map["rank"],
-        _userId = map["mail"],
         _lineId = map["lineId"],
         _score = map["score"];
 
@@ -107,5 +106,11 @@ class User extends TempUser {
   String get age => _age;
   set age(String value) {
     _age = value;
+  }
+
+  AuthStatus get status => _status;
+
+  set status(AuthStatus value) {
+    _status = value;
   }
 }

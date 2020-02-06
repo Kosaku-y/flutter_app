@@ -52,7 +52,7 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => BottomNavigationPage(user: user, message: "登録完了しました"),
+          builder: (context) => MainPage(user: user, message: "登録完了しました"),
         ),
       );
     } else {}
@@ -75,30 +75,7 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
       appBar: new AppBar(
         title: new Text("初回登録", style: TextStyle(color: set.pointColor)),
         backgroundColor: set.baseColor,
-        actions: [
-          FlatButton(
-            child: Text("登録(ホームへ)"),
-            color: Colors.green,
-            textColor: Colors.white,
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                this._formKey.currentState.save();
-                submit(widget.user.userId);
-              }
-            },
-          ),
-          FlatButton(
-            child: Text("キャンセル"),
-            color: Colors.green,
-            textColor: Colors.white,
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                this._formKey.currentState.save();
-                submit(widget.user.userId);
-              }
-            },
-          ),
-        ],
+        actions: [],
       ),
       backgroundColor: set.backGroundColor,
       body: Form(
@@ -111,9 +88,25 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
                 userName(),
                 agePicker(),
                 sexPicker(),
-//                Row(
-//                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                ),
+                FlatButton(
+                  child: Text("登録(ホームへ)"),
+                  color: Colors.green,
+                  textColor: Colors.white,
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      this._formKey.currentState.save();
+                      submit(widget.user.userId);
+                    }
+                  },
+                ),
+                FlatButton(
+                  child: Text("キャンセル"),
+                  color: Colors.green,
+                  textColor: Colors.white,
+                  onPressed: () {
+                    print("not set");
+                  },
+                ),
               ],
             ),
           ),

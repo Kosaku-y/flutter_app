@@ -16,7 +16,6 @@ class HomeState extends State<Home> {
   PageParts set = new PageParts();
   final userReference = FirebaseDatabase.instance.reference().child("gmail");
   int totalInfo = 0; //お知らせ件数
-  //後々はここでrankかUserを渡したい
 
   PieChartDetailPageState pie = new PieChartDetailPageState();
   int userRank;
@@ -25,13 +24,13 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    userRank = int.parse(widget.user.rank);
     for (int r in widget.user.rankMap.keys) {
       if (userRank <= r) {
         rankColorString = widget.user.rankMap[r];
         break;
       }
     }
-    userRank = int.parse(widget.user.rank);
     pie.seriesPieData = List<charts.Series<Data, String>>();
     pie.generateData();
   }

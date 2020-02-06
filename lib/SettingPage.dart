@@ -4,7 +4,7 @@ import 'Entity/PageParts.dart';
 
 import 'Entity/User.dart';
 import 'Repository/Login_Repository.dart';
-import 'Widget/Login_page.dart';
+import 'Widget/LoginPage.dart';
 
 class SettingPage extends StatelessWidget {
   LoginRepository repository = LoginRepository();

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_app2/Entity/User.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_twitter_login/flutter_twitter_login.dart';
@@ -45,20 +46,21 @@ class LoginRepository {
   }*/
 
   //fireBaseサインイン部分
-  Future<TempUser> checkFireBaseLogin(FirebaseUser currentUser) async {
+  Future<User> checkFireBaseLogin(FirebaseUser currentUser) async {
     final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
 
     //メールアドレス正規化
     var userId = makeUserId(currentUser.email);
-    var tempUser;
+    var user;
     await _mainReference.child(userId).once().then((DataSnapshot result) {
       if (result.value == null || result.value == "") {
-        tempUser = TempUser(status: AuthStatus.signedUp, userId: userId);
+        user = User.tmpUser(AuthStatus.signedUp, userId);
       } else {
-        tempUser = TempUser(status: AuthStatus.signedIn, userId: userId);
+        user = User.fromMap(userId, result.value);
+        user.status(AuthStatus.signedIn);
       }
     });
-    return tempUser;
+    return user;
   }
 
   Future<FirebaseUser> isSignedIn() async {

@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'Entity/Event.dart';
 import 'Entity/PageParts.dart';
 import 'Entity/EventPlace.dart';
+import 'EventSerchResultPage.dart';
 import 'Recritment.dart';
 import 'package:csv/csv.dart';
 import 'dart:io';
@@ -20,6 +21,8 @@ import 'dart:io';
 ----------------------------------------------*/
 class EventManagePage extends StatefulWidget {
   @override
+  EventManagePage({Key key}) : super(key: key);
+
   State<StatefulWidget> createState() {
     return new EventManagePageState();
   }
@@ -164,8 +167,8 @@ class EventManagePageState extends State<EventManagePage> {
             this.context,
             MaterialPageRoute(
                 // パラメータを渡す
-                builder: (context) =>
-                    new EventSearchResultPage(_selectPref, _selectLine, _selectStation)));
+                builder: (context) => new EventSearchResultPage(
+                    pref: _selectPref, line: _selectLine, station: _selectStation)));
       }
     }
   }
@@ -404,184 +407,6 @@ class EventManagePageState extends State<EventManagePage> {
 
 /*----------------------------------------------
 
-イベント検索　結果表示クラス
-
-----------------------------------------------*/
-class EventSearchResultPage extends StatefulWidget {
-  String pref;
-  String line;
-  String station;
-
-  EventSearchResultPage(this.pref, this.line, this.station);
-
-  @override
-  EventSearchResultPageState createState() => new EventSearchResultPageState();
-}
-
-/*----------------------------------------------
-
-イベント検索　結果表示ページ出力（リスト表示）クラス
-
-----------------------------------------------*/
-class EventSearchResultPageState extends State<EventSearchResultPage> {
-  PageParts set = new PageParts();
-  final _mainReference = FirebaseDatabase.instance.reference().child("Events");
-
-  //EventSearchResultPageState(this.pref, this.line, this.station);
-
-  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
-  EventCreate em = new EventCreate();
-  List<EventEntity> entries = new List();
-
-  @override
-  //初期コールメソッド
-  void initState() {
-    super.initState();
-    _createList();
-  }
-
-  _createList() {
-    print("${widget.pref},${widget.line},${widget.station}");
-    //都道府県検索
-    if (widget.pref != null && widget.line == null && widget.station == null) {
-      _mainReference.child(widget.pref).once().then((DataSnapshot result) {
-        result.value.forEach((k, v) {
-          v.forEach((k2, v2) {
-            setState(() {
-              entries.add(new EventEntity.fromMap(v2));
-            });
-          });
-        });
-      });
-      //駅名検索
-    } else if (widget.pref != null && widget.line != null && widget.station != null) {
-      //駅名検索
-      _mainReference.child("${widget.pref}/${widget.station}").once().then((DataSnapshot result) {
-        result.value.forEach((k, v) {
-          setState(() {
-            entries.add(new EventEntity.fromMap(v));
-          });
-        });
-      });
-    } else if (widget.pref == null && widget.line == null && widget.station == null) {
-      _mainReference.once().then((DataSnapshot result) {
-        result.value.forEach((k, v) {
-          v.forEach((k1, v1) {
-            v1.forEach((k2, v2) {
-              setState(() {
-                entries.add(new EventEntity.fromMap(v2));
-              });
-            });
-          });
-        });
-      });
-    }
-  }
-
-  //画面全体のビルド
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: set.backGroundColor,
-      body: Container(
-          padding: const EdgeInsets.all(20.0),
-          child: new Column(
-            children: <Widget>[
-              Text('検索結果：' + entries.length.toString() + '件',
-                  style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
-              Expanded(
-                child: ListView.builder(
-                  //padding: const EdgeInsets.all(16.0),
-                  itemBuilder: (BuildContext context, int index) {
-                    return _buildRow(index);
-                  },
-                  itemCount: entries.length,
-                ),
-              ),
-              Divider(
-                height: 8.0,
-              ),
-              RaisedButton.icon(
-                label: Text("戻る"),
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: set.fontColor,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-//              Container(
-//                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
-//                  child: _buildInputArea()
-//              )
-            ],
-          )),
-    );
-  }
-
-  //リスト要素生成
-  Widget _buildRow(int index) {
-    //リストの要素一つづつにonTapを付加して、詳細ページに飛ばす
-    return new GestureDetector(
-      onTap: () {
-        Navigator.of(context).push<Widget>(
-            MaterialPageRoute(builder: (context) => new EventDetailPage(entries[index])));
-      },
-      child: new SizedBox(
-        child: new Card(
-          elevation: 10,
-          color: set.backGroundColor,
-          child: new Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: set.fontColor),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-                  child: Text(
-                    entries[index].station + "駅",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
-                      color: set.pointColor,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                  child: Text(
-                    entries[index].userId,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: set.fontColor,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                  child: Text(
-                    "EventID :" + entries[index].eventId.toString(),
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: set.fontColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/*----------------------------------------------
-
 イベント作成用クラス
 
 ----------------------------------------------*/
@@ -605,58 +430,4 @@ class EventCreate {
   }
 
   void addUsersEvent(String eventId) {}
-}
-
-/*----------------------------------------------
-
-イベントの詳細ページ出力クラス(Stateless)
-
-----------------------------------------------*/
-
-class EventDetailPage extends StatelessWidget {
-  EventEntity event;
-  EventDetailPage(this.event);
-  PageParts set = new PageParts();
-  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: set.backGroundColor,
-      body: Center(
-        child: Column(children: <Widget>[
-          //イベント詳細
-          Text(
-            "イベントID:" +
-                event.eventId.toString() +
-                "\n"
-                    "最寄駅:" +
-                event.station +
-                "\n"
-                    "募集人数:" +
-                event.recruitMember +
-                "\n"
-                    "開始時刻:" +
-                event.startingTime +
-                "\n"
-                    "終了時刻:" +
-                event.endingTime +
-                "\n"
-                    "備考:" +
-                event.remarks +
-                "\n",
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              color: set.fontColor,
-              fontSize: 20,
-            ),
-          ),
-
-          //戻るボタン
-          set.backButton(
-            onTap: () => Navigator.pop(context),
-          ),
-        ]),
-      ),
-    );
-  }
 }
