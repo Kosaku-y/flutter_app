@@ -3,6 +3,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:firebase_database/firebase_database.dart';
 import 'Entity/PageParts.dart';
 import 'Entity/User.dart';
+import 'Repository/CommonData.dart';
 
 class PieChartDetailPage extends StatefulWidget {
   @override
@@ -16,6 +17,7 @@ class PieChartDetailPage extends StatefulWidget {
 class PieChartDetailPageState extends State<PieChartDetailPage> {
   List<charts.Series<Data, String>> seriesPieData;
   PageParts set = new PageParts();
+  CommonData cd = CommonData();
   User user = new User();
   final userReference = FirebaseDatabase.instance.reference().child("gmail");
   int rank = int.parse("21");
@@ -31,17 +33,17 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
   }
 
   generateData() {
-    for (int r in user.rankMap.keys) {
+    for (int r in cd.rankMap.keys) {
       if (rank <= r) {
         max = r;
-        rankColorString = user.rankMap[r];
+        rankColorString = cd.rankMap[r];
         break;
       }
     }
     remain = max - rank;
 //  int rank = int.parse(user.rank);
     var pieData = [
-      new Data('rank', rank, user.colorMap[rankColorString].withOpacity(0.8)),
+      new Data('rank', rank, cd.colorMap[rankColorString].withOpacity(0.8)),
       new Data('brank', remain, Colors.white.withOpacity(0.0)),
     ];
 
@@ -78,7 +80,7 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
                         text: '現在のランク:', style: TextStyle(color: set.fontColor, fontSize: 20.0)),
                     TextSpan(
                         text: '$rankColorString',
-                        style: TextStyle(color: user.colorMap[rankColorString], fontSize: 25.0)),
+                        style: TextStyle(color: cd.colorMap[rankColorString], fontSize: 25.0)),
                   ],
                 ),
               ),

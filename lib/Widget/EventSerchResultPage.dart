@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_app2/Entity/EventDetail.dart';
+import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:intl/intl.dart';
-import 'Entity/Event.dart';
-import 'Entity/PageParts.dart';
-import 'EventDetailPage.dart';
-import 'EventSearch.dart';
+import 'package:flutter_app2/Widget/EventSearchPage.dart';
+
+import '../EventDetailPage.dart';
 
 /*----------------------------------------------
 
@@ -37,7 +38,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
 
   var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
   EventCreate em = new EventCreate();
-  List<EventEntity> entries = new List();
+  List<EventDetail> entries = new List();
 
   @override
   //初期コールメソッド
@@ -54,7 +55,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
         result.value.forEach((k, v) {
           v.forEach((k2, v2) {
             setState(() {
-              entries.add(new EventEntity.fromMap(v2));
+              entries.add(new EventDetail.fromMap(v2));
             });
           });
         });
@@ -65,7 +66,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
       _mainReference.child("${widget.pref}/${widget.station}").once().then((DataSnapshot result) {
         result.value.forEach((k, v) {
           setState(() {
-            entries.add(new EventEntity.fromMap(v));
+            entries.add(new EventDetail.fromMap(v));
           });
         });
       });
@@ -75,7 +76,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
           v.forEach((k1, v1) {
             v1.forEach((k2, v2) {
               setState(() {
-                entries.add(new EventEntity.fromMap(v2));
+                entries.add(new EventDetail.fromMap(v2));
               });
             });
           });

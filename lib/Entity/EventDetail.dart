@@ -8,7 +8,7 @@
   endingTime      終了時間
   remarks         備考
 ----------------------------------------------*/
-class EventEntity {
+class EventDetail {
   String eventId;
   String recruitMember;
   String station;
@@ -18,9 +18,9 @@ class EventEntity {
   String userId;
   String name;
 
-  EventEntity(this.recruitMember, this.station, this.startingTime, this.endingTime, this.remarks);
+  EventDetail(this.recruitMember, this.station, this.startingTime, this.endingTime, this.remarks);
 
-  EventEntity.fromMap(Map map)
+  EventDetail.fromMap(Map map)
       : userId = map["userId"],
         eventId = map["eventId"],
         recruitMember = map["recruitMember"],

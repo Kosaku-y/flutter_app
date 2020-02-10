@@ -48,19 +48,19 @@ class LoginRepository {
   //fireBaseサインイン部分
   Future<User> checkFireBaseLogin(FirebaseUser currentUser) async {
     final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
-
     //メールアドレス正規化
     var userId = makeUserId(currentUser.email);
-    var user;
-    await _mainReference.child(userId).once().then((DataSnapshot result) {
-      if (result.value == null || result.value == "") {
-        user = User.tmpUser(AuthStatus.signedUp, userId);
-      } else {
-        user = User.fromMap(userId, result.value);
-        user.status(AuthStatus.signedIn);
-      }
-    });
-    return user;
+    User user;
+    try {
+      await _mainReference.child(userId).once().then((DataSnapshot result) async {
+        if (result.value == null || result.value == "") {
+          user = User.tmpUser(AuthStatus.signedUp, userId);
+        } else {
+          user = User.fromMap(userId, result.value);
+        }
+      });
+      return user;
+    } catch (e) {}
   }
 
   Future<FirebaseUser> isSignedIn() async {

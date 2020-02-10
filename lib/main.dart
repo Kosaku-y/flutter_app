@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'Entity/PageParts.dart';
-import 'EventSearch.dart';
-import 'NewHome.dart';
-import 'Chat.dart';
-import 'SettingPage.dart';
+import 'package:flutter_app2/Widget/ChatRoomPage.dart';
+import 'package:flutter_app2/Widget/SettingPage.dart';
+import 'Widget/EventSearchPage.dart';
 import 'Widget/LoginPage.dart';
 import 'Entity/User.dart';
+import 'Widget/NewHomePage.dart';
 
 //ホーム画面のrun
 void main() {
@@ -54,7 +54,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     tabs = [
-      Home(widget.user),
+      Home(user: widget.user),
       EventManagePage(),
       RoomPage(widget.user),
       SettingPage(user: widget.user),
@@ -119,6 +119,7 @@ class _MainPageState extends State<MainPage> {
         navigationKey: _navigatorKeys[tabItem],
         tabItem: tabItem,
         routerName: root,
+        user: widget.user,
       ),
     );
   }
@@ -139,7 +140,7 @@ class TabNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> navigationKey;
 
   Map<String, Widget Function(BuildContext)> _routerBuilder(BuildContext context) => {
-        '/NewHome': (context) => new Home(user),
+        '/NewHome': (context) => new Home(user: user),
         '/EventManage': (context) => new EventManagePage(),
         '/Room': (context) => new RoomPage(user),
         '/Setting': (context) => new SettingPage(user: user)

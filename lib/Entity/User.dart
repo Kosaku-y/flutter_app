@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'AuthStatus.dart';
 
-class User extends TempUser {
+class User {
   String _userId = "";
   String get userId => _userId;
 
@@ -17,29 +17,6 @@ class User extends TempUser {
   String _score = "";
   Map _event;
   AuthStatus _status;
-
-  Map<int, String> rankMap = {
-    5: "青",
-    10: "黄",
-    20: "緑",
-    40: "紫",
-    80: "赤",
-    160: "銅",
-    320: "銀",
-    480: "金"
-  };
-
-  Map<String, Color> colorMap = {
-    "青": Colors.blue,
-    "黄": Colors.yellow,
-    "緑": Colors.green,
-    "紫": Colors.purple,
-    "赤": Colors.red,
-    "銅": Color(0xffb87333),
-    "銀": Color(0xffa0a0a0),
-    "金": Color(0xffffd700),
-  };
-
   User();
   User.tmpUser(this._status, this._userId) : _rank = "0";
 
@@ -50,7 +27,8 @@ class User extends TempUser {
         _sex = map["sex"],
         _rank = map["rank"],
         _lineId = map["lineId"],
-        _score = map["score"];
+        _score = map["score"],
+        _status = AuthStatus.signedIn;
 
   toJson() {
     print("\n-----------send Data-----------\n"

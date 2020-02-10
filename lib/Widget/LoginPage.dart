@@ -47,22 +47,25 @@ class LoginPageState extends State<LoginPage> {
     loginBloc.stateSink.add(null);
     loginBloc.currentTempUserStream.listen((user) async {
       //サインイン完了でマイページへ
-      if (user.status == AuthStatus.signedIn) {
-        print("自動ログイン完了");
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => MainPage(user: user, message: "ログインしました"),
-          ),
-        );
-        //初回登録フォームへ
-      } else if (user.status == AuthStatus.signedUp) {
-        print("ユーザー情報が見つかりませんでした");
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (BuildContext context) => AccountSettingPage(user: user, status: "regist"),
-          ),
-        );
+      if (user != null) {
+        if (user.status == AuthStatus.signedIn) {
+          print("自動ログイン完了");
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => MainPage(user: user, message: "ログインしました"),
+            ),
+          );
+          //初回登録フォームへ
+        } else if (user.status == AuthStatus.signedUp) {
+          print("ユーザー情報が見つかりませんでした");
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (BuildContext context) => AccountSettingPage(user: user, status: "regist"),
+            ),
+          );
+        }
       }
+      print("user not signIn");
     });
   }
   /*

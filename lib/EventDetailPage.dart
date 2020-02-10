@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'Entity/Event.dart';
+import 'Entity/EventDetail.dart';
 import 'Entity/PageParts.dart';
 
 /*----------------------------------------------
@@ -11,13 +11,21 @@ import 'Entity/PageParts.dart';
 ----------------------------------------------*/
 
 class EventDetailPage extends StatelessWidget {
-  EventEntity event;
+  EventDetail event;
   EventDetailPage(this.event);
   PageParts set = new PageParts();
   var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
 
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 2.0,
+        backgroundColor: set.baseColor,
+        title: Text('イベント詳細',
+            style: TextStyle(
+              color: set.pointColor,
+            )),
+      ),
       backgroundColor: set.backGroundColor,
       body: Center(
         child: Column(children: <Widget>[

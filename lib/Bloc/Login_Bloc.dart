@@ -24,8 +24,8 @@ class LoginBloc {
       try {
         var currentUser = await loginRepository.isSignedIn();
         if (currentUser != null) {
-          var tempUser = await loginRepository.checkFireBaseLogin(currentUser);
-          _currentTempUserController.add(tempUser);
+          var user = await loginRepository.checkFireBaseLogin(currentUser);
+          _currentTempUserController.add(user);
           print("firebaseログイン完了:bloc");
         } else {
           print("firebaseログイン失敗:bloc");
@@ -38,9 +38,9 @@ class LoginBloc {
       try {
         var fireBaseUser = await loginRepository.signInWithGoogle();
         if (fireBaseUser != null) {
-          TempUser tempUser = await loginRepository.checkFireBaseLogin(fireBaseUser);
-          _currentTempUserController.add(tempUser);
-          print("ログイン完了:bloc");
+          var user = await loginRepository.checkFireBaseLogin(fireBaseUser);
+          _currentTempUserController.add(user);
+          print("googleログイン完了:bloc");
         } else {
           print("googleログイン失敗:bloc");
         }

@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Entity/User.dart';
+import 'package:flutter_app2/Repository/CommonData.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'DashBoardElement.dart';
-import 'Entity/PageParts.dart';
-import 'Entity/User.dart';
+
+import '../DashBoardElement.dart';
 
 class Home extends StatefulWidget {
   User user;
-  Home(this.user);
+  Home({Key key, this.user}) : super(key: key);
   HomeState createState() => HomeState();
 }
 
 class HomeState extends State<Home> {
   PageParts set = new PageParts();
+  CommonData cd = CommonData();
   final userReference = FirebaseDatabase.instance.reference().child("gmail");
   int totalInfo = 0; //お知らせ件数
 
@@ -25,9 +28,9 @@ class HomeState extends State<Home> {
   void initState() {
     super.initState();
     userRank = int.parse(widget.user.rank);
-    for (int r in widget.user.rankMap.keys) {
+    for (int r in cd.rankMap.keys) {
       if (userRank <= r) {
-        rankColorString = widget.user.rankMap[r];
+        rankColorString = cd.rankMap[r];
         break;
       }
     }
@@ -38,15 +41,14 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        /*
         appBar: AppBar(
           elevation: 2.0,
           backgroundColor: set.baseColor,
-          title: Text('Dashboard',
-              style: TextStyle(color:set.fontColor, fontWeight: FontWeight.w700, fontSize: 30.0,)
-          ),
+          title: Text('ホーム',
+              style: TextStyle(
+                color: set.pointColor,
+              )),
         ),
-        */
         backgroundColor: set.backGroundColor,
         body: StaggeredGridView.count(
           crossAxisCount: 2,
@@ -138,8 +140,8 @@ class HomeState extends State<Home> {
                               style: TextStyle(color: set.fontColor, fontSize: 12.0)),
                           TextSpan(
                               text: '$rankColorString',
-                              style: TextStyle(
-                                  color: widget.user.colorMap[rankColorString], fontSize: 12.0)),
+                              style:
+                                  TextStyle(color: cd.colorMap[rankColorString], fontSize: 12.0)),
                         ],
                       ),
                     ),

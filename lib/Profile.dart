@@ -15,10 +15,15 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: set.backGroundColor,
         appBar: AppBar(
-          title: Text("Profile"),
+          elevation: 2.0,
+          backgroundColor: set.baseColor,
+          title: Text('プロフィール詳細',
+              style: TextStyle(
+                color: set.pointColor,
+              )),
         ),
+        backgroundColor: set.backGroundColor,
         body: Card(
           elevation: 4.0,
           margin: const EdgeInsets.all(16.0),

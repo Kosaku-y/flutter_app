@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_app2/Entity/EventDetail.dart';
+import 'package:flutter_app2/Entity/EventPlace.dart';
+import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'Entity/Event.dart';
-import 'Entity/PageParts.dart';
-import 'Entity/EventPlace.dart';
-import 'EventSerchResultPage.dart';
-import 'Recritment.dart';
 import 'package:csv/csv.dart';
 import 'dart:io';
+
+import 'package:flutter_app2/Widget/EventSerchResultPage.dart';
+import '../Recritment.dart';
 
 /*----------------------------------------------
 
@@ -418,7 +418,7 @@ class EventCreate {
   int eventId;
 
   //イベント追加メソッド
-  void addEvent(String pref, String line, EventEntity event) {
+  void addEvent(String pref, String line, EventDetail event) {
     managerReference.once().then((DataSnapshot snapshot) {
       //print(snapshot.value["eventId"].toString());
       eventId = int.parse(snapshot.value["eventId"]);

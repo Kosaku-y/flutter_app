@@ -4,10 +4,10 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'Entity/Event.dart';
+import 'Entity/EventDetail.dart';
 import 'Entity/EventPlace.dart';
 import 'Entity/PageParts.dart';
-import 'EventSearch.dart';
+import 'package:flutter_app2/Widget/EventSearchPage.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
 import 'package:csv/csv.dart';
 import 'dart:io';
@@ -186,7 +186,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
     if (this._formKey.currentState.validate()) {
       this._formKey.currentState.save();
       Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
-      EventEntity event = new EventEntity(_selectRecruitMember, _selectStation,
+      EventDetail event = new EventDetail(_selectRecruitMember, _selectStation,
           formatter.format(_start), formatter.format(_end), _remarks);
       em.addEvent(_selectPref, _selectLine, event);
     }

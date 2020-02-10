@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'Entity/PageParts.dart';
+import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Entity/User.dart';
+import 'package:flutter_app2/Repository/Login_Repository.dart';
 
-import 'Entity/User.dart';
-import 'Repository/Login_Repository.dart';
-import 'Widget/LoginPage.dart';
+import 'LoginPage.dart';
 
 class SettingPage extends StatelessWidget {
   LoginRepository repository = LoginRepository();
@@ -15,6 +15,14 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 2.0,
+        backgroundColor: set.baseColor,
+        title: Text('設定＆ロウグアウト',
+            style: TextStyle(
+              color: set.pointColor,
+            )),
+      ),
       backgroundColor: set.backGroundColor,
       body: Container(
         child: ListView(children: <Widget>[
