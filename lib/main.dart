@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'Entity/PageParts.dart';
-import 'package:flutter_app2/Widget/ChatRoomPage.dart';
+import 'package:flutter_app2/Widget/TalkRoomPage.dart';
 import 'package:flutter_app2/Widget/SettingPage.dart';
 import 'Widget/EventSearchPage.dart';
 import 'Widget/LoginPage.dart';
@@ -38,7 +38,12 @@ class _MainPageState extends State<MainPage> {
   TabItem _currentTab = TabItem.NewHome;
   List<Widget> tabs;
   PageParts set = PageParts();
-  Map<TabItem, GlobalKey<NavigatorState>> _navigatorKeys;
+  Map<TabItem, GlobalKey<NavigatorState>> _navigatorKeys = {
+    TabItem.NewHome: GlobalKey<NavigatorState>(),
+    TabItem.EventManage: GlobalKey<NavigatorState>(),
+    TabItem.RoomPage: GlobalKey<NavigatorState>(),
+    TabItem.Setting: GlobalKey<NavigatorState>(),
+  };
 
   void onSelect(TabItem tabItem) {
     if (_currentTab == tabItem) {
@@ -56,16 +61,9 @@ class _MainPageState extends State<MainPage> {
     tabs = [
       Home(user: widget.user),
       EventManagePage(),
-      RoomPage(widget.user),
+      TalkRoomPage(fromUser: widget.user),
       SettingPage(user: widget.user),
     ];
-
-    _navigatorKeys = {
-      TabItem.NewHome: GlobalKey<NavigatorState>(),
-      TabItem.EventManage: GlobalKey<NavigatorState>(),
-      TabItem.RoomPage: GlobalKey<NavigatorState>(),
-      TabItem.Setting: GlobalKey<NavigatorState>(),
-    };
   }
 
   Future<bool> onWillPop() async {
@@ -142,7 +140,7 @@ class TabNavigator extends StatelessWidget {
   Map<String, Widget Function(BuildContext)> _routerBuilder(BuildContext context) => {
         '/NewHome': (context) => new Home(user: user),
         '/EventManage': (context) => new EventManagePage(),
-        '/Room': (context) => new RoomPage(user),
+        '/Room': (context) => new TalkRoomPage(fromUser: user),
         '/Setting': (context) => new SettingPage(user: user)
       };
 

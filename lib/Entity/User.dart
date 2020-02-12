@@ -17,6 +17,7 @@ class User {
   String _score = "";
   Map _event;
   AuthStatus _status;
+
   User();
   User.tmpUser(this._status, this._userId) : _rank = "0";
 

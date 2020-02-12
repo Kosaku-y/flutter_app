@@ -89,12 +89,20 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 2.0,
+        backgroundColor: set.baseColor,
+        title: Text('検索結果',
+            style: TextStyle(
+              color: set.pointColor,
+            )),
+      ),
       backgroundColor: set.backGroundColor,
       body: Container(
           padding: const EdgeInsets.all(20.0),
           child: new Column(
             children: <Widget>[
-              Text('検索結果：' + entries.length.toString() + '件',
+              Text(entries.length.toString() + '件見つかりました。',
                   style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
               Expanded(
                 child: ListView.builder(

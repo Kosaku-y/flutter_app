@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_app2/Entity/EventDetail.dart';
+import 'package:flutter_app2/Entity/EventPlace.dart';
+import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'Entity/EventDetail.dart';
-import 'Entity/EventPlace.dart';
-import 'Entity/PageParts.dart';
 import 'package:flutter_app2/Widget/EventSearchPage.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
 import 'package:csv/csv.dart';
@@ -23,7 +23,7 @@ class RecruitmentPage extends StatefulWidget {
   final int NEW = 1;
   final int MODIFIED = 0;
 
-  RecruitmentPage(this.mode);
+  RecruitmentPage({Key key, this.mode}) : super(key: key);
   @override
   RecruitmentPageState createState() => new RecruitmentPageState();
 }
@@ -38,6 +38,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   String _selectRecruitMember = null;
   DateTime _start;
   DateTime _end;
+  final int register = 0;
 
   // 日時を指定したフォーマットで指定するためのフォーマッター
   var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
@@ -80,6 +81,14 @@ class RecruitmentPageState extends State<RecruitmentPage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 2.0,
+        backgroundColor: set.baseColor,
+        title: Text('イベント作成ページ',
+            style: TextStyle(
+              color: set.pointColor,
+            )),
+      ),
       backgroundColor: set.backGroundColor,
       body: Form(
         key: _formKey,

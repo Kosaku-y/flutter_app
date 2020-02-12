@@ -4,7 +4,7 @@ import 'Entity/PageParts.dart';
 import 'Entity/User.dart';
 
 class ProfilePage extends StatelessWidget {
-  ProfilePage(User user, int mode, String userId);
+  ProfilePage(Key key, this.user, int mode, String userId) : super(key: key);
 
   final int OTHER = 1;
   final int OWN = 0;

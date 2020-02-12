@@ -61,6 +61,14 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
 
   Widget build(BuildContext context) {
     return new Scaffold(
+      appBar: AppBar(
+        elevation: 2.0,
+        backgroundColor: set.baseColor,
+        title: Text('現在のランク',
+            style: TextStyle(
+              color: set.pointColor,
+            )),
+      ),
       backgroundColor: set.backGroundColor,
       body: Container(
         padding: EdgeInsets.all(16.0),

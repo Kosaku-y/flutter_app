@@ -12,7 +12,8 @@ import 'package:csv/csv.dart';
 import 'dart:io';
 
 import 'package:flutter_app2/Widget/EventSerchResultPage.dart';
-import '../Recritment.dart';
+
+import 'RecritmentPage.dart';
 
 /*----------------------------------------------
 
@@ -31,6 +32,7 @@ class EventManagePage extends StatefulWidget {
 class EventManagePageState extends State<EventManagePage> {
   PageParts set = new PageParts();
   final _formKey = GlobalKey<FormState>();
+
   List lineData = [""];
   List stationData = [""];
   Pref pref;
@@ -54,6 +56,14 @@ class EventManagePageState extends State<EventManagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 2.0,
+        backgroundColor: set.baseColor,
+        title: Text('イベント検索',
+            style: TextStyle(
+              color: set.pointColor,
+            )),
+      ),
       backgroundColor: set.backGroundColor,
       body: Form(
           key: _formKey,
@@ -103,7 +113,7 @@ class EventManagePageState extends State<EventManagePage> {
           MaterialPageRoute(
             settings: const RouteSettings(name: "/detail"),
             builder: (context) {
-              return RecruitmentPage(0);
+              return RecruitmentPage(mode: 0);
             },
             fullscreenDialog: true,
           ),

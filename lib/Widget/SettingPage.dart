@@ -18,7 +18,7 @@ class SettingPage extends StatelessWidget {
       appBar: AppBar(
         elevation: 2.0,
         backgroundColor: set.baseColor,
-        title: Text('設定＆ロウグアウト',
+        title: Text('設定＆ログアウト',
             style: TextStyle(
               color: set.pointColor,
             )),
@@ -34,11 +34,13 @@ class SettingPage extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward),
               onTap: () async {
                 await repository.signOut();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => LoginPage(),
-                  ),
-                );
+//                Navigator.of(context).pushReplacement(
+//                  MaterialPageRoute(
+//                    builder: (BuildContext context) => LoginPage(),
+//                  ),
+//                );
+                Navigator.pushAndRemoveUntil(context,
+                    new MaterialPageRoute(builder: (context) => new LoginPage()), (route) => false);
               }),
           Divider(
             color: set.fontColor,
