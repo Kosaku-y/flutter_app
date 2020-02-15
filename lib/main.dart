@@ -181,6 +181,19 @@ BottomNavigationBarのWidgetクラス
 
 ----------------------------------------------*/
 
+const tabTitle = <TabItem, String>{
+  TabItem.NewHome: 'ホーム',
+  TabItem.EventManage: 'イベント作成',
+  TabItem.RoomPage: 'トーク',
+  TabItem.Setting: '設定',
+};
+const tabIcon = <TabItem, IconData>{
+  TabItem.NewHome: Icons.home,
+  TabItem.EventManage: IconData(59574, fontFamily: 'MaterialIcons'),
+  TabItem.RoomPage: Icons.message,
+  TabItem.Setting: Icons.settings,
+};
+
 class BottomNavigation extends StatelessWidget {
   const BottomNavigation({
     Key key,
@@ -196,24 +209,50 @@ class BottomNavigation extends StatelessWidget {
     PageParts set = PageParts();
     return BottomNavigationBar(
       items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: new Icon(Icons.home),
-          title: new Text('Home'),
+        bottomItem(
+          context,
+          tabItem: TabItem.NewHome,
         ),
-        BottomNavigationBarItem(
-          icon: new Icon(const IconData(59574, fontFamily: 'MaterialIcons')),
-          title: new Text('Search'),
+        bottomItem(
+          context,
+          tabItem: TabItem.EventManage,
         ),
-        BottomNavigationBarItem(icon: new Icon(Icons.message), title: new Text("Message")),
-        BottomNavigationBarItem(icon: new Icon(Icons.settings), title: new Text('Setting')),
+        bottomItem(
+          context,
+          tabItem: TabItem.RoomPage,
+        ),
+        bottomItem(
+          context,
+          tabItem: TabItem.Setting,
+        )
       ],
       type: BottomNavigationBarType.fixed,
       backgroundColor: set.baseColor,
-      fixedColor: set.fontColor,
-      unselectedItemColor: Colors.white,
+//      fixedColor: set.fontColor,
+//      unselectedItemColor: Colors.white,
       onTap: (index) {
         onSelect(TabItem.values[index]);
       },
+    );
+  }
+
+  BottomNavigationBarItem bottomItem(
+    BuildContext context, {
+    TabItem tabItem,
+  }) {
+    PageParts set = PageParts();
+    final color = currentTab == tabItem ? set.fontColor : Colors.white;
+    return BottomNavigationBarItem(
+      icon: Icon(
+        tabIcon[tabItem],
+        color: color,
+      ),
+      title: Text(
+        tabTitle[tabItem],
+        style: TextStyle(
+          color: color,
+        ),
+      ),
     );
   }
 }

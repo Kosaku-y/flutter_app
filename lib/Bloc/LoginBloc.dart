@@ -1,20 +1,15 @@
 import 'dart:async';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:flutter_app2/Repository/Login_Repository.dart';
-import 'package:flutter_app2/Entity/AuthStatus.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_app2/Repository/LoginRepository.dart';
 
 class LoginBloc {
   //final _currentTempUserController = PublishSubject<TempUser>();
   final _currentTempUserController = BehaviorSubject<User>.seeded(null);
-
   //loginPage側で現在のTmpUserを流す用のStream
-
   final _googleLoginController = StreamController();
   //loginRepositoryからGoogleログイン受け取るためのStream
   final _stateController = StreamController();
-  //loginRepositoryからfireBase上のログイン結果を受け取るためのStream
 
   final loginRepository = LoginRepository();
 

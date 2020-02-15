@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app2/Entity/Chat.dart';
+import 'package:flutter_app2/Entity/Talk.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -22,20 +22,24 @@ class TalkPageState extends State<ChatPage> {
   final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
   final _textEditController = TextEditingController();
 
-  List<ChatEntity> entries = new List();
+  List<Talk> entries = new List();
 
   @override
   initState() {
     super.initState();
-    _mainReference
-        .child("${widget.fromUserId}/message/${widget.toUserId}")
-        .onChildAdded
-        .listen(_onEntryAdded);
+    try {
+      _mainReference
+          .child("${widget.fromUserId}/message/${widget.toUserId}")
+          .onChildAdded
+          .listen(_onEntryAdded);
+    } catch (e) {
+      print(e);
+    }
   }
 
   _onEntryAdded(Event e) {
     setState(() {
-      entries.add(new ChatEntity.fromSnapShot(e.snapshot));
+      entries.add(new Talk.fromSnapShot(e.snapshot));
     });
   }
 
@@ -100,12 +104,12 @@ class TalkPageState extends State<ChatPage> {
             _mainReference
                 .child("${widget.fromUserId}/message/${widget.toUserId}")
                 .push()
-                .set(ChatEntity(DateTime.now(), _textEditController.text).toJson());
+                .set(Talk(DateTime.now(), _textEditController.text).toJson());
             print("send message :${_textEditController.text}");
             _mainReference
                 .child("${widget.toUserId}/message/${widget.fromUserId}")
                 .push()
-                .set(ChatEntity(DateTime.now(), _textEditController.text).toJson());
+                .set(Talk(DateTime.now(), _textEditController.text).toJson());
             print("send message :${_textEditController.text}");
             _textEditController.clear();
             // キーボードを閉じる

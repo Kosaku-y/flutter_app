@@ -30,7 +30,11 @@ class TalkRoomPageState extends State<TalkRoomPage> {
   @override
   initState() {
     super.initState();
-    _mainReference.child("${widget.fromUser.userId}/message").onChildAdded.listen(_onEntryAdded);
+    try {
+      _mainReference.child("${widget.fromUser.userId}/message").onChildAdded.listen(_onEntryAdded);
+    } catch (e) {
+      print(e);
+    }
   }
 
   _onEntryAdded(Event e) {

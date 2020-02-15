@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app2/Entity/EventDetail.dart';
+import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:intl/intl.dart';
-
-import 'Entity/EventDetail.dart';
-import 'Entity/PageParts.dart';
 
 /*----------------------------------------------
 

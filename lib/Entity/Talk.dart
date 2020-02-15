@@ -2,18 +2,19 @@ import 'package:firebase_database/firebase_database.dart';
 
 /*----------------------------------------------
 
-チャットエンティティクラス
+トークエンティティクラス
 
 ----------------------------------------------*/
-class ChatEntity {
+class Talk {
   String key;
   DateTime dateTime;
   String message;
+  String toUserId;
   String fromUserId;
 
-  ChatEntity(this.dateTime, this.message);
+  Talk(this.dateTime, this.message);
 
-  ChatEntity.fromSnapShot(DataSnapshot snapshot)
+  Talk.fromSnapShot(DataSnapshot snapshot)
       : key = snapshot.key,
         dateTime = new DateTime.fromMillisecondsSinceEpoch(snapshot.value["date"]),
         message = snapshot.value["message"],

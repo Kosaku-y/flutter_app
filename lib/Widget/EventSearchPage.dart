@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
@@ -413,31 +412,4 @@ class EventManagePageState extends State<EventManagePage> {
       });
     });
   }
-}
-
-/*----------------------------------------------
-
-イベント作成用クラス
-
-----------------------------------------------*/
-class EventCreate {
-  var mainReference = FirebaseDatabase.instance.reference().child("Events");
-  var managerReference = FirebaseDatabase.instance.reference().child("EventManager");
-  //var userReference = FirebaseDatabase.instance.reference().child("User");
-  var userReference = FirebaseDatabase.instance.reference().child("gmail");
-  int eventId;
-
-  //イベント追加メソッド
-  void addEvent(String pref, String line, EventDetail event) {
-    managerReference.once().then((DataSnapshot snapshot) {
-      //print(snapshot.value["eventId"].toString());
-      eventId = int.parse(snapshot.value["eventId"]);
-      String newEventId = (eventId + 1).toString();
-      managerReference.set({"eventId": "$newEventId"});
-      event.eventId = newEventId;
-      mainReference.child(pref).child(event.station).child(eventId.toString()).set(event.toJson());
-    });
-  }
-
-  void addUsersEvent(String eventId) {}
 }

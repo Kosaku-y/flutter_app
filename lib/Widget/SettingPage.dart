@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import 'package:flutter_app2/Repository/Login_Repository.dart';
+import 'package:flutter_app2/Repository/LoginRepository.dart';
 
 import 'LoginPage.dart';
 

@@ -3,25 +3,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_app2/Widget/EventSearchPage.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
 import 'package:csv/csv.dart';
 import 'dart:io';
 
 /*----------------------------------------------
 
-イベント作成フォームページクラス
+イベント作成・編集フォームページクラス
 
 ----------------------------------------------*/
 class RecruitmentPage extends StatefulWidget {
-  // アロー関数を用いて、Stateを呼ぶ
   int mode;
-  final int NEW = 1;
-  final int MODIFIED = 0;
 
   RecruitmentPage({Key key, this.mode}) : super(key: key);
   @override
@@ -30,6 +27,8 @@ class RecruitmentPage extends StatefulWidget {
 
 class RecruitmentPageState extends State<RecruitmentPage> {
   PageParts set = new PageParts();
+  final int NEW = 1;
+  final int MODIFIED = 0;
 
   //送信用変数
   String _selectPref = null;
@@ -62,7 +61,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   TextEditingController _stationController = new TextEditingController(text: '');
 
   final _formKey = GlobalKey<FormState>();
-  final EventCreate em = new EventCreate();
+  final EventRepository repository = new EventRepository();
   final List<String> _numberOfRecruit = <String>['1', '2', '3'];
 
   @override
@@ -76,7 +75,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
       lineMap = new Map<String, int>();
     });
 
-    if (widget.mode == widget.MODIFIED) {}
+    if (widget.mode == MODIFIED) {}
   }
 
   Widget build(BuildContext context) {
@@ -197,7 +196,7 @@ class RecruitmentPageState extends State<RecruitmentPage> {
       Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
       EventDetail event = new EventDetail(_selectRecruitMember, _selectStation,
           formatter.format(_start), formatter.format(_end), _remarks);
-      em.addEvent(_selectPref, _selectLine, event);
+      repository.createEvent(_selectPref, _selectLine, event);
     }
   }
 

@@ -4,10 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_app2/Widget/EventSearchPage.dart';
 
-import '../EventDetailPage.dart';
+import 'package:flutter_app2/Widget/EventDetailPage.dart';
 
 /*----------------------------------------------
 
@@ -37,7 +37,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
   //EventSearchResultPageState(this.pref, this.line, this.station);
 
   var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
-  EventCreate em = new EventCreate();
+  EventRepository eventRepository = new EventRepository();
   List<EventDetail> entries = new List();
 
   @override
