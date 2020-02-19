@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:csv/csv.dart';
-import 'dart:io';
 
 import 'package:flutter_app2/Widget/EventSerchResultPage.dart';
 
@@ -44,8 +41,8 @@ class EventManagePageState extends State<EventManagePage> {
   int changePref = 0;
   int changeLine = 0;
   int changeStation = 0;
-  Map lineMap;
-  Map stationMap;
+  Map lineMap = new Map<String, String>();
+  Map stationMap = new Map<String, String>();
 
   TextEditingController _prefController = new TextEditingController(text: '');
   TextEditingController _lineController = new TextEditingController(text: '');
@@ -65,107 +62,75 @@ class EventManagePageState extends State<EventManagePage> {
       ),
       backgroundColor: set.backGroundColor,
       body: Form(
-          key: _formKey,
-          child: Container(
-              padding: const EdgeInsets.all(30.0),
-              child: SingleChildScrollView(
-                  child: Column(children: <Widget>[
-                Text("検索条件を入力してください", style: TextStyle(color: set.fontColor)),
-                _prefPicker(),
-                _linePicker(),
-                _stationPicker(),
-                Container(
-                  padding: EdgeInsets.only(top: 20.0),
-                  child: RaisedButton.icon(
-                    label: Text("検索する"),
-                    icon: Icon(
-                      Icons.search,
-                      color: set.fontColor,
-                    ),
-                    onPressed: () => _submission(),
-                  ),
-                ),
-                RaisedButton.icon(
-                  label: Text("削除する"),
+        key: _formKey,
+        child: Container(
+          padding: const EdgeInsets.all(30.0),
+          child: SingleChildScrollView(
+            child: Column(children: <Widget>[
+              Text("検索条件を入力してください", style: TextStyle(color: set.fontColor)),
+              _prefPicker(),
+              _linePicker(),
+              _stationPicker(),
+              Container(
+                padding: EdgeInsets.only(top: 20.0),
+                child: RaisedButton.icon(
+                  label: Text("検索する"),
                   icon: Icon(
-                    Icons.delete,
+                    Icons.search,
                     color: set.fontColor,
                   ),
-                  onPressed: () => _delete(),
+                  onPressed: () => _submission(),
                 ),
-                RaisedButton.icon(
-                  label: Text("修正する"),
-                  icon: Icon(
-                    Icons.check,
-                    color: set.fontColor,
-                  ),
-                  onPressed: () => _correction(),
+              ),
+              RaisedButton.icon(
+                label: Text("削除する"),
+                icon: Icon(
+                  Icons.delete,
+                  color: set.fontColor,
                 ),
-              ])))),
+                onPressed: () => null,
+              ),
+              RaisedButton.icon(
+                label: Text("修正する"),
+                icon: Icon(
+                  Icons.check,
+                  color: set.fontColor,
+                ),
+                onPressed: () => _correction(),
+              ),
+            ]),
+          ),
+        ),
+      ),
       floatingActionButton: IconButton(
         icon: Icon(
           Icons.person_add,
           color: set.fontColor,
         ),
-        onPressed: () => Navigator.push(
+        onPressed: () => Navigator.of(
           context,
-          MaterialPageRoute(
-            settings: const RouteSettings(name: "/detail"),
-            builder: (context) {
-              return RecruitmentPage(mode: 0);
-            },
-            fullscreenDialog: true,
-          ),
+          rootNavigator: true,
+        ).push<Widget>(
+          MaterialPageRoute(builder: (context) {
+            return RecruitmentPage(mode: 0);
+          }
+
+//        Navigator.push(
+//          context,
+//          MaterialPageRoute(
+//            //settings: const RouteSettings(name: "/detail"),
+//            builder: (context) {
+//              return RecruitmentPage(mode: 0);
+//            },
+//            fullscreenDialog: true,
+              ),
         ),
       ),
     );
   }
 
-  //ログ出力用メソッド
-  void printMap(String actionName, Map map) {
-    print("\n-----------$actionName Data-----------\n"
-            "eventId:" +
-        map["eventId"].toString() +
-        "\n"
-            "member:" +
-        map["recruitMember"] +
-        "\n"
-            "station:" +
-        map["station"] +
-        "\n"
-            "start:" +
-        DateTime.fromMillisecondsSinceEpoch(map["startingTime"]).toString() +
-        "\n"
-            "end:" +
-        DateTime.fromMillisecondsSinceEpoch(map["endingTime"]).toString() +
-        "\n"
-            "remarks:" +
-        map["remarks"] +
-        "\n"
-            "-------------------------------\n");
-  }
-
   //イベント修正
   void _correction() {}
-
-  //期限切れイベント削除用メソッド
-  void _delete() {
-    DateTime now = DateTime.now();
-    final _mainReference = FirebaseDatabase.instance.reference().child("Events");
-    _mainReference.once().then((DataSnapshot snapshot) {
-      Map<dynamic, dynamic> values = snapshot.value;
-      values.forEach((k, v) {
-        v.forEach((k1, v1) {
-          v1.forEach((k2, v2) {
-            if (DateTime.fromMillisecondsSinceEpoch(v2["endingTime"]).isBefore(now)) {
-              _mainReference.child(k).child(k1).child(k2).remove();
-              printMap("remove", v2);
-            }
-          });
-        });
-      });
-    });
-  }
 
   //フォーム送信用メソッド
   void _submission() {
@@ -184,7 +149,7 @@ class EventManagePageState extends State<EventManagePage> {
 
   //都道府県Picker
   Widget _prefPicker() {
-    return new GestureDetector(
+    return new InkWell(
       onTap: () {
         DataPicker.showDatePicker(
           context,
@@ -234,7 +199,7 @@ class EventManagePageState extends State<EventManagePage> {
 
   //路線Picker
   Widget _linePicker() {
-    return new GestureDetector(
+    return new InkWell(
       onTap: () {
         DataPicker.showDatePicker(
           context,
@@ -283,7 +248,7 @@ class EventManagePageState extends State<EventManagePage> {
 
   //駅Picker
   Widget _stationPicker() {
-    return new GestureDetector(
+    return new InkWell(
       onTap: () {
         DataPicker.showDatePicker(
           context,
@@ -354,62 +319,57 @@ class EventManagePageState extends State<EventManagePage> {
   }
 
   //県Pickerが選択された時の処理メソッド
-  void _prefChange(String newValue) {
+  Future _prefChange(String prefName) async {
+    changePref = 1;
+    //県、路線、駅、組み合わせ矛盾チェック
+    if (changeLine != 0 || changeStation != 0) {
+      changeLine = 2;
+      changeStation = 2;
+    }
+    //APIコール
+    String prefCode = Pref.pref[prefName];
+    var url = "http://api.ekispert.jp/v1/json/operationLine?prefectureCode=" +
+        "$prefCode&offset=1&limit=100&gcs=tokyo&key=LE_UaP7Vyjs3wQPa";
+    http.Response response = await http.get(url);
+    var body = response.body;
+    Map<String, dynamic> responseMap = jsonDecode(body);
+    lineMap.clear();
+    responseMap["ResultSet"]["Line"].forEach((i) {
+      lineMap[i["Name"]] = i["code"];
+    });
     setState(() {
-      changePref = 1;
-      //県、路線、駅、組み合わせ矛盾チェック
-      if (changeLine != 0 || changeStation != 0) {
-        changeLine = 2;
-        changeStation = 2;
-      }
-
-      lineMap = new Map<String, int>();
-      final input = new File('assets/csv/line.csv').openRead();
-      final fields = input.transform(utf8.decoder).transform(new CsvToListConverter()).toList();
-      int prefNum = int.parse(Pref.pref[newValue]);
-
-//      var url = 'http://www.ekidata.jp/api/p/' + prefNum.toString() + '.json';
-//      //APIコール
-//      http.get(url).then((response) {
-//        var body = response.body.substring(50, response.body.length - 58);
-//        var mapLine = jsonDecode(body);
-//        mapLine["line"].forEach((i) {
-//          lineMap[i["line_name"]] = i["line_cd"];
-//        });
-//        //lineMap.forEach((key,value) => lineData.add(key));
-//        lineData = lineMap.keys.toList();
-//      });
+      lineData.clear();
+      lineData = lineMap.keys.toList();
     });
   }
 
   //路線チェンジ用
-  void _lineChange(String newValue) {
-    setState(() {
-      //県、路線、駅、組み合わせ矛盾チェック
-      if (changeLine == 0) {
-        changeLine = 1;
-      } else if (changeLine == 1) {
-        if (changeStation != 0) {
-          changeStation = 2;
-        }
-      } else {
-        changeLine = 1;
+  Future _lineChange(String lineName) async {
+    //県、路線、駅、組み合わせ矛盾チェック
+    if (changeLine == 0) {
+      changeLine = 1;
+    } else if (changeLine == 1) {
+      if (changeStation != 0) {
+        changeStation = 2;
       }
-      _selectLine = newValue;
-      int lineNum = lineMap[newValue];
-      stationMap = new Map<String, int>();
+    } else {
+      changeLine = 1;
+    }
+    String lineCode = lineMap[lineName];
+    //APIコール
+    var url = "http://api.ekispert.jp/v1/json/station?operationLineCode=" +
+        "$lineCode&type=train&offset=1&limit=100&direction=up&gcs=tokyo&key=LE_UaP7Vyjs3wQPa";
+    http.Response response = await http.get(url);
+    var body = response.body;
+    Map<String, dynamic> responseMap = jsonDecode(body);
+    stationMap.clear();
+    responseMap["ResultSet"]["Point"].forEach((i) {
+      stationMap[i["Station"]["Name"]] = i["Station"]["code"];
+    });
 
-      //APIコール
-      var url = 'http://www.ekidata.jp/api/l/' + lineNum.toString() + '.json';
-      http.get(url).then((response) {
-        var body = response.body.substring(50, response.body.length - 58);
-        var mapStation = jsonDecode(body);
-        mapStation["station_l"].forEach((i) {
-          stationMap[i["station_name"]] = i["station_cd"];
-        });
-        //lineMap.forEach((key,value) => lineData.add(key));
-        stationData = stationMap.keys.toList();
-      });
+    setState(() {
+      stationData.clear();
+      stationData = stationMap.keys.toList();
     });
   }
 }

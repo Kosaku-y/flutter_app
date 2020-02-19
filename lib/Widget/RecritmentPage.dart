@@ -9,8 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
-import 'package:csv/csv.dart';
-import 'dart:io';
 
 /*----------------------------------------------
 
@@ -67,14 +65,6 @@ class RecruitmentPageState extends State<RecruitmentPage> {
   @override
   void initState() {
     super.initState();
-
-    setState(() async {
-      final input = new File('assets/csv/line.csv').openRead();
-      final fields =
-          await input.transform(utf8.decoder).transform(new CsvToListConverter()).toList();
-      lineMap = new Map<String, int>();
-    });
-
     if (widget.mode == MODIFIED) {}
   }
 

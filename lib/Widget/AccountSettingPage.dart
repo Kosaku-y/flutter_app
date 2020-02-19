@@ -90,7 +90,6 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
                 sexPicker(),
                 FlatButton(
                   child: Text("登録(ホームへ)"),
-                  color: Colors.green,
                   textColor: Colors.white,
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
@@ -101,7 +100,6 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
                 ),
                 FlatButton(
                   child: Text("キャンセル"),
-                  color: Colors.green,
                   textColor: Colors.white,
                   onPressed: () {
                     print("not set");

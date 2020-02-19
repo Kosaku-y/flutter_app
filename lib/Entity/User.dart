@@ -1,14 +1,7 @@
-import 'package:flutter/material.dart';
 import 'AuthStatus.dart';
 
 class User {
   String _userId = "";
-  String get userId => _userId;
-
-  set userId(String value) {
-    _userId = value;
-  } //primarykey
-
   String _name = "";
   String _age = "";
   String _sex = "";
@@ -33,23 +26,29 @@ class User {
 
   toJson() {
     print("\n-----------send Data-----------\n"
+        "userId:$userId\n"
         "name:$name\n"
         "age:$age\n"
         "sex:$sex\n"
         "rank:$rank\n"
-        "mail:$userId\n"
         "lineId:$lineId\n"
         "score:$score\n"
         "-------------------------------\n");
     return {
+      "userId": userId,
       "name": name,
       "age": age,
       "sex": sex,
       "rank": rank,
-      "mail": userId,
       "lineId": lineId,
       "score": score,
     };
+  }
+
+  String get userId => _userId;
+
+  set userId(String value) {
+    _userId = value;
   }
 
   String get name => _name;

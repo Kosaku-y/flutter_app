@@ -4,20 +4,23 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Entity/Talk.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_app2/Entity/User.dart';
 
 /*----------------------------------------------
+
 　チャットページクラス
+
 ----------------------------------------------*/
-class ChatPage extends StatefulWidget {
-  String fromUserId;
+class TalkPage extends StatefulWidget {
+  User user;
   String toUserId;
 
-  ChatPage({Key key, this.fromUserId, this.toUserId}) : super(key: key);
+  TalkPage({Key key, this.user, this.toUserId}) : super(key: key);
   @override
   TalkPageState createState() => new TalkPageState();
 }
 
-class TalkPageState extends State<ChatPage> {
+class TalkPageState extends State<TalkPage> {
   PageParts set = PageParts();
   final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
   final _textEditController = TextEditingController();
@@ -29,7 +32,7 @@ class TalkPageState extends State<ChatPage> {
     super.initState();
     try {
       _mainReference
-          .child("${widget.fromUserId}/message/${widget.toUserId}")
+          .child("${widget.user.userId}/message/${widget.toUserId}")
           .onChildAdded
           .listen(_onEntryAdded);
     } catch (e) {
@@ -102,12 +105,12 @@ class TalkPageState extends State<ChatPage> {
           child: Text("Send"),
           onPressed: () {
             _mainReference
-                .child("${widget.fromUserId}/message/${widget.toUserId}")
+                .child("${widget.user.userId}/message/${widget.toUserId}")
                 .push()
                 .set(Talk(DateTime.now(), _textEditController.text).toJson());
             print("send message :${_textEditController.text}");
             _mainReference
-                .child("${widget.toUserId}/message/${widget.fromUserId}")
+                .child("${widget.toUserId}/message/${widget.user.userId}")
                 .push()
                 .set(Talk(DateTime.now(), _textEditController.text).toJson());
             print("send message :${_textEditController.text}");

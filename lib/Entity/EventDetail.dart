@@ -14,11 +14,11 @@ class EventDetail {
   String station;
   String startingTime;
   String endingTime;
-  String remarks;
+  String comment;
   String userId;
   String name;
 
-  EventDetail(this.recruitMember, this.station, this.startingTime, this.endingTime, this.remarks);
+  EventDetail(this.recruitMember, this.station, this.startingTime, this.endingTime, this.comment);
 
   EventDetail.fromMap(Map map)
       : userId = map["userId"],
@@ -30,7 +30,7 @@ class EventDetail {
 //        endingTime = new DateTime.fromMillisecondsSinceEpoch(map["endingTime"]),
         startingTime = map["startingTime"],
         endingTime = map["endingTime"],
-        remarks = map["remarks"];
+        comment = map["comment"];
 
   //json化,ログ出力メソッド
   toJson() {
@@ -41,7 +41,7 @@ class EventDetail {
         "station:$station\n"
         "start:$startingTime\n"
         "end:$endingTime\n"
-        "remarks:$remarks\n"
+        "comment:$comment\n"
         "-------------------------------\n");
     return {
       "eventId": eventId,
@@ -50,7 +50,7 @@ class EventDetail {
       "station": station,
       "startingTime": startingTime,
       "endingTime": endingTime,
-      "remarks": remarks,
+      "comment": comment,
     };
   }
 }

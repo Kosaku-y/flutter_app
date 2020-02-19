@@ -4,6 +4,7 @@ import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/LoginRepository.dart';
 
+import 'package:flutter_app2/Widget/ProfilePage.dart';
 import 'LoginPage.dart';
 
 class SettingPage extends StatelessWidget {
@@ -28,19 +29,33 @@ class SettingPage extends StatelessWidget {
         child: ListView(children: <Widget>[
           ListTile(
               title: Text(
-                "Logout",
+                "プロフィールを見る",
+                style: TextStyle(color: set.pointColor),
+              ),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () {
+                Navigator.of(context).push<Widget>(
+                    MaterialPageRoute(builder: (context) => new ProfilePage(user: user)));
+              }),
+          Divider(
+            color: set.fontColor,
+            height: 4.0,
+          ),
+          ListTile(
+              title: Text(
+                "ログアウト",
                 style: TextStyle(color: set.pointColor),
               ),
               trailing: Icon(Icons.arrow_forward),
               onTap: () async {
                 await repository.signOut();
-//                Navigator.of(context).pushReplacement(
-//                  MaterialPageRoute(
-//                    builder: (BuildContext context) => LoginPage(),
-//                  ),
-//                );
-                Navigator.pushAndRemoveUntil(context,
-                    new MaterialPageRoute(builder: (context) => new LoginPage()), (route) => false);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => LoginPage(),
+                  ),
+                );
+//                Navigator.pushAndRemoveUntil(context,
+//                    new MaterialPageRoute(builder: (context) => new LoginPage()), (route) => false);
               }),
           Divider(
             color: set.fontColor,

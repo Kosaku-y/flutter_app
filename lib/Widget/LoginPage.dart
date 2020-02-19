@@ -69,25 +69,6 @@ class LoginPageState extends State<LoginPage> {
       print("user not signIn");
     });
   }
-  /*
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    loginBloc.fireBaseLoginSink.add();
-    loginBloc.loginStateStream.listen((onData) {
-      //サインイン完了でマイページへ
-      if (onData == AuthStatus.signedIn) {
-        print("自動ログイン完了");
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => LaunchPage(user: user, message: "ログインしました"),
-          ),
-        );
-        //初回登録フォームへ
-      } else if (onData == AuthStatus.signedUp) {}
-    });
-  }
-  */
 
   @override
   Widget build(BuildContext context) {
@@ -139,5 +120,6 @@ class LoginPageState extends State<LoginPage> {
   void dispose() {
     loginBloc.dispose();
     super.dispose();
+    print("dispose login Bloc");
   }
 }

@@ -46,7 +46,7 @@ class EventDetailPage extends StatelessWidget {
                 event.endingTime +
                 "\n"
                     "備考:" +
-                event.remarks +
+                event.comment +
                 "\n",
             style: TextStyle(
               fontFamily: 'Roboto',

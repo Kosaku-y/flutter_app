@@ -2,6 +2,7 @@
 /*
 バグ対応
 ・BottomNavigationが重なってしまう
+(ログアウト機能で最後までpop出来ていない)
 
 */
 
@@ -18,7 +19,6 @@
 
 
 --------------
-
 
 
 起動画面
@@ -48,3 +48,18 @@
     設定画面
         ログアウト
 */
+
+/*
+覚え書き
+--変数の変化(状態の変化)によってwidgetが変わる場合setState呼んで値を変える
+->bloc を使ったり、providerやInheritedWidgetを使うことによって回避できる
+
+finalやconstはなるべく使う
+
+*/
+
+路線
+http://api.ekispert.jp/v1/json/operationLine?prefectureCode=13&offset=1&limit=100&gcs=tokyo&key=LE_UaP7Vyjs3wQPa
+
+駅
+http://api.ekispert.jp/v1/json/station?operationLineCode=98&offset=1&limit=100&direction=up&gcs=tokyo&key=key=LE_UaP7Vyjs3wQPa

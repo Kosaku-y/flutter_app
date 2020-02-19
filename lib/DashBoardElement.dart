@@ -134,6 +134,10 @@ class MahjongHandPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: new AppBar(
+        title: new Text("役一覧", style: TextStyle(color: set.pointColor)),
+        backgroundColor: set.baseColor,
+      ),
       backgroundColor: set.backGroundColor,
       body: Container(
           padding: const EdgeInsets.all(20.0),

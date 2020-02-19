@@ -4,10 +4,13 @@ import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter_app2/Widget/EventDetailPage.dart';
+
+import 'TalkPage.dart';
 
 /*----------------------------------------------
 
@@ -18,8 +21,8 @@ class EventSearchResultPage extends StatefulWidget {
   String pref;
   String line;
   String station;
-
-  EventSearchResultPage({Key key, this.pref, this.line, this.station}) : super(key: key);
+  User user;
+  EventSearchResultPage({Key key, this.user, this.pref, this.line, this.station}) : super(key: key);
 
   @override
   EventSearchResultPageState createState() => new EventSearchResultPageState();
@@ -37,7 +40,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
   //EventSearchResultPageState(this.pref, this.line, this.station);
 
   var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
-  EventRepository eventRepository = new EventRepository();
+  //EventRepository eventRepository = new EventRepository();
   List<EventDetail> entries = new List();
 
   @override
@@ -141,7 +144,10 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
     return new GestureDetector(
       onTap: () {
         Navigator.of(context).push<Widget>(
-            MaterialPageRoute(builder: (context) => new EventDetailPage(entries[index])));
+          MaterialPageRoute(
+            builder: (context) => new EventDetailPage(entries[index]),
+          ),
+        );
       },
       child: new SizedBox(
         child: new Card(
@@ -152,37 +158,57 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
               border: Border.all(color: set.fontColor),
               borderRadius: BorderRadius.circular(5),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              // 1行目
               children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                        child: Text(
+                          entries[index].station + "駅",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                            color: set.pointColor,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+                        child: Text(
+                          entries[index].userId,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: set.fontColor,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
+                        child: Text(
+                          "EventID :" + entries[index].eventId.toString(),
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            color: set.fontColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-                  child: Text(
-                    entries[index].station + "駅",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push<Widget>(MaterialPageRoute(
+                          builder: (context) =>
+                              new TalkPage(user: widget.user, toUserId: entries[index].userId)));
+                    },
+                    child: Icon(
+                      Icons.mail,
                       color: set.pointColor,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                  child: Text(
-                    entries[index].userId,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: set.fontColor,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
-                  child: Text(
-                    "EventID :" + entries[index].eventId.toString(),
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: set.fontColor,
                     ),
                   ),
                 ),

@@ -5,83 +5,86 @@
 * */
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_app2/Bloc/TalkBloc.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 
 import 'TalkPage.dart';
 
-class TalkRoomPage extends StatefulWidget {
-  User fromUser;
-  TalkRoomPage({Key key, @required this.fromUser}) : super(key: key);
-
-  @override
-  TalkRoomPageState createState() => new TalkRoomPageState();
-}
-
 /*----------------------------------------------
 　ルームページクラス
 ----------------------------------------------*/
-class TalkRoomPageState extends State<TalkRoomPage> {
+class TalkRoomPage extends StatelessWidget {
+  User user;
+
+  TalkRoomPage(this.user);
   PageParts set = PageParts();
-  final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
   List<String> rooms = new List();
 
   @override
-  initState() {
-    super.initState();
-    try {
-      _mainReference.child("${widget.fromUser.userId}/message").onChildAdded.listen(_onEntryAdded);
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  _onEntryAdded(Event e) {
-    setState(() {
-      rooms.add(e.snapshot.key);
-    });
-  }
-
-  // 画面全体のビルド
-  @override
   Widget build(BuildContext context) {
+    TalkBloc bloc = new TalkBloc(user);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text('トークルーム',
-            style: TextStyle(
-              color: set.pointColor,
-            )),
-      ),
-      backgroundColor: set.backGroundColor,
-      body: Container(
-          child: new Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return _buildRow(index);
-              },
-              itemCount: rooms.length,
-            ),
-          ),
-        ],
-      )),
-    );
+        appBar: AppBar(
+          elevation: 2.0,
+          backgroundColor: set.baseColor,
+          title: Text('トークルーム',
+              style: TextStyle(
+                color: set.pointColor,
+              )),
+        ),
+        backgroundColor: set.backGroundColor,
+        body: Padding(
+          padding: const EdgeInsets.all(80),
+          child: StreamBuilder<List<String>>(
+              stream: bloc.eventListStream,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Text(
+                    "トークルームはありません",
+                    style: TextStyle(
+                      color: set.pointColor,
+                      fontSize: 20,
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text("エラーが発生しました" + snapshot.error.toString());
+                } else {
+                  rooms = snapshot.data;
+                  if (snapshot.data.length == 0) {
+                    return Text("トークルームはありません",
+                        style: TextStyle(
+                          color: set.pointColor,
+                          fontSize: 20,
+                        ));
+                  }
+                  return Container(
+                      child: new Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: ListView.builder(
+                          itemBuilder: (BuildContext context, int index) {
+                            return _buildRow(context, index);
+                          },
+                          itemCount: snapshot.data.length,
+                        ),
+                      ),
+                    ],
+                  ));
+                }
+              }),
+        ));
   }
 
   // 投稿されたメッセージの1行を表示するWidgetを生成
-  Widget _buildRow(int index) {
+  Widget _buildRow(BuildContext context, int index) {
     return InkWell(
       onTap: () {
         Navigator.push(
-            this.context,
+            context,
             MaterialPageRoute(
                 // パラメータを渡す
-                builder: (context) =>
-                    new ChatPage(fromUserId: widget.fromUser.userId, toUserId: rooms[index])));
+                builder: (context) => new TalkPage(user: user, toUserId: rooms[index])));
       },
       child: new Column(children: <Widget>[
         Card(

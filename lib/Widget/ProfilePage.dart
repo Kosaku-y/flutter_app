@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'Entity/PageParts.dart';
-import 'Entity/User.dart';
+import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Entity/User.dart';
+
+import 'TalkPage.dart';
 
 class ProfilePage extends StatelessWidget {
-  ProfilePage(Key key, this.user, int mode, String userId) : super(key: key);
+  ProfilePage({Key key, @required this.user, this.userId}) : super(key: key);
 
-  final int OTHER = 1;
-  final int OWN = 0;
   User user;
+  String userId;
+
   PageParts set = PageParts();
-  String UserId;
 
   @override
   Widget build(BuildContext context) {
@@ -24,20 +25,36 @@ class ProfilePage extends StatelessWidget {
               )),
         ),
         backgroundColor: set.backGroundColor,
-        body: Card(
-          elevation: 4.0,
-          margin: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+        body: Container(
+          child: new Column(
             children: <Widget>[
-              //Image.asset('assets/neko1_600x400.jpg'),
-              _titleArea(),
+              Card(
+                elevation: 4.0,
+                margin: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    //Image.asset('assets/neko1_600x400.jpg'),
+                    _titleArea(context),
+                  ],
+                ),
+              ),
+              RaisedButton.icon(
+                label: Text("戻る"),
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: set.fontColor,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
             ],
           ),
         ));
   }
 
-  Widget _titleArea() {
+  Widget _titleArea(BuildContext context) {
     return Container(
         margin: EdgeInsets.all(16.0),
         child: Row(
@@ -63,6 +80,14 @@ class ProfilePage extends StatelessWidget {
                       style: TextStyle(fontSize: 12.0, color: set.fontColor),
                     ),
                   ),
+                  Container(
+                      child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push<Widget>(
+                          MaterialPageRoute(builder: (context) => new TalkPage(user: user)));
+                    },
+                    child: Icon(Icons.mail),
+                  )),
                 ],
               ),
             ),

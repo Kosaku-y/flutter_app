@@ -61,7 +61,7 @@ class _MainPageState extends State<MainPage> {
     tabs = [
       Home(user: widget.user),
       EventManagePage(),
-      TalkRoomPage(fromUser: widget.user),
+      TalkRoomPage(widget.user),
       SettingPage(user: widget.user),
     ];
   }
@@ -140,7 +140,7 @@ class TabNavigator extends StatelessWidget {
   Map<String, Widget Function(BuildContext)> _routerBuilder(BuildContext context) => {
         '/NewHome': (context) => new Home(user: user),
         '/EventManage': (context) => new EventManagePage(),
-        '/Room': (context) => new TalkRoomPage(fromUser: user),
+        '/RoomPage': (context) => new TalkRoomPage(user),
         '/Setting': (context) => new SettingPage(user: user)
       };
 
@@ -183,7 +183,7 @@ BottomNavigationBarのWidgetクラス
 
 const tabTitle = <TabItem, String>{
   TabItem.NewHome: 'ホーム',
-  TabItem.EventManage: 'イベント作成',
+  TabItem.EventManage: 'イベント',
   TabItem.RoomPage: 'トーク',
   TabItem.Setting: '設定',
 };
