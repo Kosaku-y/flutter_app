@@ -16,18 +16,16 @@ class EventDetail {
   String endingTime;
   String comment;
   String userId;
-  String name;
+  String userName;
 
   EventDetail(this.recruitMember, this.station, this.startingTime, this.endingTime, this.comment);
 
   EventDetail.fromMap(Map map)
       : userId = map["userId"],
+        userName = map["userName"],
         eventId = map["eventId"],
         recruitMember = map["recruitMember"],
         station = map["station"],
-//        startingTime =
-//            new DateTime.fromMillisecondsSinceEpoch(map["startingTime"]),
-//        endingTime = new DateTime.fromMillisecondsSinceEpoch(map["endingTime"]),
         startingTime = map["startingTime"],
         endingTime = map["endingTime"],
         comment = map["comment"];
@@ -36,6 +34,7 @@ class EventDetail {
   toJson() {
     print("\n-----------send Data-----------\n"
         "eventId:$eventId\n"
+        "userName:$userName\n"
         "userId:$userId\n"
         "member:$recruitMember\n"
         "station:$station\n"
@@ -45,7 +44,8 @@ class EventDetail {
         "-------------------------------\n");
     return {
       "eventId": eventId,
-      "userId": "xxxlancerk@gmail.com",
+      "userId": userId,
+      "userName": userName,
       "recruitMember": recruitMember,
       "station": station,
       "startingTime": startingTime,

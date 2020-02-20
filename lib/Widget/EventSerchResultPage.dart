@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
+import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
@@ -18,11 +19,9 @@ import 'TalkPage.dart';
 
 ----------------------------------------------*/
 class EventSearchResultPage extends StatefulWidget {
-  String pref;
-  String line;
-  String station;
+  EventSearch eventSearch;
   User user;
-  EventSearchResultPage({Key key, this.user, this.pref, this.line, this.station}) : super(key: key);
+  EventSearchResultPage({Key key, this.user, this.eventSearch}) : super(key: key);
 
   @override
   EventSearchResultPageState createState() => new EventSearchResultPageState();
@@ -51,10 +50,12 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
   }
 
   _createList() {
-    print("${widget.pref},${widget.line},${widget.station}");
+    print("${widget.eventSearch.pref},${widget.eventSearch.line},${widget.eventSearch.station}");
     //都道府県検索
-    if (widget.pref != null && widget.line == null && widget.station == null) {
-      _mainReference.child(widget.pref).once().then((DataSnapshot result) {
+    if (widget.eventSearch.pref != null &&
+        widget.eventSearch.line == null &&
+        widget.eventSearch.station == null) {
+      _mainReference.child(widget.eventSearch.pref).once().then((DataSnapshot result) {
         result.value.forEach((k, v) {
           v.forEach((k2, v2) {
             setState(() {
@@ -64,16 +65,23 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
         });
       });
       //駅名検索
-    } else if (widget.pref != null && widget.line != null && widget.station != null) {
+    } else if (widget.eventSearch.pref != null &&
+        widget.eventSearch.line != null &&
+        widget.eventSearch.station != null) {
       //駅名検索
-      _mainReference.child("${widget.pref}/${widget.station}").once().then((DataSnapshot result) {
+      _mainReference
+          .child("${widget.eventSearch.pref}/${widget.eventSearch.station}")
+          .once()
+          .then((DataSnapshot result) {
         result.value.forEach((k, v) {
           setState(() {
             eventList.add(new EventDetail.fromMap(v));
           });
         });
       });
-    } else if (widget.pref == null && widget.line == null && widget.station == null) {
+    } else if (widget.eventSearch.pref == null &&
+        widget.eventSearch.line == null &&
+        widget.eventSearch.station == null) {
       _mainReference.once().then((DataSnapshot result) {
         result.value.forEach((k, v) {
           v.forEach((k1, v1) {

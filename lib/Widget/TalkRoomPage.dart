@@ -28,23 +28,25 @@ class TalkRoomPage extends StatelessWidget {
         appBar: AppBar(
           elevation: 2.0,
           backgroundColor: set.baseColor,
-          title: Text('トークルーム',
+          title: Text('トークルーム一覧',
               style: TextStyle(
                 color: set.pointColor,
               )),
         ),
         backgroundColor: set.backGroundColor,
         body: Padding(
-          padding: const EdgeInsets.all(80),
+          padding: const EdgeInsets.all(5),
           child: StreamBuilder<List<String>>(
               stream: bloc.eventListStream,
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Text(
-                    "トークルームはありません",
-                    style: TextStyle(
-                      color: set.pointColor,
-                      fontSize: 20,
+                  return Center(
+                    child: Text(
+                      "トークルームはありません",
+                      style: TextStyle(
+                        color: set.pointColor,
+                        fontSize: 20,
+                      ),
                     ),
                   );
                 } else if (snapshot.hasError) {
@@ -92,6 +94,10 @@ class TalkRoomPage extends StatelessWidget {
         Card(
           color: set.backGroundColor,
           child: ListTile(
+            leading: CircleAvatar(
+              //backgroundImage: NetworkImage(entry.userImageUrl),
+              child: Text(rooms[index][0]),
+            ),
             title: Text(
               rooms[index],
               style: TextStyle(

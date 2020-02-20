@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
+import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 import 'package:flutter_app2/Widget/EventSerchResultPage.dart';
-
 import 'RecritmentPage.dart';
 
 /*----------------------------------------------
@@ -116,15 +113,6 @@ class EventManagePageState extends State<EventManagePage> {
           MaterialPageRoute(
             settings: const RouteSettings(name: "/Recruitment"),
             builder: (context) => RecruitmentPage(mode: 0),
-
-//        Navigator.push(
-//          context,
-//          MaterialPageRoute(
-//            //settings: const RouteSettings(name: "/detail"),
-//            builder: (context) {
-//              return RecruitmentPage(mode: 0);
-//            },
-//            fullscreenDialog: true,
           ),
         ),
       ),
@@ -142,13 +130,14 @@ class EventManagePageState extends State<EventManagePage> {
         Navigator.push(
           this.context,
           MaterialPageRoute(
-              // パラメータを渡す
-              settings: const RouteSettings(name: "/EventSearchResult"),
-              builder: (context) => new EventSearchResultPage(
-                  user: widget.user,
-                  pref: _selectPref,
-                  line: _selectLine,
-                  station: _selectStation)),
+            // パラメータを渡す
+            settings: const RouteSettings(name: "/EventSearchResult"),
+            builder: (context) => new EventSearchResultPage(
+              user: widget.user,
+              eventSearch:
+                  EventSearch(pref: _selectPref, line: _selectLine, station: _selectStation),
+            ),
+          ),
         );
       }
     }
@@ -333,17 +322,7 @@ class EventManagePageState extends State<EventManagePage> {
       changeLine = 2;
       changeStation = 2;
     }
-    //APIコール
-    String prefCode = Pref.pref[prefName];
-    var url = "http://api.ekispert.jp/v1/json/operationLine?prefectureCode=" +
-        "$prefCode&offset=1&limit=100&gcs=tokyo&key=LE_UaP7Vyjs3wQPa";
-    http.Response response = await http.get(url);
-    var body = response.body;
-    Map<String, dynamic> responseMap = jsonDecode(body);
-    lineMap.clear();
-    responseMap["ResultSet"]["Line"].forEach((i) {
-      lineMap[i["Name"]] = i["code"];
-    });
+
     setState(() {
       lineData.clear();
       lineData = lineMap.keys.toList();
@@ -362,17 +341,6 @@ class EventManagePageState extends State<EventManagePage> {
     } else {
       changeLine = 1;
     }
-    String lineCode = lineMap[lineName];
-    //APIコール
-    var url = "http://api.ekispert.jp/v1/json/station?operationLineCode=" +
-        "$lineCode&type=train&offset=1&limit=100&direction=up&gcs=tokyo&key=LE_UaP7Vyjs3wQPa";
-    http.Response response = await http.get(url);
-    var body = response.body;
-    Map<String, dynamic> responseMap = jsonDecode(body);
-    stationMap.clear();
-    responseMap["ResultSet"]["Point"].forEach((i) {
-      stationMap[i["Station"]["Name"]] = i["Station"]["code"];
-    });
 
     setState(() {
       stationData.clear();
