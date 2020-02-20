@@ -84,7 +84,11 @@ class ProfilePage extends StatelessWidget {
                       child: InkWell(
                     onTap: () {
                       Navigator.of(context).push<Widget>(
-                          MaterialPageRoute(builder: (context) => new TalkPage(user: user)));
+                        MaterialPageRoute(
+                          settings: const RouteSettings(name: "/Talk"),
+                          builder: (context) => new TalkPage(user: user),
+                        ),
+                      );
                     },
                     child: Icon(Icons.mail),
                   )),

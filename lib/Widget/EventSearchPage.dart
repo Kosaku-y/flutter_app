@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -18,7 +19,8 @@ import 'RecritmentPage.dart';
 ----------------------------------------------*/
 class EventManagePage extends StatefulWidget {
   @override
-  EventManagePage({Key key}) : super(key: key);
+  User user;
+  EventManagePage({Key key, this.user}) : super(key: key);
 
   State<StatefulWidget> createState() {
     return new EventManagePageState();
@@ -111,9 +113,9 @@ class EventManagePageState extends State<EventManagePage> {
           context,
           rootNavigator: true,
         ).push<Widget>(
-          MaterialPageRoute(builder: (context) {
-            return RecruitmentPage(mode: 0);
-          }
+          MaterialPageRoute(
+            settings: const RouteSettings(name: "/Recruitment"),
+            builder: (context) => RecruitmentPage(mode: 0),
 
 //        Navigator.push(
 //          context,
@@ -123,7 +125,7 @@ class EventManagePageState extends State<EventManagePage> {
 //              return RecruitmentPage(mode: 0);
 //            },
 //            fullscreenDialog: true,
-              ),
+          ),
         ),
       ),
     );
@@ -138,11 +140,16 @@ class EventManagePageState extends State<EventManagePage> {
       if (_eventId != null) {
       } else {
         Navigator.push(
-            this.context,
-            MaterialPageRoute(
-                // パラメータを渡す
-                builder: (context) => new EventSearchResultPage(
-                    pref: _selectPref, line: _selectLine, station: _selectStation)));
+          this.context,
+          MaterialPageRoute(
+              // パラメータを渡す
+              settings: const RouteSettings(name: "/EventSearchResult"),
+              builder: (context) => new EventSearchResultPage(
+                  user: widget.user,
+                  pref: _selectPref,
+                  line: _selectLine,
+                  station: _selectStation)),
+        );
       }
     }
   }

@@ -12,7 +12,6 @@ import 'package:rxdart/rxdart.dart';
 ----------------------------------------------*/
 class TalkRepository {
   User user;
-  TalkRepository(this.user);
 
   // fireBaseから取得をしたデータのストリームを外部に公開するための Stream
   final StreamController<String> _eventRealTimeStream = StreamController();
@@ -20,7 +19,7 @@ class TalkRepository {
 
   final _roomReference = FirebaseDatabase.instance.reference().child("User/Gmail");
 
-  void realTimeThrowList() {
+  TalkRepository(this.user) {
     try {
       _roomReference.child("${user.userId}/message/").onChildAdded.listen((e) {
         _eventRealTimeStream.add(e.snapshot.key);

@@ -81,10 +81,12 @@ class TalkRoomPage extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                // パラメータを渡す
-                builder: (context) => new TalkPage(user: user, toUserId: rooms[index])));
+          context,
+          MaterialPageRoute(
+            settings: const RouteSettings(name: "/Talk"),
+            builder: (context) => new TalkPage(user: user, opponentId: rooms[index]),
+          ),
+        );
       },
       child: new Column(children: <Widget>[
         Card(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
 
 /*----------------------------------------------
@@ -9,9 +10,10 @@ import 'package:intl/intl.dart';
 
 ----------------------------------------------*/
 
-class EventDetailPage extends StatelessWidget {
+class EventSearchResultDetailPage extends StatelessWidget {
   EventDetail event;
-  EventDetailPage(this.event);
+  User user;
+  EventSearchResultDetailPage({Key key, this.user, this.event}) : super(key: key);
   PageParts set = new PageParts();
   var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
 

@@ -60,7 +60,7 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     tabs = [
       Home(user: widget.user),
-      EventManagePage(),
+      EventManagePage(user: widget.user),
       TalkRoomPage(widget.user),
       SettingPage(user: widget.user),
     ];
@@ -139,7 +139,7 @@ class TabNavigator extends StatelessWidget {
 
   Map<String, Widget Function(BuildContext)> _routerBuilder(BuildContext context) => {
         '/NewHome': (context) => new Home(user: user),
-        '/EventManage': (context) => new EventManagePage(),
+        '/EventManage': (context) => new EventManagePage(user: user),
         '/RoomPage': (context) => new TalkRoomPage(user),
         '/Setting': (context) => new SettingPage(user: user)
       };

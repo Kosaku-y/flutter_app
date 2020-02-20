@@ -8,7 +8,7 @@ import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:intl/intl.dart';
 
-import 'package:flutter_app2/Widget/EventDetailPage.dart';
+import 'package:flutter_app2/Widget/EventSearchResultDetailPage.dart';
 
 import 'TalkPage.dart';
 
@@ -41,7 +41,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
 
   var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
   //EventRepository eventRepository = new EventRepository();
-  List<EventDetail> entries = new List();
+  List<EventDetail> eventList = new List();
 
   @override
   //初期コールメソッド
@@ -58,7 +58,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
         result.value.forEach((k, v) {
           v.forEach((k2, v2) {
             setState(() {
-              entries.add(new EventDetail.fromMap(v2));
+              eventList.add(new EventDetail.fromMap(v2));
             });
           });
         });
@@ -69,7 +69,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
       _mainReference.child("${widget.pref}/${widget.station}").once().then((DataSnapshot result) {
         result.value.forEach((k, v) {
           setState(() {
-            entries.add(new EventDetail.fromMap(v));
+            eventList.add(new EventDetail.fromMap(v));
           });
         });
       });
@@ -79,7 +79,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
           v.forEach((k1, v1) {
             v1.forEach((k2, v2) {
               setState(() {
-                entries.add(new EventDetail.fromMap(v2));
+                eventList.add(new EventDetail.fromMap(v2));
               });
             });
           });
@@ -105,7 +105,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
           padding: const EdgeInsets.all(20.0),
           child: new Column(
             children: <Widget>[
-              Text(entries.length.toString() + '件見つかりました。',
+              Text(eventList.length.toString() + '件見つかりました。',
                   style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
               Expanded(
                 child: ListView.builder(
@@ -113,7 +113,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
                   itemBuilder: (BuildContext context, int index) {
                     return _buildRow(index);
                   },
-                  itemCount: entries.length,
+                  itemCount: eventList.length,
                 ),
               ),
               Divider(
@@ -141,11 +141,20 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
   //リスト要素生成
   Widget _buildRow(int index) {
     //リストの要素一つづつにonTapを付加して、詳細ページに飛ばす
-    return new GestureDetector(
+    return InkWell(
       onTap: () {
+//        Navigator.push(
+//          this.context,
+//          MaterialPageRoute(
+//            // パラメータを渡す
+//            builder: (context) => new EventSearchResultDetailPage(entries[index]),
+//          ),
+//        );
         Navigator.of(context).push<Widget>(
           MaterialPageRoute(
-            builder: (context) => new EventDetailPage(entries[index]),
+            settings: const RouteSettings(name: "/EventSearchResultDetail/"),
+            builder: (context) =>
+                EventSearchResultDetailPage(user: widget.user, event: eventList[index]),
           ),
         );
       },
@@ -168,7 +177,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                         child: Text(
-                          entries[index].station + "駅",
+                          eventList[index].station + "駅",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20.0,
@@ -179,7 +188,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                         child: Text(
-                          entries[index].userId,
+                          eventList[index].userId,
                           style: TextStyle(
                             fontSize: 16.0,
                             color: set.fontColor,
@@ -189,7 +198,7 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                         child: Text(
-                          "EventID :" + entries[index].eventId.toString(),
+                          "EventID :" + eventList[index].eventId.toString(),
                           style: TextStyle(
                             fontSize: 16.0,
                             color: set.fontColor,
@@ -203,8 +212,9 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
                   child: InkWell(
                     onTap: () {
                       Navigator.of(context).push<Widget>(MaterialPageRoute(
-                          builder: (context) =>
-                              new TalkPage(user: widget.user, toUserId: entries[index].userId)));
+                          settings: const RouteSettings(name: "/Talk"),
+                          builder: (context) => new TalkPage(
+                              user: widget.user, opponentId: eventList[index].userId)));
                     },
                     child: Icon(
                       Icons.mail,

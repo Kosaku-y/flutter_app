@@ -7,24 +7,31 @@ import 'package:firebase_database/firebase_database.dart';
 ----------------------------------------------*/
 class Talk {
   String key;
-  DateTime dateTime;
-  String message;
-  String toUserId;
-  String fromUserId;
+  DateTime _dateTime;
+  String _message;
+  String _toUserId;
+  String _fromUserId;
 
-  Talk(this.dateTime, this.message);
+  Talk(this._toUserId, this._fromUserId, this._message) : _dateTime = DateTime.now();
 
   Talk.fromSnapShot(DataSnapshot snapshot)
       : key = snapshot.key,
-        dateTime = new DateTime.fromMillisecondsSinceEpoch(snapshot.value["date"]),
-        message = snapshot.value["message"],
-        fromUserId = snapshot.value["fromUserId"];
+        _dateTime = new DateTime.fromMillisecondsSinceEpoch(snapshot.value["date"]),
+        _message = snapshot.value["message"],
+        _toUserId = snapshot.value["toUserId"],
+        _fromUserId = snapshot.value["fromUserId"];
 
   toJson() {
     return {
-      "date": dateTime.millisecondsSinceEpoch,
-      "message": message,
-      "fromUserId": fromUserId,
+      "date": _dateTime.millisecondsSinceEpoch,
+      "message": _message,
+      "toUserId": _toUserId,
+      "fromUserId": _fromUserId,
     };
   }
+
+  DateTime get dateTime => _dateTime;
+  String get message => _message;
+  String get toUserId => _toUserId;
+  String get fromUserId => _fromUserId;
 }

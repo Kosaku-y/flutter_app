@@ -35,7 +35,11 @@ class SettingPage extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward),
               onTap: () {
                 Navigator.of(context).push<Widget>(
-                    MaterialPageRoute(builder: (context) => new ProfilePage(user: user)));
+                  MaterialPageRoute(
+                    settings: const RouteSettings(name: "/Profile"),
+                    builder: (context) => new ProfilePage(user: user),
+                  ),
+                );
               }),
           Divider(
             color: set.fontColor,
@@ -49,13 +53,16 @@ class SettingPage extends StatelessWidget {
               trailing: Icon(Icons.arrow_forward),
               onTap: () async {
                 await repository.signOut();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => LoginPage(),
-                  ),
-                );
-//                Navigator.pushAndRemoveUntil(context,
-//                    new MaterialPageRoute(builder: (context) => new LoginPage()), (route) => false);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
+                    ModalRoute.withName('/NewHome'));
+//                Navigator.of(context).pushReplacement(
+//                  MaterialPageRoute(
+//                    settings: const RouteSettings(name: "/Login"),
+//                    builder: (context) => LoginPage(),
+//                  ),
+//                );
               }),
           Divider(
             color: set.fontColor,

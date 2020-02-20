@@ -52,6 +52,7 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
+          settings: const RouteSettings(name: "/main"),
           builder: (context) => MainPage(user: user, message: "登録完了しました"),
         ),
       );

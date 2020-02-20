@@ -58,7 +58,7 @@ class HomeState extends State<Home> {
           children: <Widget>[
             Container(
               padding: const EdgeInsets.all(2.0),
-              child: Text('ようこそ ${widget.user.name}さん',
+              child: Text('ようこそ ${widget.user.name} さん',
                   style:
                       TextStyle(color: set.fontColor, fontWeight: FontWeight.w700, fontSize: 20.0)),
             ),
@@ -119,6 +119,7 @@ class HomeState extends State<Home> {
               onTap: () => Navigator.push(
                 this.context,
                 MaterialPageRoute(
+                  settings: const RouteSettings(name: "/MahjongHand"),
                   builder: (context) => MahjongHandPage(),
                 ),
               ),
@@ -154,6 +155,7 @@ class HomeState extends State<Home> {
               onTap: () => Navigator.push(
                 this.context,
                 MaterialPageRoute(
+                  settings: const RouteSettings(name: "/PieChartDetail"),
                   builder: (context) => new PieChartDetailPage(),
                 ),
               ),

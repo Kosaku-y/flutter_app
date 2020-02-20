@@ -61,6 +61,7 @@ class LoginPageState extends State<LoginPage> {
           print("ユーザー情報が見つかりませんでした");
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
+              settings: const RouteSettings(name: "/AccountSetting"),
               builder: (BuildContext context) => AccountSettingPage(user: user, status: "regist"),
             ),
           );
