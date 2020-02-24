@@ -7,6 +7,7 @@ class Pref {
   int prefCode;
   String prefName;
   static Map<String, String> pref = {
+    "": "",
     "北海道": "1",
     "青森県": "2",
     "岩手県": "3",

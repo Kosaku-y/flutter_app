@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
-import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,7 +13,7 @@ import 'package:http/http.dart' as http;
 class EventRepository {
   final _eventReference = FirebaseDatabase.instance.reference().child("Events");
   final _eventManagerReference = FirebaseDatabase.instance.reference().child("EventManager");
-  final _userReference = FirebaseDatabase.instance.reference().child("gmail");
+  final _userReference = FirebaseDatabase.instance.reference();
   int eventId;
 
   //既存イベント変更メソッド
@@ -95,6 +94,7 @@ class EventRepository {
     }
   }
 
+  //路線Picker作成
   Future<Map<String, String>> createLineMap(String prefCode) async {
     //APIコール
     var url = "http://api.ekispert.jp/v1/json/operationLine?prefectureCode=" +
@@ -105,12 +105,14 @@ class EventRepository {
     Map<String, dynamic> responseMap = jsonDecode(body);
     //return用Map
     Map<String, String> lineMap = Map();
+    lineMap["--選択して下さい--"] = " "; //空データ挿入
     responseMap["ResultSet"]["Line"].forEach((i) {
       lineMap[i["Name"]] = i["code"];
     });
     return lineMap;
   }
 
+  //駅Picker作成
   Future<Map<String, String>> createStationMap(String lineCode) async {
     //APIコール
     var url = "http://api.ekispert.jp/v1/json/station?operationLineCode=" +
@@ -119,7 +121,7 @@ class EventRepository {
     var body = response.body;
     Map<String, dynamic> responseMap = jsonDecode(body); //レスポンス受信用Map
     Map<String, String> stationMap = Map(); //return用Map
-    stationMap[""] = ""; //空データ挿入
+    stationMap["--選択して下さい--"] = " "; //空データ挿入
     responseMap["ResultSet"]["Point"].forEach((i) {
       stationMap[i["Station"]["Name"]] = i["Station"]["code"];
     });

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app2/Bloc/EventManageBloc.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
 import 'package:flutter_app2/Widget/EventSerchResultPage.dart';
-import 'RecritmentPage.dart';
+import 'EventCreatePage.dart';
 
 /*----------------------------------------------
 
@@ -28,20 +29,16 @@ class EventManagePageState extends State<EventManagePage> {
   PageParts set = new PageParts();
   final _formKey = GlobalKey<FormState>();
 
-  List lineData = [""];
-  List stationData = [""];
   Pref pref;
   Line line;
   Station station;
-  String _selectPref;
-  String _selectLine;
-  String _selectStation;
   String _eventId;
   int changePref = 0;
   int changeLine = 0;
   int changeStation = 0;
-  Map lineMap = new Map<String, String>();
-  Map stationMap = new Map<String, String>();
+  Map _lineMap = new Map<String, String>();
+  Map _stationMap = new Map<String, String>();
+  EventManageBloc _bloc = EventManageBloc();
 
   TextEditingController _prefController = new TextEditingController(text: '');
   TextEditingController _lineController = new TextEditingController(text: '');
@@ -112,7 +109,7 @@ class EventManagePageState extends State<EventManagePage> {
         ).push<Widget>(
           MaterialPageRoute(
             settings: const RouteSettings(name: "/Recruitment"),
-            builder: (context) => RecruitmentPage(mode: 0),
+            builder: (context) => EventCreatePage(mode: 0),
           ),
         ),
       ),
@@ -134,8 +131,10 @@ class EventManagePageState extends State<EventManagePage> {
             settings: const RouteSettings(name: "/EventSearchResult"),
             builder: (context) => new EventSearchResultPage(
               user: widget.user,
-              eventSearch:
-                  EventSearch(pref: _selectPref, line: _selectLine, station: _selectStation),
+              eventSearch: EventSearch(
+                  pref: _prefController.text,
+                  line: _lineController.text,
+                  station: _stationController.text),
             ),
           ),
         );
@@ -154,11 +153,13 @@ class EventManagePageState extends State<EventManagePage> {
           datas: Pref.pref.keys.toList(),
           title: '都道府県',
           onConfirm: (value) {
-            if (value != "") {
+            if (_prefController.text != value) {
               setState(() {
                 _prefController.text = value;
-                _selectPref = value;
-                _prefChange(value);
+                if (value != "") {
+                  _bloc.lineApiSink.add(Pref.pref[value]);
+                  _prefChange();
+                }
               });
             }
           },
@@ -195,100 +196,147 @@ class EventManagePageState extends State<EventManagePage> {
 
   //路線Picker
   Widget _linePicker() {
-    return new InkWell(
-      onTap: () {
-        DataPicker.showDatePicker(
-          context,
-          showTitleActions: true,
-          locale: 'en',
-          datas: lineData,
-          title: '路線',
-          onConfirm: (value) {
-            if (value != "") {
-              setState(() {
-                _lineController.text = value;
-                _lineChange(value);
-              });
-            }
-          },
-        );
-      },
-      child: AbsorbPointer(
-        child: new TextFormField(
-          style: TextStyle(color: Colors.white),
-          enableInteractiveSelection: false,
-          controller: _lineController,
-          decoration: InputDecoration(
-            icon: Icon(
-              Icons.train,
-              color: set.fontColor,
-            ),
-            hintText: 'Choose a line',
-            labelText: '路線',
-            labelStyle: TextStyle(color: set.fontColor),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
-          ),
-          validator: (String value) {
-            if (changeLine == 2) {
-              return '再選択してください';
+    List _lineData = [""];
+    return StreamBuilder<Map<String, String>>(
+        stream: _bloc.lineMapStream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return _lineTextFormField();
+          } else if (snapshot.hasError) {
+            return Text("エラーが発生しました。");
+          } else {
+            if (snapshot.data == null || snapshot.data.isEmpty) {
+              return Text("データが空です。");
             } else {
-              return null;
+              _lineMap = snapshot.data;
+              _lineData = _lineMap.keys.toList();
+              return new InkWell(
+                onTap: () {
+                  DataPicker.showDatePicker(
+                    context,
+                    showTitleActions: true,
+                    locale: 'en',
+                    datas: _lineData,
+                    title: '路線',
+                    onConfirm: (value) {
+                      if (_lineController.text != value) {
+                        setState(() {
+                          _lineController.text = value;
+                          if (value != "") {
+                            _bloc.stationApiSink.add(_lineMap[value]);
+                            _lineChange();
+                          }
+                        });
+                      }
+                    },
+                  );
+                },
+                child: AbsorbPointer(
+                  child: _lineTextFormField(),
+                ),
+              );
             }
-          },
+          }
+        });
+  }
+
+  Widget _lineTextFormField() {
+    return new TextFormField(
+      style: TextStyle(color: Colors.white),
+      enableInteractiveSelection: false,
+      controller: _lineController,
+      decoration: InputDecoration(
+        icon: Icon(
+          Icons.train,
+          color: set.fontColor,
+        ),
+        hintText: 'Choose a line',
+        labelText: '路線',
+        labelStyle: TextStyle(color: set.fontColor),
+        enabledBorder: UnderlineInputBorder(
+          borderRadius: BorderRadius.circular(1.0),
+          borderSide: BorderSide(color: set.fontColor, width: 3.0),
         ),
       ),
+      validator: (String value) {
+        if (changeLine == 2) {
+          return '再選択してください';
+        } else {
+          return null;
+        }
+      },
     );
   }
 
   //駅Picker
   Widget _stationPicker() {
-    return new InkWell(
-      onTap: () {
-        DataPicker.showDatePicker(
-          context,
-          showTitleActions: true,
-          locale: 'en',
-          datas: stationData,
-          title: '駅',
-          onConfirm: (value) {
-            if (value != "") {
-              setState(() {
-                _stationController.text = value;
-                _selectStation = value;
-                changeStation = 1;
-              });
-            }
-          },
-        );
-      },
-      child: AbsorbPointer(
-        child: new TextFormField(
-          style: TextStyle(color: Colors.white),
-          enableInteractiveSelection: false,
-          controller: _stationController,
-          decoration: InputDecoration(
-            icon: Icon(
-              Icons.subway,
-              color: set.fontColor,
-            ),
-            hintText: 'Choose a station',
-            labelText: '駅名',
-            labelStyle: TextStyle(color: set.fontColor),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
-          ),
-          validator: (String value) {
-            if (changeStation == 2) {
-              return '再選択してください';
+    List _stationData = [""];
+    return StreamBuilder<Map<String, String>>(
+        stream: _bloc.stationMapStream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return _stationTextFormField();
+          } else if (snapshot.hasError) {
+            return Text("エラーが発生しました。");
+          } else {
+            if (snapshot.data == null || snapshot.data.isEmpty) {
+              return Text("データが空です。");
             } else {
-              return null;
+              _stationMap = snapshot.data;
+              _stationData = _stationMap.keys.toList();
+              return InkWell(
+                onTap: () {
+                  DataPicker.showDatePicker(
+                    context,
+                    showTitleActions: true,
+                    locale: 'en',
+                    datas: _stationData,
+                    title: '駅',
+                    onConfirm: (value) {
+                      if (value != "") {
+                        if (_stationController.text != value) {
+                          setState(() {
+                            _stationController.text = value;
+                            changeStation = 1;
+                          });
+                        }
+                      }
+                    },
+                  );
+                },
+                child: AbsorbPointer(
+                  child: _stationTextFormField(),
+                ),
+              );
             }
-          },
+          }
+        });
+  }
+
+  Widget _stationTextFormField() {
+    return new TextFormField(
+      style: TextStyle(color: Colors.white),
+      enableInteractiveSelection: false,
+      controller: _stationController,
+      decoration: InputDecoration(
+        icon: Icon(
+          Icons.subway,
+          color: set.fontColor,
         ),
+        hintText: 'Choose a station',
+        labelText: '駅名',
+        labelStyle: TextStyle(color: set.fontColor),
+        enabledBorder: UnderlineInputBorder(
+            borderRadius: BorderRadius.circular(1.0),
+            borderSide: BorderSide(color: set.fontColor, width: 3.0)),
       ),
+      validator: (String value) {
+        if (changeStation == 2) {
+          return '再選択してください';
+        } else {
+          return null;
+        }
+      },
     );
   }
 
@@ -315,22 +363,17 @@ class EventManagePageState extends State<EventManagePage> {
   }
 
   //県Pickerが選択された時の処理メソッド
-  Future _prefChange(String prefName) async {
+  void _prefChange() {
     changePref = 1;
     //県、路線、駅、組み合わせ矛盾チェック
     if (changeLine != 0 || changeStation != 0) {
       changeLine = 2;
       changeStation = 2;
     }
-
-    setState(() {
-      lineData.clear();
-      lineData = lineMap.keys.toList();
-    });
   }
 
   //路線チェンジ用
-  Future _lineChange(String lineName) async {
+  void _lineChange() {
     //県、路線、駅、組み合わせ矛盾チェック
     if (changeLine == 0) {
       changeLine = 1;
@@ -341,10 +384,11 @@ class EventManagePageState extends State<EventManagePage> {
     } else {
       changeLine = 1;
     }
+  }
 
-    setState(() {
-      stationData.clear();
-      stationData = stationMap.keys.toList();
-    });
+  @override
+  void dispose() {
+    super.dispose();
+    _bloc.dispose();
   }
 }

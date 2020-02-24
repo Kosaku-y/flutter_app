@@ -4,7 +4,7 @@ import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:flutter_app2/Widget/EventSerchResultPage.dart';
 
-class EventBloc {
+class EventSearchBloc {
   //イベント作成ページから要素を受け取るStream
   final StreamController<EventDetail> _eventCreateController = StreamController();
 
@@ -17,13 +17,12 @@ class EventBloc {
 
   final EventRepository repository = EventRepository();
 
-  EventBloc(EventSearch e) {
-    fetchSearch(e);
-    //_eventCreateController.stream.listen((onData) async {});
-  }
-  Future<void> fetchSearch(EventSearch e) async {
-    List<EventDetail> eventList = await repository.searchEvent(e);
-    _searchResultController.sink.add(eventList);
+  EventSearchBloc({EventSearch eventSearch}) {
+    _eventSearchController.stream.listen((eventSearch) async {
+      List<EventDetail> eventList = await repository.searchEvent(eventSearch);
+      _searchResultController.sink.add(eventList);
+    });
+    _eventCreateController.stream.listen((onData) async {});
   }
 
   void dispose() {
