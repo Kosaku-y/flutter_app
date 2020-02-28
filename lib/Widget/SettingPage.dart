@@ -56,13 +56,7 @@ class SettingPage extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
-                    ModalRoute.withName('/NewHome'));
-//                Navigator.of(context).pushReplacement(
-//                  MaterialPageRoute(
-//                    settings: const RouteSettings(name: "/Login"),
-//                    builder: (context) => LoginPage(),
-//                  ),
-//                );
+                    ModalRoute.withName('/'));
               }),
           Divider(
             color: set.fontColor,

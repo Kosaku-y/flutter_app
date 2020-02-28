@@ -109,7 +109,7 @@ class EventManagePageState extends State<EventManagePage> {
         ).push<Widget>(
           MaterialPageRoute(
             settings: const RouteSettings(name: "/Recruitment"),
-            builder: (context) => EventCreatePage(mode: 0),
+            builder: (context) => EventCreatePage(user: widget.user, mode: 0),
           ),
         ),
       ),

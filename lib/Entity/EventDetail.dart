@@ -18,7 +18,8 @@ class EventDetail {
   String userId;
   String userName;
 
-  EventDetail(this.recruitMember, this.station, this.startingTime, this.endingTime, this.comment);
+  EventDetail(this.recruitMember, this.station, this.startingTime, this.endingTime, this.comment,
+      this.userId, this.userName);
 
   EventDetail.fromMap(Map map)
       : userId = map["userId"],
@@ -43,7 +44,7 @@ class EventDetail {
         "comment:$comment\n"
         "-------------------------------\n");
     return {
-      "eventId": eventId,
+      "eventId": "$eventId",
       "userId": userId,
       "userName": userName,
       "recruitMember": recruitMember,

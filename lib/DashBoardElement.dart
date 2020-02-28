@@ -143,8 +143,6 @@ class MahjongHandPage extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: new Column(
             children: <Widget>[
-              Text('役一覧',
-                  style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
               Expanded(
                 child: ListView.builder(
                   itemBuilder: (BuildContext context, int index) {

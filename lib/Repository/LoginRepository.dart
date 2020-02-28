@@ -47,7 +47,7 @@ class LoginRepository {
 
   //fireBaseサインイン部分
   Future<User> checkFireBaseLogin(FirebaseUser currentUser) async {
-    final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
+    final _mainReference = FirebaseDatabase.instance.reference().child("User");
     //メールアドレス正規化
     var userId = makeUserId(currentUser.email);
     User user;

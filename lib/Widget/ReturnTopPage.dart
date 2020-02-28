@@ -9,21 +9,33 @@ class ReturnTopPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Center(
-            child: Text("$message", style: TextStyle(color: set.pointColor)),
-          ),
-          RaisedButton.icon(
-            label: Text("検索ページへ戻る"),
-            icon: Icon(
-              Icons.search,
-              color: set.fontColor,
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 2.0,
+        backgroundColor: set.baseColor,
+        title: Text('完了',
+            style: TextStyle(
+              color: set.pointColor,
+            )),
+      ),
+      backgroundColor: set.backGroundColor,
+      body: Container(
+        child: Column(
+          children: <Widget>[
+            Center(
+              child: Text("$message", style: TextStyle(color: set.pointColor)),
             ),
-            onPressed: () => Navigator.of(context).popUntil(ModalRoute.withName("/EventSearch")),
-          ),
-        ],
+            RaisedButton.icon(
+                label: Text("検索ページへ戻る"),
+                icon: Icon(
+                  Icons.search,
+                  color: set.fontColor,
+                ),
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(context, "/EventSearch", (_) => false);
+                }),
+          ],
+        ),
       ),
     );
   }

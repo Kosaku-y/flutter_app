@@ -35,7 +35,7 @@ class TalkRoomPage extends StatelessWidget {
         ),
         backgroundColor: set.backGroundColor,
         body: Padding(
-          padding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.all(15.0),
           child: StreamBuilder<List<String>>(
               stream: bloc.eventListStream,
               builder: (context, snapshot) {
@@ -49,17 +49,20 @@ class TalkRoomPage extends StatelessWidget {
                       ),
                     ),
                   );
-                } else if (snapshot.hasError) {
+                }
+                if (snapshot.hasError) {
                   return Text("エラーが発生しました" + snapshot.error.toString());
-                } else {
-                  rooms = snapshot.data;
-                  if (snapshot.data.length == 0) {
-                    return Text("トークルームはありません",
+                }
+                rooms = snapshot.data;
+                if (snapshot.data.length == 0) {
+                  return Center(
+                    child: Text("トークルームはありません",
                         style: TextStyle(
                           color: set.pointColor,
                           fontSize: 20,
-                        ));
-                  }
+                        )),
+                  );
+                } else {
                   return Container(
                       child: new Column(
                     children: <Widget>[

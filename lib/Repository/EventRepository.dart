@@ -24,14 +24,10 @@ class EventRepository {
     try {
       await _eventManagerReference.once().then((DataSnapshot snapshot) {
         eventId = int.parse(snapshot.value["eventId"]);
-        String newEventId = (eventId + 1).toString();
-        _eventManagerReference.set({"eventId": "$newEventId"});
-        event.eventId = newEventId;
-        _eventReference
-            .child(pref)
-            .child(event.station)
-            .child(eventId.toString())
-            .set(event.toJson());
+        String newEventId = (eventId + 1).toString().padLeft(7, "0"); // => 001;
+        event.eventId = "E" + newEventId;
+        _eventManagerReference.set({"eventId": "${eventId + 1}"});
+        _eventReference.child(pref).child(event.station).child(event.eventId).set(event.toJson());
       });
     } catch (e) {
       print(e);
@@ -60,25 +56,25 @@ class EventRepository {
   Future<List<EventDetail>> searchEvent(EventSearch e) async {
     List<EventDetail> eventList = List();
     try {
-      if (e.pref != null && e.line == null && e.station == null) {
+      if (e.pref != "" && e.line == "" && e.station == "") {
         //都道府県検索
-        _eventReference.child(e.pref).once().then((DataSnapshot result) {
+        await _eventReference.child(e.pref).once().then((DataSnapshot result) {
           result.value.forEach((k, v) {
             v.forEach((k2, v2) {
               eventList.add(new EventDetail.fromMap(v2));
             });
           });
         });
-      } else if (e.pref != null && e.line != null && e.station != null) {
+      } else if (e.pref != "" && e.line != "" && e.station != "") {
         //駅名検索
-        _eventReference.child("${e.pref}/${e.station}").once().then((DataSnapshot result) {
+        await _eventReference.child("${e.pref}/${e.station}").once().then((DataSnapshot result) {
           result.value.forEach((k, v) {
             eventList.add(new EventDetail.fromMap(v));
           });
         });
-      } else if (e.pref == null && e.line == null && e.station == null) {
+      } else if (e.pref == "" && e.line == "" && e.station == "") {
         //全件検索
-        _eventReference.once().then((DataSnapshot result) {
+        await _eventReference.once().then((DataSnapshot result) {
           result.value.forEach((k, v) {
             v.forEach((k1, v1) {
               v1.forEach((k2, v2) {

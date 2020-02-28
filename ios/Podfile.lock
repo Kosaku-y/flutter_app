@@ -163,7 +163,7 @@ SPEC CHECKSUMS:
   firebase_analytics: bd50d8f5d3f42dcab6da67944a849062470b0a19
   firebase_auth: 3735c80c0a290fd04a34e9bbbecbeec8f79a216a
   firebase_core: ebf6a934345d646bf7820a6685427bb3741f01ed
-  firebase_database: 03cd65b8e4203286a337877bb3dd744f4817f71e
+  firebase_database: 25e756b41e85a2d9c07502b78f28fc5ae5973e0d
   FirebaseAnalytics: 629301c2b9925f3537d4093a17a72751ae5b7084
   FirebaseAuth: 80879f0e9f2c5f40686d5b42f6ccb3cd5dce78ea
   FirebaseAuthInterop: 0ffa57668be100582bb7643d4fcb7615496c41fc

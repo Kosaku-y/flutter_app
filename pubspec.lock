@@ -203,7 +203,7 @@ packages:
       name: firebase_database
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.9"
+    version: "3.1.1"
   fixnum:
     dependency: transitive
     description:
@@ -233,12 +233,10 @@ packages:
   flutter_picker:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: a0ed849a42f8be2a60d56d42697036d8f8a49dea
-      url: "git://github.com/yangyxd/flutter_picker.git"
-    source: git
-    version: "1.0.13"
+      name: flutter_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   flutter_signin_button:
     dependency: "direct main"
     description:
@@ -615,4 +613,4 @@ packages:
     version: "2.1.16"
 sdks:
   dart: ">=2.4.0 <3.0.0"
-  flutter: ">=1.9.1+hotfix.5 <2.0.0"
+  flutter: ">=1.10.0 <2.0.0"

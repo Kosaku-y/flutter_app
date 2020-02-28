@@ -4,7 +4,9 @@ import 'package:flutter_app2/Bloc/EventManageBloc.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
+import 'package:flutter_app2/Widget/EventCreateConfirmPage.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
@@ -16,8 +18,9 @@ import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart
 ----------------------------------------------*/
 class EventCreatePage extends StatefulWidget {
   int mode;
+  User user;
 
-  EventCreatePage({Key key, this.mode}) : super(key: key);
+  EventCreatePage({Key key, this.user, this.mode}) : super(key: key);
   @override
   EventCreatePageState createState() => new EventCreatePageState();
 }
@@ -53,7 +56,6 @@ class EventCreatePageState extends State<EventCreatePage> {
   DateTime _end;
 
   final _formKey = GlobalKey<FormState>();
-  final EventRepository repository = new EventRepository();
   final List<String> _numberOfRecruit = <String>['1', '2', '3'];
 
   @override
@@ -107,7 +109,13 @@ class EventCreatePageState extends State<EventCreatePage> {
                   Icons.search,
                   color: set.fontColor,
                 ),
-                onPressed: () => Navigator.of(context).popUntil(ModalRoute.withName("/EventSearch")
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => EventCreatePage(),
+                    ),
+                  );
+                },
               ),
             ]),
           ),
@@ -144,10 +152,25 @@ class EventCreatePageState extends State<EventCreatePage> {
     if (this._formKey.currentState.validate()) {
       this._formKey.currentState.save();
 
-      EventDetail event = new EventDetail(_memberController.text, _prefController.text,
-          formatter.format(_start), formatter.format(_end), _commentController.text);
-      //repository.createEvent(_prefController.text, _lineController.text, event);
-
+      EventDetail event = new EventDetail(
+        _memberController.text,
+        _stationController.text,
+        formatter.format(_start),
+        formatter.format(_end),
+        _commentController.text,
+        widget.user.userId,
+        widget.user.name,
+      );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          settings: const RouteSettings(name: "/EventCreateConfirm"),
+          builder: (BuildContext context) => EventCreateConfirmPage(
+              pref: _prefController.text,
+              line: _lineController.text,
+              user: widget.user,
+              event: event),
+        ),
+      );
     }
   }
 

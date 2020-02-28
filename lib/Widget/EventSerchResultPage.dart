@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_app2/Bloc/EventSearchBloc.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
@@ -15,90 +15,23 @@ import 'TalkPage.dart';
 
 /*----------------------------------------------
 
-イベント検索　結果表示クラス
-
-----------------------------------------------*/
-class EventSearchResultPage extends StatefulWidget {
-  EventSearch eventSearch;
-  User user;
-  EventSearchResultPage({Key key, this.user, this.eventSearch}) : super(key: key);
-
-  @override
-  EventSearchResultPageState createState() => new EventSearchResultPageState();
-}
-
-/*----------------------------------------------
-
 イベント検索　結果表示ページ出力（リスト表示）クラス
 
 ----------------------------------------------*/
-class EventSearchResultPageState extends State<EventSearchResultPage> {
+class EventSearchResultPage extends StatelessWidget {
+  User user;
+  EventSearch eventSearch;
+  EventSearchResultPage({Key key, this.user, this.eventSearch}) : super(key: key);
   PageParts set = new PageParts();
-  final _mainReference = FirebaseDatabase.instance.reference().child("Events");
-
-  //EventSearchResultPageState(this.pref, this.line, this.station);
 
   var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
-  //EventRepository eventRepository = new EventRepository();
+  EventRepository eventRepository = new EventRepository();
   List<EventDetail> eventList = new List();
-
-  @override
-  //初期コールメソッド
-  void initState() {
-    super.initState();
-    _createList();
-  }
-
-  _createList() {
-    print("${widget.eventSearch.pref},${widget.eventSearch.line},${widget.eventSearch.station}");
-    //都道府県検索
-    if (widget.eventSearch.pref != null &&
-        widget.eventSearch.line == null &&
-        widget.eventSearch.station == null) {
-      _mainReference.child(widget.eventSearch.pref).once().then((DataSnapshot result) {
-        result.value.forEach((k, v) {
-          v.forEach((k2, v2) {
-            setState(() {
-              eventList.add(new EventDetail.fromMap(v2));
-            });
-          });
-        });
-      });
-      //駅名検索
-    } else if (widget.eventSearch.pref != null &&
-        widget.eventSearch.line != null &&
-        widget.eventSearch.station != null) {
-      //駅名検索
-      _mainReference
-          .child("${widget.eventSearch.pref}/${widget.eventSearch.station}")
-          .once()
-          .then((DataSnapshot result) {
-        result.value.forEach((k, v) {
-          setState(() {
-            eventList.add(new EventDetail.fromMap(v));
-          });
-        });
-      });
-    } else if (widget.eventSearch.pref == null &&
-        widget.eventSearch.line == null &&
-        widget.eventSearch.station == null) {
-      _mainReference.once().then((DataSnapshot result) {
-        result.value.forEach((k, v) {
-          v.forEach((k1, v1) {
-            v1.forEach((k2, v2) {
-              setState(() {
-                eventList.add(new EventDetail.fromMap(v2));
-              });
-            });
-          });
-        });
-      });
-    }
-  }
-
   //画面全体のビルド
   @override
   Widget build(BuildContext context) {
+    EventSearchBloc bloc = EventSearchBloc();
+    bloc.eventSearchSink.add(eventSearch);
     return Scaffold(
       appBar: AppBar(
         elevation: 2.0,
@@ -109,60 +42,74 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
             )),
       ),
       backgroundColor: set.backGroundColor,
-      body: Container(
-          padding: const EdgeInsets.all(20.0),
-          child: new Column(
-            children: <Widget>[
-              Text(eventList.length.toString() + '件見つかりました。',
-                  style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
-              Expanded(
-                child: ListView.builder(
-                  //padding: const EdgeInsets.all(16.0),
-                  itemBuilder: (BuildContext context, int index) {
-                    return _buildRow(index);
-                  },
-                  itemCount: eventList.length,
+      body: StreamBuilder<List<EventDetail>>(
+        stream: bloc.searchResultStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text("エラーが発生しました");
+          } else if (!snapshot.hasData) {
+            return Center(
+              child: set.indicator(),
+            );
+          } else {
+            if (snapshot.data == null || snapshot.data.isEmpty) {
+              return Center(
+                child: Text(
+                  "指定の条件では見つかりませんでした。",
+                  style: TextStyle(color: set.pointColor),
                 ),
-              ),
-              Divider(
-                height: 8.0,
-              ),
-              RaisedButton.icon(
-                label: Text("戻る"),
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: set.fontColor,
+              );
+            } else {
+              eventList = snapshot.data;
+              return Container(
+                padding: const EdgeInsets.all(20.0),
+                child: new Column(
+                  children: <Widget>[
+                    Text(eventList.length.toString() + '件見つかりました。',
+                        style:
+                            TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
+                    Expanded(
+                      child: ListView.builder(
+                        //padding: const EdgeInsets.all(16.0),
+                        itemBuilder: (BuildContext context, int index) {
+                          return _buildRow(context, index);
+                        },
+                        itemCount: eventList.length,
+                      ),
+                    ),
+                    Divider(
+                      height: 8.0,
+                    ),
+                    RaisedButton.icon(
+                      label: Text("戻る"),
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: set.fontColor,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-//              Container(
-//                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
-//                  child: _buildInputArea()
-//              )
-            ],
-          )),
+              );
+            }
+          }
+        },
+      ),
     );
   }
 
   //リスト要素生成
-  Widget _buildRow(int index) {
+  Widget _buildRow(BuildContext context, int index) {
     //リストの要素一つづつにonTapを付加して、詳細ページに飛ばす
     return InkWell(
       onTap: () {
-//        Navigator.push(
-//          this.context,
-//          MaterialPageRoute(
-//            // パラメータを渡す
-//            builder: (context) => new EventSearchResultDetailPage(entries[index]),
-//          ),
-//        );
         Navigator.of(context).push<Widget>(
           MaterialPageRoute(
-            settings: const RouteSettings(name: "/EventSearchResultDetail/"),
-            builder: (context) =>
-                EventSearchResultDetailPage(user: widget.user, event: eventList[index]),
+            settings:
+                RouteSettings(name: "/EventSearchResultDetail/code=${eventList[index].eventId}"),
+            builder: (context) => EventSearchResultDetailPage(user: user, event: eventList[index]),
           ),
         );
       },
@@ -221,8 +168,8 @@ class EventSearchResultPageState extends State<EventSearchResultPage> {
                     onTap: () {
                       Navigator.of(context).push<Widget>(MaterialPageRoute(
                           settings: const RouteSettings(name: "/Talk"),
-                          builder: (context) => new TalkPage(
-                              user: widget.user, opponentId: eventList[index].userId)));
+                          builder: (context) =>
+                              new TalkPage(user: user, opponentId: eventList[index].userId)));
                     },
                     child: Icon(
                       Icons.mail,

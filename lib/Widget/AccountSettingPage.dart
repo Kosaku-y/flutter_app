@@ -48,7 +48,7 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
     user.rank = "0";
 
     if (widget.status == "regist") {
-      await mainReference.child("Gmail").child(address).set(user.toJson());
+      await mainReference.child(address).set(user.toJson());
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -57,8 +57,6 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
         ),
       );
     } else {}
-
-    //userNameInputController.clear(); // 送信した後テキストフォームの文字をクリア
     print('finish register.');
   }
 

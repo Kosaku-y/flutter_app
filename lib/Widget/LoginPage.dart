@@ -89,38 +89,41 @@ class LoginPageState extends State<LoginPage> {
                   return Center(
                     child: const CircularProgressIndicator(),
                   );
-                } else if (snapshot.hasError) {
-                  return Text("エラーが発生しました" + snapshot.error.toString());
-                } else {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      SignInButton(
-                        Buttons.Google,
-                        text: "Login with Google",
-                        onPressed: () => loginBloc.googleLoginSink.add(null),
-                      ),
-                      SignInButton(
-                        Buttons.Twitter,
-                        text: "Login with Twitter",
-                        onPressed: () => null,
-                      ),
-                      SignInButton(
-                        Buttons.Apple,
-                        text: "Login with Apple",
-                        onPressed: () => null,
-                      ),
-                    ],
-                  );
                 }
+                if (snapshot.hasError) return Text("エラーが発生しました" + snapshot.error.toString());
+
+                //if (snapshot.data.status == AuthStatus.notSignedIn) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    SignInButton(
+                      Buttons.Google,
+                      text: "Login with Google",
+                      onPressed: () => loginBloc.googleLoginSink.add(null),
+                    ),
+                    SignInButton(
+                      Buttons.Twitter,
+                      text: "Login with Twitter",
+                      onPressed: () => null,
+                    ),
+                    SignInButton(
+                      Buttons.Apple,
+                      text: "Login with Apple",
+                      onPressed: () => null,
+                    ),
+                  ],
+                );
+//                  } else {
+//                    return set.indicator();
+//                  }
               }),
         ));
   }
 
   @override
   void dispose() {
-    loginBloc.dispose();
     super.dispose();
+    loginBloc.dispose();
     print("dispose login Bloc");
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_app2/Splash.dart';
 import 'Entity/PageParts.dart';
 import 'package:flutter_app2/Widget/TalkRoomPage.dart';
 import 'package:flutter_app2/Widget/SettingPage.dart';
 import 'Widget/EventSearchPage.dart';
-import 'Widget/LoginPage.dart';
 import 'Entity/User.dart';
 import 'Widget/NewHomePage.dart';
 
@@ -14,7 +14,7 @@ void main() {
   return runApp(
     new MaterialApp(
       title: "Home",
-      home: new LoginPage(),
+      home: new Splash(),
       theme: parts.defaultTheme,
     ),
   );
