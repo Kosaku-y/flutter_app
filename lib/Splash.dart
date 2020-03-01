@@ -12,7 +12,7 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
 
-    new Future.delayed(const Duration(seconds: 3)).then((value) => handleTimeout());
+    new Future.delayed(const Duration(seconds: 2)).then((value) => handleTimeout());
   }
 
   @override

@@ -52,8 +52,6 @@ PODS:
     - GoogleUtilities/Environment (~> 6.0)
     - GoogleUtilities/UserDefaults (~> 6.0)
   - Flutter (1.0.0)
-  - flutter_picker (0.0.1):
-    - Flutter
   - flutter_twitter_login (0.0.1):
     - Flutter
     - TwitterKit
@@ -114,7 +112,6 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_database (from `.symlinks/plugins/firebase_database/ios`)
   - Flutter (from `Flutter`)
-  - flutter_picker (from `.symlinks/plugins/flutter_picker/ios`)
   - flutter_twitter_login (from `.symlinks/plugins/flutter_twitter_login/ios`)
   - google_sign_in (from `.symlinks/plugins/google_sign_in/ios`)
 
@@ -150,8 +147,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_database/ios"
   Flutter:
     :path: Flutter
-  flutter_picker:
-    :path: ".symlinks/plugins/flutter_picker/ios"
   flutter_twitter_login:
     :path: ".symlinks/plugins/flutter_twitter_login/ios"
   google_sign_in:
@@ -171,7 +166,6 @@ SPEC CHECKSUMS:
   FirebaseDatabase: f48e067716864be2b855cf716b927ef375d6cfa0
   FirebaseInstanceID: cdb3827746d53ece7ae87a5c51c25c3055443366
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_picker: 8ff0d7440b4e8327fcc9e6b21a39ef9369e697c7
   flutter_twitter_login: acf71258bca3b35b6ac06681f7a33b48f4acc0bd
   google_sign_in: 27e70a98b529f0b076d4b19f231b81da28b1750b
   GoogleAppMeasurement: 51d8d9ea48f0ca44484d29cfbdef976fbd4fc336

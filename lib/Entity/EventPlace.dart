@@ -4,10 +4,10 @@
 
 ----------------------------------------------*/
 class Pref {
-  int prefCode;
-  String prefName;
+  int code;
+  String name;
   static Map<String, String> pref = {
-    "": "",
+    " ": " ",
     "北海道": "1",
     "青森県": "2",
     "岩手県": "3",
@@ -57,7 +57,7 @@ class Pref {
     "沖縄県": "47"
   };
   Map<String, int> lineMap = new Map();
-  Pref(this.prefCode, this.prefName);
+  Pref(this.code, this.name);
 }
 
 /*----------------------------------------------
@@ -66,29 +66,20 @@ class Pref {
 
 ----------------------------------------------*/
 class Line {
-  int lineCode;
-  String lineName;
+  String code;
+  String name;
   Station station;
   static Map<String, int> stationMap;
   Line();
-
-  Map<String, dynamic> toJson() => {'line_name': lineName, 'line_cd': lineCode};
 }
 
 /*----------------------------------------------
 
 駅エンティティクラス
 
-----------------------------------------------*/
+--------- -------------------------------------*/
 class Station {
-  int stationCode;
-  String stationName;
-
-  Station({this.stationCode, this.stationName});
-
-  factory Station.fromJson(Map<String, dynamic> json) {
-    return Station(
-        stationCode: json['station_cd'] as int, stationName: json['station_name'] as String);
-  }
-  Map<String, dynamic> toJson() => {'station_name': stationName, 'station_cd': stationCode};
+  String code;
+  String name;
+  Station({this.code, this.name});
 }

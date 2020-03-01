@@ -243,4 +243,9 @@ class HomeState extends State<Home> {
                   },
             child: child));
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }

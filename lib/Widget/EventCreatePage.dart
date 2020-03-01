@@ -5,7 +5,6 @@ import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:flutter_app2/Widget/EventCreateConfirmPage.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
@@ -52,6 +51,8 @@ class EventCreatePageState extends State<EventCreatePage> {
   TextEditingController _lineController = new TextEditingController(text: '');
   TextEditingController _stationController = new TextEditingController(text: '');
   TextEditingController _commentController = new TextEditingController(text: '');
+  Line _line = Line();
+  Station _station = Station();
   DateTime _start;
   DateTime _end;
 
@@ -110,11 +111,7 @@ class EventCreatePageState extends State<EventCreatePage> {
                   color: set.fontColor,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => EventCreatePage(),
-                    ),
-                  );
+                  Navigator.popUntil(context, ModalRoute.withName("/EventManage"));
                 },
               ),
             ]),
@@ -161,14 +158,14 @@ class EventCreatePageState extends State<EventCreatePage> {
         widget.user.userId,
         widget.user.name,
       );
+      _line.name = _lineController.text;
+      _station.name = _stationController.text;
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           settings: const RouteSettings(name: "/EventCreateConfirm"),
           builder: (BuildContext context) => EventCreateConfirmPage(
-              pref: _prefController.text,
-              line: _lineController.text,
-              user: widget.user,
-              event: event),
+              line: _line, station: _station, user: widget.user, event: event),
         ),
       );
     }
@@ -232,7 +229,7 @@ class EventCreatePageState extends State<EventCreatePage> {
             if (_prefController.text != value) {
               setState(() {
                 _prefController.text = value;
-                if (value != "") {
+                if (value != " ") {
                   _bloc.lineApiSink.add(Pref.pref[value]);
                   _prefChange();
                 }
@@ -298,7 +295,8 @@ class EventCreatePageState extends State<EventCreatePage> {
                       if (_lineController.text != value) {
                         setState(() {
                           _lineController.text = value;
-                          if (value != "") {
+                          _line.code = _lineMap[value];
+                          if (value != " ") {
                             _bloc.stationApiSink.add(_lineMap[value]);
                             _lineChange();
                           }
@@ -369,10 +367,11 @@ class EventCreatePageState extends State<EventCreatePage> {
                     datas: _stationData,
                     title: '駅',
                     onConfirm: (value) {
-                      if (value != "") {
+                      if (value != " ") {
                         if (_stationController.text != value) {
                           setState(() {
                             _stationController.text = value;
+                            _station.code = _stationMap[value];
                             changeStation = 1;
                           });
                         }
@@ -533,6 +532,13 @@ class EventCreatePageState extends State<EventCreatePage> {
   @override
   void dispose() {
     super.dispose();
+    _startingController.dispose();
+    _endingController.dispose();
+    _memberController.dispose();
+    _prefController.dispose();
+    _lineController.dispose();
+    _stationController.dispose();
+    _commentController.dispose();
     _bloc.dispose();
   }
 }

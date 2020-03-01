@@ -20,20 +20,22 @@ class ReturnTopPage extends StatelessWidget {
       ),
       backgroundColor: set.backGroundColor,
       body: Container(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           children: <Widget>[
-            Center(
-              child: Text("$message", style: TextStyle(color: set.pointColor)),
+            Expanded(
+              child: Center(
+                child: Text("$message", style: TextStyle(color: set.pointColor)),
+              ),
             ),
-            RaisedButton.icon(
-                label: Text("検索ページへ戻る"),
-                icon: Icon(
-                  Icons.search,
-                  color: set.fontColor,
-                ),
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(context, "/EventSearch", (_) => false);
-                }),
+            Container(
+              padding: const EdgeInsets.all(50.0),
+              child: set.iconButton(
+                message: "検索ページに戻る",
+                icon: Icons.keyboard_backspace,
+                onPressed: () => Navigator.pushNamedAndRemoveUntil(context, "/", (_) => false),
+              ),
+            ),
           ],
         ),
       ),

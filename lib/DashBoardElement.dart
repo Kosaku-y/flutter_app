@@ -97,7 +97,7 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
                 child: pieChart(),
               ),
               set.backButton(
-                onTap: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context),
               ),
             ],
           ),
@@ -154,7 +154,7 @@ class MahjongHandPage extends StatelessWidget {
               Divider(
                 height: 8.0,
               ),
-              set.backButton(onTap: () => Navigator.pop(context))
+              set.backButton(onPressed: () => Navigator.pop(context))
 //              Container(
 //                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
 //                  child: _buildInputArea()

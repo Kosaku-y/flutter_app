@@ -45,56 +45,50 @@ class EventSearchResultPage extends StatelessWidget {
       body: StreamBuilder<List<EventDetail>>(
         stream: bloc.searchResultStream,
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text("エラーが発生しました");
-          } else if (!snapshot.hasData) {
+          if (snapshot.hasError) return Text("エラーが発生しました");
+
+          if (!snapshot.hasData)
             return Center(
               child: set.indicator(),
             );
-          } else {
-            if (snapshot.data == null || snapshot.data.isEmpty) {
-              return Center(
-                child: Text(
-                  "指定の条件では見つかりませんでした。",
-                  style: TextStyle(color: set.pointColor),
-                ),
-              );
-            } else {
-              eventList = snapshot.data;
-              return Container(
-                padding: const EdgeInsets.all(20.0),
-                child: new Column(
-                  children: <Widget>[
-                    Text(eventList.length.toString() + '件見つかりました。',
-                        style:
-                            TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
-                    Expanded(
-                      child: ListView.builder(
-                        //padding: const EdgeInsets.all(16.0),
-                        itemBuilder: (BuildContext context, int index) {
-                          return _buildRow(context, index);
-                        },
-                        itemCount: eventList.length,
-                      ),
-                    ),
-                    Divider(
-                      height: 8.0,
-                    ),
-                    RaisedButton.icon(
-                      label: Text("戻る"),
-                      icon: Icon(
-                        Icons.arrow_back_ios,
-                        color: set.fontColor,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              );
-            }
+          if (snapshot.data == null || snapshot.data.isEmpty) {
+            return Container(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                      child: Center(
+                    child: Text("指定の条件では見つかりませんでした。", style: TextStyle(color: set.pointColor)),
+                  )),
+                  set.backButton(onPressed: () => Navigator.pop(context)),
+                ],
+              ),
+            );
           }
+          eventList = snapshot.data;
+          return Container(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: <Widget>[
+                Text(eventList.length.toString() + '件見つかりました。',
+                    style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
+                Expanded(
+                  child: ListView.builder(
+                    //padding: const EdgeInsets.all(16.0),
+                    itemBuilder: (BuildContext context, int index) {
+                      return _buildRow(context, index);
+                    },
+                    itemCount: eventList.length,
+                  ),
+                ),
+                Divider(
+                  height: 8.0,
+                ),
+                set.backButton(onPressed: () => Navigator.pop(context)),
+              ],
+            ),
+          );
         },
       ),
     );
@@ -143,7 +137,7 @@ class EventSearchResultPage extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                         child: Text(
-                          eventList[index].userId,
+                          eventList[index].userName,
                           style: TextStyle(
                             fontSize: 16.0,
                             color: set.fontColor,
@@ -163,25 +157,68 @@ class EventSearchResultPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push<Widget>(MaterialPageRoute(
-                          settings: const RouteSettings(name: "/Talk"),
-                          builder: (context) =>
-                              new TalkPage(user: user, opponentId: eventList[index].userId)));
-                    },
-                    child: Icon(
-                      Icons.mail,
-                      color: set.pointColor,
-                    ),
-                  ),
-                ),
+                _actionWidget(context, eventList[index]),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _actionWidget(BuildContext context, EventDetail event) {
+    if (event.userId == user.userId) {
+      return Container(
+        child: Row(
+          children: <Widget>[
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push<Widget>(MaterialPageRoute(
+                    settings: const RouteSettings(name: "/Talk"),
+                    builder: (context) => new TalkPage(user: user, opponentId: event.userId)));
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.check,
+                  color: set.pointColor,
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push<Widget>(MaterialPageRoute(
+                    settings: const RouteSettings(name: "/Talk"),
+                    builder: (context) => new TalkPage(user: user, opponentId: event.userId)));
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.delete,
+                  color: set.pointColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container(
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push<Widget>(MaterialPageRoute(
+                settings: const RouteSettings(name: "/Talk"),
+                builder: (context) => new TalkPage(user: user, opponentId: event.userId)));
+          },
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(
+              Icons.mail,
+              color: set.pointColor,
+            ),
+          ),
+        ),
+      );
+    }
   }
 }

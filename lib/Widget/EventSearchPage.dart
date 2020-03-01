@@ -9,6 +9,7 @@ import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
 import 'package:flutter_app2/Widget/EventSerchResultPage.dart';
 import 'EventCreatePage.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 
 /*----------------------------------------------
 
@@ -40,22 +41,21 @@ class EventManagePageState extends State<EventManagePage> {
   Map _stationMap = new Map<String, String>();
   EventManageBloc _bloc = EventManageBloc();
 
-  TextEditingController _prefController = new TextEditingController(text: '');
-  TextEditingController _lineController = new TextEditingController(text: '');
-  TextEditingController _stationController = new TextEditingController(text: '');
-  TextEditingController _eventIdController = new TextEditingController(text: '');
+  TextEditingController _prefController = new TextEditingController(text: " ");
+  TextEditingController _lineController = new TextEditingController(text: " ");
+  TextEditingController _stationController = new TextEditingController(text: " ");
+  TextEditingController _eventIdController = new TextEditingController(text: "");
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text('イベント検索',
-            style: TextStyle(
-              color: set.pointColor,
-            )),
-      ),
+          elevation: 2.0,
+          backgroundColor: set.baseColor,
+          title: Text('イベント検索',
+              style: TextStyle(
+                color: set.pointColor,
+              ))),
       backgroundColor: set.backGroundColor,
       body: Form(
         key: _formKey,
@@ -69,30 +69,7 @@ class EventManagePageState extends State<EventManagePage> {
               _stationPicker(),
               Container(
                 padding: EdgeInsets.only(top: 20.0),
-                child: RaisedButton.icon(
-                  label: Text("検索する"),
-                  icon: Icon(
-                    Icons.search,
-                    color: set.fontColor,
-                  ),
-                  onPressed: () => _submission(),
-                ),
-              ),
-              RaisedButton.icon(
-                label: Text("削除する"),
-                icon: Icon(
-                  Icons.delete,
-                  color: set.fontColor,
-                ),
-                onPressed: () => null,
-              ),
-              RaisedButton.icon(
-                label: Text("修正する"),
-                icon: Icon(
-                  Icons.check,
-                  color: set.fontColor,
-                ),
-                onPressed: () => _correction(),
+                child: set.iconButton(message: "検索", icon: Icons.search, onPressed: _submission),
               ),
             ]),
           ),
@@ -132,9 +109,9 @@ class EventManagePageState extends State<EventManagePage> {
             builder: (context) => new EventSearchResultPage(
               user: widget.user,
               eventSearch: EventSearch(
-                  pref: _prefController.text,
-                  line: _lineController.text,
-                  station: _stationController.text),
+                  pref: _prefController.text == " " ? null : _prefController.text,
+                  line: _lineController.text == " " ? null : _lineController.text,
+                  station: _stationController.text == " " ? null : _stationController.text),
             ),
           ),
         );
@@ -146,24 +123,22 @@ class EventManagePageState extends State<EventManagePage> {
   Widget _prefPicker() {
     return new InkWell(
       onTap: () {
-        DataPicker.showDatePicker(
-          context,
-          showTitleActions: true,
-          locale: 'en',
-          datas: Pref.pref.keys.toList(),
-          title: '都道府県',
-          onConfirm: (value) {
-            if (_prefController.text != value) {
-              setState(() {
-                _prefController.text = value;
-                if (value != "") {
-                  _bloc.lineApiSink.add(Pref.pref[value]);
-                  _prefChange();
+        set
+            .picker(
+              adapter: PickerDataAdapter<String>(pickerdata: Pref.pref.keys.toList()),
+              selecteds: [0], //初期値
+              onConfirm: (Picker picker, List value) {
+                var newData = picker.getSelectedValues()[0].toString();
+                if (_prefController.text != newData) {
+                  setState(() {
+                    _prefController.text = newData;
+                    if (newData != " ") _bloc.lineApiSink.add(Pref.pref[newData]);
+                    _prefChange();
+                  });
                 }
-              });
-            }
-          },
-        );
+              },
+            )
+            .showModal(this.context);
       },
       child: AbsorbPointer(
         child: new TextFormField(
@@ -222,10 +197,8 @@ class EventManagePageState extends State<EventManagePage> {
                       if (_lineController.text != value) {
                         setState(() {
                           _lineController.text = value;
-                          if (value != "") {
-                            _bloc.stationApiSink.add(_lineMap[value]);
-                            _lineChange();
-                          }
+                          if (value != " ") _bloc.stationApiSink.add(_lineMap[value]);
+                          _lineChange();
                         });
                       }
                     },
@@ -259,7 +232,12 @@ class EventManagePageState extends State<EventManagePage> {
         ),
       ),
       validator: (String value) {
+        if ((value != " " && _prefController.text == " ") ||
+            (value == " " && _stationController.text != " ")) {
+          return '再選択してください';
+        }
         if (changeLine == 2) {
+          if (_lineController.text == " ") return null;
           return '再選択してください';
         } else {
           return null;
@@ -293,13 +271,11 @@ class EventManagePageState extends State<EventManagePage> {
                     datas: _stationData,
                     title: '駅',
                     onConfirm: (value) {
-                      if (value != "") {
-                        if (_stationController.text != value) {
-                          setState(() {
-                            _stationController.text = value;
-                            changeStation = 1;
-                          });
-                        }
+                      if (_stationController.text != value) {
+                        setState(() {
+                          _stationController.text = value;
+                          _stationChange();
+                        });
                       }
                     },
                   );
@@ -331,7 +307,12 @@ class EventManagePageState extends State<EventManagePage> {
             borderSide: BorderSide(color: set.fontColor, width: 3.0)),
       ),
       validator: (String value) {
+        if ((value != " " && _prefController.text == " ") ||
+            (value != " " && _lineController.text == " ")) {
+          return '再選択してください';
+        }
         if (changeStation == 2) {
+          if (_stationController.text == " ") return null;
           return '再選択してください';
         } else {
           return null;
@@ -386,9 +367,18 @@ class EventManagePageState extends State<EventManagePage> {
     }
   }
 
+  //路線チェンジ用
+  void _stationChange() {
+    changeStation = 1;
+  }
+
   @override
   void dispose() {
     super.dispose();
+    _prefController.dispose();
+    _lineController.dispose();
+    _stationController.dispose();
+    _eventIdController.dispose();
     _bloc.dispose();
   }
 }

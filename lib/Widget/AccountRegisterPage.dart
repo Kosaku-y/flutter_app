@@ -1,71 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
+import 'package:flutter_app2/Repository/LoginRepository.dart';
+import 'package:flutter_app2/Repository/UserDataRepository.dart';
+import 'package:flutter_app2/Widget/LoginPage.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 
 import '../main.dart';
 
-class AccountSettingPage extends StatefulWidget {
-  User user;
-  String status;
-
-  AccountSettingPage({Key key, @required this.user, @required this.status}) : super(key: key);
+class AccountRegisterPage extends StatefulWidget {
+  final User user;
+  AccountRegisterPage({Key key, @required this.user}) : super(key: key);
 
   @override
-  _AccountSettingPageState createState() => new _AccountSettingPageState();
+  _AccountRegisterPageState createState() => new _AccountRegisterPageState();
 }
 
-class _AccountSettingPageState extends State<AccountSettingPage> {
-  final title = 'Account';
+class _AccountRegisterPageState extends State<AccountRegisterPage> {
   PageParts set = PageParts();
-  var mainReference = FirebaseDatabase.instance.reference().child("User");
-
   TextEditingController _nameInputController = new TextEditingController(text: '');
   TextEditingController _ageInputController = new TextEditingController(text: '');
   TextEditingController _sexInputController = new TextEditingController(text: '');
 
   final _formKey = GlobalKey<FormState>();
 
-  final entries = {};
-  int count = 0;
-
   @override
   initState() {
     super.initState();
-    if (widget.status == "regist") {
-      setState(() {});
-    } else {}
   }
 
-  void submit(String address) async {
+  void submit(String userId) async {
     User user = widget.user;
     user.name = _nameInputController.text;
     user.age = _ageInputController.text;
     user.sex = _sexInputController.text;
     user.rank = "0";
+    UserDataRepository repository = UserDataRepository();
+    await repository.registerUser(user);
 
-    if (widget.status == "regist") {
-      await mainReference.child(address).set(user.toJson());
-
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          settings: const RouteSettings(name: "/main"),
-          builder: (context) => MainPage(user: user, message: "登録完了しました"),
-        ),
-      );
-    } else {}
-    print('finish register.');
-  }
-
-  List ageList() {
-    List tmp = [];
-    for (int i = 18; i <= 100; i++) {
-      tmp.add(i.toString());
-    }
-    return tmp;
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        settings: const RouteSettings(name: "/main"),
+        builder: (context) => MainPage(user: user, message: "登録完了しました"),
+      ),
+    );
+    print('finish register');
   }
 
   @override
@@ -84,12 +65,12 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                userName(),
+                userNameField(),
                 agePicker(),
                 sexPicker(),
-                FlatButton(
-                  child: Text("登録(ホームへ)"),
-                  textColor: Colors.white,
+                set.iconButton(
+                  message: "登録(ホームへ)",
+                  icon: Icons.check,
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       this._formKey.currentState.save();
@@ -97,11 +78,16 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
                     }
                   },
                 ),
-                FlatButton(
-                  child: Text("キャンセル"),
-                  textColor: Colors.white,
+                set.backButton(
                   onPressed: () {
-                    print("not set");
+                    LoginRepository repository = LoginRepository();
+                    repository.signOut();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        settings: const RouteSettings(name: "/Login"),
+                        builder: (BuildContext context) => LoginPage(),
+                      ),
+                    );
                   },
                 ),
               ],
@@ -112,7 +98,7 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
     );
   }
 
-  Widget userName() {
+  Widget userNameField() {
     return new Container(
       child: new TextFormField(
           style: TextStyle(color: set.pointColor),
@@ -137,20 +123,20 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
   Widget agePicker() {
     return InkWell(
       onTap: () {
-        DataPicker.showDatePicker(
-          context,
-          showTitleActions: true,
-          locale: 'en',
-          datas: ageList(),
-          title: 'age',
-          onConfirm: (value) {
-            if (value != "") {
-              setState(() {
-                _ageInputController.text = value;
-              });
-            }
-          },
-        );
+        set
+            .picker(
+                adapter: NumberPickerAdapter(data: [NumberPickerColumn(begin: 18, end: 99)]),
+                selecteds: [0], //初期値
+                onConfirm: (Picker picker, List value) {
+                  print(value.toString());
+                  print(picker.getSelectedValues());
+                  if (value.toString() != "") {
+                    setState(() {
+                      _ageInputController.text = picker.getSelectedValues()[0].toString();
+                    });
+                  }
+                })
+            .showModal(this.context);
       },
       child: AbsorbPointer(
         child: new TextFormField(
@@ -178,20 +164,19 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
   Widget sexPicker() {
     return InkWell(
       onTap: () {
-        DataPicker.showDatePicker(
-          context,
-          showTitleActions: true,
-          locale: 'en',
-          datas: ['男性', '女性', 'その他'],
-          title: '性別',
-          onConfirm: (value) {
-            if (value != "") {
-              setState(() {
-                _sexInputController.text = value;
-              });
-            }
-          },
-        );
+        set
+            .picker(
+              adapter: PickerDataAdapter<String>(pickerdata: ['男性', '女性', 'その他']),
+              selecteds: [0], //初期値
+              onConfirm: (Picker picker, List value) {
+                if (value.toString() != "") {
+                  setState(() {
+                    _sexInputController.text = picker.getSelectedValues()[0].toString();
+                  });
+                }
+              },
+            )
+            .showModal(this.context);
       },
       child: AbsorbPointer(
         child: new TextFormField(
@@ -218,6 +203,9 @@ class _AccountSettingPageState extends State<AccountSettingPage> {
 
   @override
   void dispose() {
+    _nameInputController.dispose();
+    _ageInputController.dispose();
+    _sexInputController.dispose();
     super.dispose();
   }
 }

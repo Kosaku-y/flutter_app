@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 
-import 'package:flutter_app2/Widget/AccountSettingPage.dart';
+import 'package:flutter_app2/Widget/AccountRegisterPage.dart';
 import '../main.dart';
 
 /*----------------------------------------------
@@ -62,7 +62,7 @@ class LoginPageState extends State<LoginPage> {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               settings: const RouteSettings(name: "/AccountSetting"),
-              builder: (BuildContext context) => AccountSettingPage(user: user, status: "regist"),
+              builder: (BuildContext context) => AccountRegisterPage(user: user),
             ),
           );
         }

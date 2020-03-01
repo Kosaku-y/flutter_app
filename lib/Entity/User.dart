@@ -6,7 +6,6 @@ class User {
   String _age = "";
   String _sex = "";
   String _rank = "";
-  String _lineId = "";
   String _score = "";
   Map _event;
   AuthStatus _status;
@@ -20,7 +19,6 @@ class User {
         _age = map["age"],
         _sex = map["sex"],
         _rank = map["rank"],
-        _lineId = map["lineId"],
         _score = map["score"],
         _status = AuthStatus.signedIn;
 
@@ -31,7 +29,6 @@ class User {
         "age:$age\n"
         "sex:$sex\n"
         "rank:$rank\n"
-        "lineId:$lineId\n"
         "score:$score\n"
         "-------------------------------\n");
     return {
@@ -40,7 +37,6 @@ class User {
       "age": age,
       "sex": sex,
       "rank": rank,
-      "lineId": lineId,
       "score": score,
     };
   }
@@ -64,11 +60,6 @@ class User {
   String get score => _score;
   set score(String value) {
     _score = value;
-  }
-
-  String get lineId => _lineId;
-  set lineId(String value) {
-    _lineId = value;
   }
 
   String get rank => _rank;

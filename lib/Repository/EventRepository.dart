@@ -15,22 +15,40 @@ class EventRepository {
   final _eventManagerReference = FirebaseDatabase.instance.reference().child("EventManager");
   final _userReference = FirebaseDatabase.instance.reference();
   int eventId;
+  final String apiKey = "LE_UaP7Vyjs3wQPa";
 
   //既存イベント変更メソッド
   Future<void> changeEvent(String pref, String line, EventDetail event) async {}
 
   //新規イベント追加メソッド
-  Future<void> createEvent(String pref, String line, EventDetail event) async {
+  Future<void> createEvent(String stationCode, EventDetail event) async {
     try {
+      String newEventId;
       await _eventManagerReference.once().then((DataSnapshot snapshot) {
         eventId = int.parse(snapshot.value["eventId"]);
-        String newEventId = (eventId + 1).toString().padLeft(7, "0"); // => 001;
-        event.eventId = "E" + newEventId;
-        _eventManagerReference.set({"eventId": "${eventId + 1}"});
-        _eventReference.child(pref).child(event.station).child(event.eventId).set(event.toJson());
       });
-    } catch (e) {
-      print(e);
+      newEventId = (eventId + 1).toString().padLeft(7, "0"); // => 0000001;
+      event.eventId = "E" + newEventId;
+      _eventManagerReference.set({"eventId": "${eventId + 1}"});
+      String prefName = await getPrefName(stationCode);
+      _eventReference.child(prefName).child(event.station).child(event.eventId).set(event.toJson());
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  //駅の所在都道府県を取得
+  Future<String> getPrefName(String stationCode) async {
+    try {
+      var url =
+          "http://api.ekispert.jp/v1/json/station/light?code=$stationCode&gcs=tokyo&key=$apiKey";
+      http.Response response = await http.get(url);
+      var body = response.body;
+      Map<String, dynamic> responseMap = jsonDecode(body); //レスポンス受信用Map
+      String prefName = responseMap["ResultSet"]["Point"]["Prefecture"]["Name"];
+      return prefName;
+    } catch (error) {
+      print(error);
     }
   }
 
@@ -56,25 +74,31 @@ class EventRepository {
   Future<List<EventDetail>> searchEvent(EventSearch e) async {
     List<EventDetail> eventList = List();
     try {
-      if (e.pref != "" && e.line == "" && e.station == "") {
+      if (e.pref != null && e.line == null && e.station == null) {
         //都道府県検索
         await _eventReference.child(e.pref).once().then((DataSnapshot result) {
+          if (result.value == null) return null;
           result.value.forEach((k, v) {
             v.forEach((k2, v2) {
               eventList.add(new EventDetail.fromMap(v2));
             });
           });
         });
-      } else if (e.pref != "" && e.line != "" && e.station != "") {
+      } else if (e.pref != null && e.line != null && e.station == null) {
+        //路線検索
+        return null;
+      } else if (e.pref != null && e.line != null && e.station != null) {
         //駅名検索
         await _eventReference.child("${e.pref}/${e.station}").once().then((DataSnapshot result) {
+          if (result.value == null) return null;
           result.value.forEach((k, v) {
             eventList.add(new EventDetail.fromMap(v));
           });
         });
-      } else if (e.pref == "" && e.line == "" && e.station == "") {
+      } else if (e.pref == null && e.line == null && e.station == null) {
         //全件検索
         await _eventReference.once().then((DataSnapshot result) {
+          if (result.value == null) return null;
           result.value.forEach((k, v) {
             v.forEach((k1, v1) {
               v1.forEach((k2, v2) {
@@ -92,36 +116,44 @@ class EventRepository {
 
   //路線Picker作成
   Future<Map<String, String>> createLineMap(String prefCode) async {
-    //APIコール
-    var url = "http://api.ekispert.jp/v1/json/operationLine?prefectureCode=" +
-        "$prefCode&offset=1&limit=100&gcs=tokyo&key=LE_UaP7Vyjs3wQPa";
-    http.Response response = await http.get(url);
-    var body = response.body;
-    //レスポンス受信用Map
-    Map<String, dynamic> responseMap = jsonDecode(body);
-    //return用Map
-    Map<String, String> lineMap = Map();
-    lineMap["--選択して下さい--"] = " "; //空データ挿入
-    responseMap["ResultSet"]["Line"].forEach((i) {
-      lineMap[i["Name"]] = i["code"];
-    });
-    return lineMap;
+    try {
+      //APIコール
+      var url = "http://api.ekispert.jp/v1/json/operationLine?prefectureCode=" +
+          "$prefCode&offset=1&limit=100&gcs=tokyo&key=$apiKey";
+      http.Response response = await http.get(url);
+      var body = response.body;
+      //レスポンス受信用Map
+      Map<String, dynamic> responseMap = jsonDecode(body);
+      //return用Map
+      Map<String, String> lineMap = Map();
+      lineMap[" "] = " "; //空データ挿入
+      responseMap["ResultSet"]["Line"].forEach((i) {
+        lineMap[i["Name"]] = i["code"];
+      });
+      return lineMap;
+    } catch (error) {
+      print(error);
+    }
   }
 
   //駅Picker作成
   Future<Map<String, String>> createStationMap(String lineCode) async {
-    //APIコール
-    var url = "http://api.ekispert.jp/v1/json/station?operationLineCode=" +
-        "$lineCode&type=train&offset=1&limit=100&direction=up&gcs=tokyo&key=LE_UaP7Vyjs3wQPa";
-    http.Response response = await http.get(url);
-    var body = response.body;
-    Map<String, dynamic> responseMap = jsonDecode(body); //レスポンス受信用Map
-    Map<String, String> stationMap = Map(); //return用Map
-    stationMap["--選択して下さい--"] = " "; //空データ挿入
-    responseMap["ResultSet"]["Point"].forEach((i) {
-      stationMap[i["Station"]["Name"]] = i["Station"]["code"];
-    });
-    return stationMap;
+    try {
+      //APIコール
+      var url = "http://api.ekispert.jp/v1/json/station?operationLineCode=" +
+          "$lineCode&type=train&offset=1&limit=100&direction=up&gcs=tokyo&key=$apiKey";
+      http.Response response = await http.get(url);
+      var body = response.body;
+      Map<String, dynamic> responseMap = jsonDecode(body); //レスポンス受信用Map
+      Map<String, String> stationMap = Map(); //return用Map
+      stationMap[" "] = " "; //空データ挿入
+      responseMap["ResultSet"]["Point"].forEach((i) {
+        stationMap[i["Station"]["Name"]] = i["Station"]["code"];
+      });
+      return stationMap;
+    } catch (error) {
+      print(error);
+    }
   }
 
   void addUsersEvent(String eventId) {}

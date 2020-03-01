@@ -46,18 +46,40 @@ class SettingPage extends StatelessWidget {
             height: 4.0,
           ),
           ListTile(
-              title: Text(
-                "ログアウト",
-                style: TextStyle(color: set.pointColor),
-              ),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () async {
-                await repository.signOut();
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
-                    ModalRoute.withName('/'));
-              }),
+            title: Text(
+              "ログアウト",
+              style: TextStyle(color: set.pointColor),
+            ),
+            trailing: Icon(Icons.arrow_forward),
+//              onTap: () async {
+//                await repository.signOut();
+//                Navigator.pushNamedAndRemoveUntil(context, "/", (_) => false);
+//              }
+            onTap: () {
+              showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return new AlertDialog(
+                    content: const Text('ログアウトしてよろしいですか？'),
+                    actions: <Widget>[
+                      new FlatButton(
+                        child: const Text('No'),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                      ),
+                      new FlatButton(
+                        child: const Text('Yes'),
+                        onPressed: () {
+                          Navigator.pushNamedAndRemoveUntil(context, "/", (_) => false);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
           Divider(
             color: set.fontColor,
             height: 4.0,

@@ -23,7 +23,7 @@ class TalkPage extends StatefulWidget {
 
 class TalkPageState extends State<TalkPage> {
   PageParts set = PageParts();
-  final _mainReference = FirebaseDatabase.instance.reference().child("User/Gmail");
+  final _mainReference = FirebaseDatabase.instance.reference().child("User");
   final _textEditController = TextEditingController();
   var formatter = new DateFormat('yyyy/M/d/ HH:mm');
 
@@ -159,5 +159,10 @@ class TalkPageState extends State<TalkPage> {
         )
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

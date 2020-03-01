@@ -17,11 +17,11 @@ class TalkRepository {
   final StreamController<String> _eventRealTimeStream = StreamController();
   Stream<String> get eventStream => _eventRealTimeStream.stream;
 
-  final _roomReference = FirebaseDatabase.instance.reference().child("User/Gmail");
+  final _userReference = FirebaseDatabase.instance.reference().child("User");
 
   TalkRepository(this.user) {
     try {
-      _roomReference.child("${user.userId}/message/").onChildAdded.listen((e) {
+      _userReference.child("${user.userId}/message/").onChildAdded.listen((e) {
         _eventRealTimeStream.add(e.snapshot.key);
       });
     } catch (error) {

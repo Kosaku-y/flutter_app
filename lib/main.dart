@@ -15,7 +15,7 @@ void main() {
     new MaterialApp(
       title: "Home",
       home: new Splash(),
-      theme: parts.defaultTheme,
+      //theme: parts.defaultTheme,
     ),
   );
 }
@@ -46,6 +46,7 @@ class _MainPageState extends State<MainPage> {
   };
 
   void onSelect(TabItem tabItem) {
+    //現在選択されているタブが選択された場合,最初までpop
     if (_currentTab == tabItem) {
       _navigatorKeys[tabItem].currentState.popUntil((route) => route.isFirst);
     } else {
@@ -120,6 +121,11 @@ class _MainPageState extends State<MainPage> {
         user: widget.user,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
 

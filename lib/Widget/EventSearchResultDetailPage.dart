@@ -4,6 +4,10 @@ import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
 
+import 'ProfilePage.dart';
+import 'TalkPage.dart';
+import 'package:flutter/gestures.dart';
+
 /*----------------------------------------------
 
 イベントの詳細ページ出力クラス(Stateless)
@@ -28,41 +32,87 @@ class EventSearchResultDetailPage extends StatelessWidget {
             )),
       ),
       backgroundColor: set.backGroundColor,
-      body: Center(
-        child: Column(children: <Widget>[
-          //イベント詳細
-          Text(
-            "イベントID:" +
-                event.eventId.toString() +
-                "\n"
-                    "最寄駅:" +
-                event.station +
-                "\n"
-                    "募集人数:" +
-                event.recruitMember +
-                "\n"
-                    "開始時刻:" +
-                event.startingTime +
-                "\n"
-                    "終了時刻:" +
-                event.endingTime +
-                "\n"
-                    "備考:" +
-                event.comment +
-                "\n",
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              color: set.fontColor,
-              fontSize: 20,
+      body: Container(
+        padding: const EdgeInsets.all(40.0),
+        child: Column(
+          children: <Widget>[
+            //イベント詳細
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("募集人数：${event.recruitMember}",
+                      style: TextStyle(color: set.pointColor, fontSize: 18)),
+                  Text("駅　　　：${event.station}",
+                      style: TextStyle(color: set.pointColor, fontSize: 18)),
+                  Text("開始時間：${event.startingTime}",
+                      style: TextStyle(color: set.pointColor, fontSize: 17)),
+                  Text("終了時間：${event.endingTime}",
+                      style: TextStyle(color: set.pointColor, fontSize: 17)),
+                  RichText(
+                    text: TextSpan(children: [
+                      TextSpan(text: "主催者：", style: TextStyle(color: set.pointColor, fontSize: 18)),
+                      TextSpan(
+                          text: event.userName,
+                          style: TextStyle(color: set.fontColor, fontSize: 17),
+                          recognizer: new TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.of(context).push<Widget>(
+                                MaterialPageRoute(
+                                  settings: const RouteSettings(name: "/Profile"),
+                                  builder: (context) =>
+                                      new ProfilePage(user: user, userId: event.userId),
+                                ),
+                              );
+                            }),
+                    ]),
+                  ),
+                  Text("コメント：${event.comment}",
+                      style: TextStyle(color: set.pointColor, fontSize: 18)),
+                  _actionWidget(context),
+                ],
+              ),
             ),
-          ),
 
-          //戻るボタン
-          set.backButton(
-            onTap: () => Navigator.pop(context),
-          ),
-        ]),
+            //戻るボタン
+            set.backButton(
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Widget _actionWidget(BuildContext context) {
+    if (event.userId == user.userId) {
+      return Container(
+        padding: EdgeInsets.only(top: 20.0),
+        child: Column(
+          children: <Widget>[
+            Center(
+              child: set.iconButton(message: "削除", icon: Icons.delete, onPressed: null),
+            ),
+            Center(
+              child: set.iconButton(message: "修正", icon: Icons.check, onPressed: null),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container(
+        padding: const EdgeInsets.all(20.0),
+        child: Center(
+          child: set.iconButton(
+              message: "メッセージを送る",
+              icon: Icons.mail,
+              onPressed: () {
+                Navigator.of(context).push<Widget>(MaterialPageRoute(
+                    settings: const RouteSettings(name: "/Talk"),
+                    builder: (context) => new TalkPage(user: user, opponentId: event.userId)));
+              }),
+        ),
+      );
+    }
   }
 }
