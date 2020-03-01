@@ -16,8 +16,8 @@ import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart
 
 ----------------------------------------------*/
 class EventCreatePage extends StatefulWidget {
-  int mode;
-  User user;
+  final int mode;
+  final User user;
 
   EventCreatePage({Key key, this.user, this.mode}) : super(key: key);
   @override
@@ -26,10 +26,8 @@ class EventCreatePage extends StatefulWidget {
 
 class EventCreatePageState extends State<EventCreatePage> {
   PageParts set = new PageParts();
-  final int NEW = 1;
-  final int MODIFIED = 0;
-
   final int register = 0;
+  final int modify = 1;
 
   // 日時を指定したフォーマットで指定するためのフォーマッター
   var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
@@ -62,7 +60,6 @@ class EventCreatePageState extends State<EventCreatePage> {
   @override
   void initState() {
     super.initState();
-    if (widget.mode == MODIFIED) {}
   }
 
   Widget build(BuildContext context) {

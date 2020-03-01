@@ -5,7 +5,6 @@ import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/LoginRepository.dart';
 
 import 'package:flutter_app2/Widget/ProfilePage.dart';
-import 'LoginPage.dart';
 
 class SettingPage extends StatelessWidget {
   LoginRepository repository = LoginRepository();
@@ -51,10 +50,6 @@ class SettingPage extends StatelessWidget {
               style: TextStyle(color: set.pointColor),
             ),
             trailing: Icon(Icons.arrow_forward),
-//              onTap: () async {
-//                await repository.signOut();
-//                Navigator.pushNamedAndRemoveUntil(context, "/", (_) => false);
-//              }
             onTap: () {
               showDialog<bool>(
                 context: context,
@@ -70,7 +65,8 @@ class SettingPage extends StatelessWidget {
                       ),
                       new FlatButton(
                         child: const Text('Yes'),
-                        onPressed: () {
+                        onPressed: () async {
+                          await repository.signOut();
                           Navigator.pushNamedAndRemoveUntil(context, "/", (_) => false);
                         },
                       ),

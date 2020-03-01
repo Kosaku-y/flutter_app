@@ -15,14 +15,14 @@ import 'TalkPage.dart';
 　ルームページクラス
 ----------------------------------------------*/
 class TalkRoomPage extends StatelessWidget {
-  User user;
+  final User user;
+  final PageParts set = PageParts();
 
   TalkRoomPage(this.user);
-  PageParts set = PageParts();
-  List<String> rooms = new List();
 
   @override
   Widget build(BuildContext context) {
+    List<String> rooms;
     TalkBloc bloc = new TalkBloc(user);
     return Scaffold(
         appBar: AppBar(
@@ -69,7 +69,7 @@ class TalkRoomPage extends StatelessWidget {
                       Expanded(
                         child: ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
-                            return _buildRow(context, index);
+                            return _buildRow(context, rooms[index]);
                           },
                           itemCount: snapshot.data.length,
                         ),
@@ -82,14 +82,14 @@ class TalkRoomPage extends StatelessWidget {
   }
 
   // 投稿されたメッセージの1行を表示するWidgetを生成
-  Widget _buildRow(BuildContext context, int index) {
+  Widget _buildRow(BuildContext context, String room) {
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             settings: const RouteSettings(name: "/Talk"),
-            builder: (context) => new TalkPage(user: user, opponentId: rooms[index]),
+            builder: (context) => new TalkPage(user: user, opponentId: room),
           ),
         );
       },
@@ -99,10 +99,10 @@ class TalkRoomPage extends StatelessWidget {
           child: ListTile(
             leading: CircleAvatar(
               //backgroundImage: NetworkImage(entry.userImageUrl),
-              child: Text(rooms[index][0]),
+              child: Text(room[0]),
             ),
             title: Text(
-              rooms[index],
+              room,
               style: TextStyle(
                 fontSize: 20.0,
                 color: set.pointColor,

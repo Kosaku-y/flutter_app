@@ -7,9 +7,10 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import '../DashBoardElement.dart';
+import 'MahjongHandPage.dart';
 
 class Home extends StatefulWidget {
-  User user;
+  final User user;
   Home({Key key, this.user}) : super(key: key);
   HomeState createState() => HomeState();
 }

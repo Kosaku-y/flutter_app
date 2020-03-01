@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 
 class ReturnTopPage extends StatelessWidget {
-  PageParts set = PageParts();
-  String message;
+  final PageParts set = PageParts();
+  final String message;
   ReturnTopPage({Key key, @required this.message}) : super(key: key);
 
   @override

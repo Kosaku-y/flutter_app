@@ -13,8 +13,8 @@ import 'package:intl/intl.dart';
 
 ----------------------------------------------*/
 class TalkPage extends StatefulWidget {
-  User user;
-  String opponentId;
+  final User user;
+  final String opponentId;
 
   TalkPage({Key key, this.user, this.opponentId}) : super(key: key);
   @override

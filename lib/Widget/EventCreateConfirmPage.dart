@@ -11,7 +11,7 @@ class EventCreateConfirmPage extends StatelessWidget {
   final Line line;
   final Station station;
   final EventDetail event;
-  PageParts set = new PageParts();
+  final PageParts set = new PageParts();
   EventCreateConfirmPage({Key key, this.line, this.station, this.user, this.event})
       : super(key: key);
 

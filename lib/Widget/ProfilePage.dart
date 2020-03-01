@@ -8,10 +8,9 @@ import 'TalkPage.dart';
 class ProfilePage extends StatelessWidget {
   ProfilePage({Key key, @required this.user, this.userId}) : super(key: key);
 
-  User user;
-  String userId;
-
-  PageParts set = PageParts();
+  final User user;
+  final String userId;
+  final PageParts set = PageParts();
 
   @override
   Widget build(BuildContext context) {
