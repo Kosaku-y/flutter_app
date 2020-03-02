@@ -4,7 +4,7 @@ import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
-import 'package:flutter_app2/Widget/ReturnTopPage.dart';
+import 'package:flutter_app2/Page/ReturnTopPage.dart';
 
 class EventCreateConfirmPage extends StatelessWidget {
   final User user;

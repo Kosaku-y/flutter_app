@@ -4,12 +4,12 @@ import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/LoginRepository.dart';
 
-import 'package:flutter_app2/Widget/ProfilePage.dart';
+import 'package:flutter_app2/Page/ProfilePage.dart';
 
 class SettingPage extends StatelessWidget {
-  LoginRepository repository = LoginRepository();
-  PageParts set = PageParts();
-  User user;
+  final LoginRepository repository = LoginRepository();
+  final PageParts set = PageParts();
+  final User user;
   SettingPage({Key key, this.user});
   // 画面全体のビルド
   @override

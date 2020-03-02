@@ -5,10 +5,10 @@ import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/LoginRepository.dart';
 import 'package:flutter_app2/Repository/UserDataRepository.dart';
-import 'package:flutter_app2/Widget/LoginPage.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
 import '../main.dart';
+import 'LoginPage.dart';
 
 class AccountRegisterPage extends StatefulWidget {
   final User user;

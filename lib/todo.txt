@@ -1,8 +1,5 @@
 
 /*
-バグ対応
-・BottomNavigationが重なってしまう
-(ログアウト機能で最後までpop出来ていない)
 
 */
 
@@ -24,7 +21,8 @@
 	路線で選択のため、他県に駅が入ってしまうときがある(埼玉：上野)
 	→路線検索：駅の路線APIを使えば、なんとかなりそう
 ・別の認証間で同じIDは？
-
+・戦績管理(Preferenceshared)
+https://medium.com/better-programming/flutter-how-to-save-objects-in-sharedpreferences-b7880d0ee2e4
 
 --------------
 -User

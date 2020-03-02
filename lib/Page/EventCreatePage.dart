@@ -5,7 +5,7 @@ import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import 'package:flutter_app2/Widget/EventCreateConfirmPage.dart';
+import 'package:flutter_app2/Page/EventCreateConfirmPage.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';

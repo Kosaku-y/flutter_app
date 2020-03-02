@@ -9,7 +9,7 @@ import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:intl/intl.dart';
 
-import 'package:flutter_app2/Widget/EventSearchResultDetailPage.dart';
+import 'package:flutter_app2/Page/EventSearchResultDetailPage.dart';
 
 import 'TalkPage.dart';
 

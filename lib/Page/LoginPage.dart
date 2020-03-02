@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 
-import 'package:flutter_app2/Widget/AccountRegisterPage.dart';
+import 'package:flutter_app2/Page/AccountRegisterPage.dart';
 import '../main.dart';
 
 /*----------------------------------------------

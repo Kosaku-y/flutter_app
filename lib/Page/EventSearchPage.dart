@@ -7,7 +7,7 @@ import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
-import 'package:flutter_app2/Widget/EventSerchResultPage.dart';
+import 'package:flutter_app2/Page/EventSerchResultPage.dart';
 import 'EventCreatePage.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
