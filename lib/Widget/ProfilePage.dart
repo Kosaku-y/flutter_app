@@ -15,42 +15,43 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 2.0,
-          backgroundColor: set.baseColor,
-          title: Text('プロフィール詳細',
-              style: TextStyle(
-                color: set.pointColor,
-              )),
+      appBar: AppBar(
+        elevation: 2.0,
+        backgroundColor: set.baseColor,
+        title: Text('プロフィール詳細',
+            style: TextStyle(
+              color: set.pointColor,
+            )),
+      ),
+      backgroundColor: set.backGroundColor,
+      body: Container(
+        child: new Column(
+          children: <Widget>[
+            Card(
+              elevation: 4.0,
+              margin: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  //Image.asset('assets/neko1_600x400.jpg'),
+                  _titleArea(context),
+                ],
+              ),
+            ),
+            RaisedButton.icon(
+              label: Text("戻る"),
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: set.fontColor,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
         ),
-        backgroundColor: set.backGroundColor,
-        body: Container(
-          child: new Column(
-            children: <Widget>[
-              Card(
-                elevation: 4.0,
-                margin: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    //Image.asset('assets/neko1_600x400.jpg'),
-                    _titleArea(context),
-                  ],
-                ),
-              ),
-              RaisedButton.icon(
-                label: Text("戻る"),
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: set.fontColor,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        ));
+      ),
+    );
   }
 
   Widget _titleArea(BuildContext context) {

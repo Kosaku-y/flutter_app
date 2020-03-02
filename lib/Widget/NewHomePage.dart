@@ -6,7 +6,7 @@ import 'package:flutter_app2/Repository/CommonData.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import '../DashBoardElement.dart';
+import 'PieChartDetailPage.dart';
 import 'MahjongHandPage.dart';
 
 class Home extends StatefulWidget {

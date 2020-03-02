@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:firebase_database/firebase_database.dart';
-import 'Entity/PageParts.dart';
-import 'Entity/User.dart';
-import 'Repository/CommonData.dart';
+import '../Entity/PageParts.dart';
+import '../Entity/User.dart';
+import '../Repository/CommonData.dart';
+
+class Data {
+  String name;
+  int value;
+  Color color;
+  Data(this.name, this.value, this.color);
+}
 
 class PieChartDetailPage extends StatefulWidget {
   @override
-//  String rank;
-//  PieChartDetailPage(this.rank);
   State<StatefulWidget> createState() {
     return new PieChartDetailPageState();
   }
@@ -114,11 +119,4 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
           new charts.ArcLabelDecorator(labelPosition: charts.ArcLabelPosition.inside)
         ]));
   }
-}
-
-class Data {
-  String name;
-  int value;
-  Color color;
-  Data(this.name, this.value, this.color);
 }

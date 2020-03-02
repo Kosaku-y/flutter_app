@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_twitter_login/flutter_twitter_login.dart';
+//import 'package:flutter_twitter_login/flutter_twitter_login.dart';
+//import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
 
 class LoginRepository {
@@ -44,6 +45,33 @@ class LoginRepository {
     final FirebaseUser user = (await _firebaseAuth.signInWithCredential(credential)).user;
     return _firebaseAuth.currentUser();
   }*/
+
+  /*------Appleサインイン機能------
+  Future signInWithApple() async {
+    final AuthorizationResult result = await AppleSignIn.performRequests([
+      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+    ]);
+
+    switch (result.status) {
+      case AuthorizationStatus.authorized:
+        print("success");
+        print(result.credential.user);
+        // ログイン成功
+
+        break;
+
+      case AuthorizationStatus.error:
+        print("Sign in failed: ${result.error.localizedDescription}");
+
+        throw Exception(result.error.localizedDescription);
+        break;
+
+      case AuthorizationStatus.cancelled:
+        print('User cancelled');
+        break;
+    }
+  }
+  * */
 
   //fireBaseサインイン部分
   Future<User> checkFireBaseLogin(FirebaseUser currentUser) async {

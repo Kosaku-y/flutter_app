@@ -1,6 +1,4 @@
-import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class CommonData {
   Map<int, String> rankMap = {
@@ -24,12 +22,4 @@ class CommonData {
     "銀": Color(0xffa0a0a0),
     "金": Color(0xffffd700),
   };
-
-  /*csv読み込み*/
-  stationLoadAsset() async {
-    final myData = await rootBundle.loadString("asset/csv/station.csv");
-    List<List<dynamic>> csvTable = CsvToListConverter().convert(myData);
-
-    print(csvTable);
-  }
 }

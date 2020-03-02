@@ -7,6 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
 
+import 'ProfilePage.dart';
+
 /*----------------------------------------------
 
 　チャットページクラス
@@ -15,8 +17,9 @@ import 'package:intl/intl.dart';
 class TalkPage extends StatefulWidget {
   final User user;
   final String opponentId;
+  final String opponentName;
 
-  TalkPage({Key key, this.user, this.opponentId}) : super(key: key);
+  TalkPage({Key key, this.user, this.opponentId, this.opponentName}) : super(key: key);
   @override
   TalkPageState createState() => new TalkPageState();
 }
@@ -25,6 +28,7 @@ class TalkPageState extends State<TalkPage> {
   PageParts set = PageParts();
   final _mainReference = FirebaseDatabase.instance.reference().child("User");
   final _textEditController = TextEditingController();
+//  ScrollController _scrollController;
   var formatter = new DateFormat('yyyy/M/d/ HH:mm');
 
   List<Talk> talkList = new List();
@@ -32,6 +36,16 @@ class TalkPageState extends State<TalkPage> {
   @override
   initState() {
     super.initState();
+
+    ///todo
+//    _scrollController = ScrollController();
+//    _scrollController.addListener(() {
+//      final maxScrollExtent = _scrollController.position.maxScrollExtent;
+//      final currentPosition = _scrollController.position.pixels;
+//      if (maxScrollExtent > 0 && (maxScrollExtent - 20.0) <= currentPosition) {
+//        _addContents();
+//      }
+//    });
     try {
       _mainReference
           .child("${widget.user.userId}/message/${widget.opponentId}")
@@ -47,6 +61,21 @@ class TalkPageState extends State<TalkPage> {
       talkList.add(new Talk.fromSnapShot(e.snapshot));
     });
   }
+
+//  bool _isLoading = false;
+
+//  _addContents() {
+//    if (_isLoading) {
+//      return;
+//    }
+//    _isLoading = true;
+//    Future.delayed(Duration(seconds: 1), () {
+//      setState(() {
+//        Contents.forEach((content) => talkList.add(content));
+//      });
+//      _isLoading = false;
+//    });
+//  }
 
   // 画面全体のビルド
   @override
@@ -66,6 +95,8 @@ class TalkPageState extends State<TalkPage> {
         children: <Widget>[
           Expanded(
             child: ListView.builder(
+              //controller: _scrollController,
+              reverse: true,
               padding: const EdgeInsets.all(16.0),
               itemBuilder: (BuildContext context, int index) {
                 return _buildRow(index);
@@ -126,9 +157,17 @@ class TalkPageState extends State<TalkPage> {
   }
 
   Widget _avatarLayout(Talk talk) {
-    return CircleAvatar(
-      //backgroundImage: NetworkImage(entry.userImageUrl),
-      child: Text(talk.fromUserId[0]),
+    return InkWell(
+      child: CircleAvatar(
+        //backgroundImage: NetworkImage(entry.userImageUrl),
+        child: Text(talk.fromUserId[0]),
+      ),
+      onTap: () => Navigator.of(context).push<Widget>(
+        MaterialPageRoute(
+          settings: const RouteSettings(name: "/Profile"),
+          builder: (context) => new ProfilePage(user: widget.user, userId: talk.fromUserId),
+        ),
+      ),
     );
   }
 
@@ -147,10 +186,17 @@ class TalkPageState extends State<TalkPage> {
         CupertinoButton(
           child: Icon(Icons.send, color: set.baseColor),
           onPressed: () {
-            _mainReference.child("${widget.user.userId}/message/${widget.opponentId}").push().set(
-                Talk(widget.opponentId, widget.user.userId, _textEditController.text).toJson());
-            _mainReference.child("${widget.opponentId}/message/${widget.user.userId}").push().set(
-                Talk(widget.opponentId, widget.user.userId, _textEditController.text).toJson());
+            var json = Talk(widget.opponentId, widget.opponentName, widget.user.userId,
+                    widget.user.name, _textEditController.text)
+                .toJson();
+            _mainReference
+                .child("${widget.user.userId}/message/${widget.opponentId}")
+                .push()
+                .set(json);
+            _mainReference
+                .child("${widget.opponentId}/message/${widget.user.userId}")
+                .push()
+                .set(json);
             print("send message :${_textEditController.text}");
             _textEditController.clear();
             // キーボードを閉じる

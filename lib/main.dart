@@ -10,7 +10,7 @@ import 'Widget/NewHomePage.dart';
 
 //ホーム画面のrun
 void main() {
-  PageParts parts = PageParts();
+  //PageParts parts = PageParts();
   return runApp(
     new MaterialApp(
       title: "Home",

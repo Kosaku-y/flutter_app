@@ -109,7 +109,8 @@ class EventSearchResultDetailPage extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push<Widget>(MaterialPageRoute(
                     settings: const RouteSettings(name: "/Talk"),
-                    builder: (context) => new TalkPage(user: user, opponentId: event.userId)));
+                    builder: (context) => new TalkPage(
+                        user: user, opponentId: event.userId, opponentName: event.userName)));
               }),
         ),
       );

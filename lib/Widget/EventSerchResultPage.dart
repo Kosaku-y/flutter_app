@@ -173,9 +173,7 @@ class EventSearchResultPage extends StatelessWidget {
           children: <Widget>[
             InkWell(
               onTap: () {
-                Navigator.of(context).push<Widget>(MaterialPageRoute(
-                    settings: const RouteSettings(name: "/Talk"),
-                    builder: (context) => new TalkPage(user: user, opponentId: event.userId)));
+                print("notset");
               },
               child: Container(
                 padding: const EdgeInsets.all(8.0),
@@ -187,9 +185,7 @@ class EventSearchResultPage extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                Navigator.of(context).push<Widget>(MaterialPageRoute(
-                    settings: const RouteSettings(name: "/Talk"),
-                    builder: (context) => new TalkPage(user: user, opponentId: event.userId)));
+                print("notset");
               },
               child: Container(
                 padding: const EdgeInsets.all(8.0),
@@ -208,7 +204,11 @@ class EventSearchResultPage extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push<Widget>(MaterialPageRoute(
                 settings: const RouteSettings(name: "/Talk"),
-                builder: (context) => new TalkPage(user: user, opponentId: event.userId)));
+                builder: (context) => new TalkPage(
+                      user: user,
+                      opponentId: event.userId,
+                      opponentName: event.userName,
+                    )));
           },
           child: Container(
             padding: const EdgeInsets.all(8.0),
