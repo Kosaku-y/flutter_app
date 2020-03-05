@@ -4,6 +4,7 @@ import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
 
+import 'EventCreatePage.dart';
 import 'ProfilePage.dart';
 import 'TalkPage.dart';
 import 'package:flutter/gestures.dart';
@@ -26,10 +27,7 @@ class EventSearchResultDetailPage extends StatelessWidget {
       appBar: AppBar(
         elevation: 2.0,
         backgroundColor: set.baseColor,
-        title: Text('イベント詳細',
-            style: TextStyle(
-              color: set.pointColor,
-            )),
+        title: Text('イベント詳細', style: TextStyle(color: set.pointColor)),
       ),
       backgroundColor: set.backGroundColor,
       body: Container(
@@ -91,10 +89,23 @@ class EventSearchResultDetailPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Center(
-              child: set.iconButton(message: "削除", icon: Icons.delete, onPressed: null),
+              child: set.iconButton(message: "削除", icon: Icons.delete, onPressed: () {}),
             ),
             Center(
-              child: set.iconButton(message: "修正", icon: Icons.check, onPressed: null),
+              child: set.iconButton(
+                  message: "修正",
+                  icon: Icons.check,
+                  onPressed: () {
+                    Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).push<Widget>(
+                      MaterialPageRoute(
+                        settings: const RouteSettings(name: "/EventCreate"),
+                        builder: (context) => EventCreatePage(user: user, mode: 1, event: event),
+                      ),
+                    );
+                  }),
             ),
           ],
         ),

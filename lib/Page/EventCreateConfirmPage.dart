@@ -21,10 +21,7 @@ class EventCreateConfirmPage extends StatelessWidget {
       appBar: AppBar(
         elevation: 2.0,
         backgroundColor: set.baseColor,
-        title: Text('確認ページ',
-            style: TextStyle(
-              color: set.pointColor,
-            )),
+        title: Text('確認ページ', style: TextStyle(color: set.pointColor)),
       ),
       backgroundColor: set.backGroundColor,
       body: Container(
@@ -60,7 +57,7 @@ class EventCreateConfirmPage extends StatelessWidget {
                   final EventRepository repository = new EventRepository();
                   repository.createEvent(station.code, event);
                   //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       settings: const RouteSettings(name: "/ReturnTop"),

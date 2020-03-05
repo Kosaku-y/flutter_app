@@ -114,11 +114,14 @@ class _MainPageState extends State<MainPage> {
   Widget _buildTabItem(TabItem tabItem, String root) {
     return Offstage(
       offstage: _currentTab != tabItem,
-      child: TabNavigator(
-        navigationKey: _navigatorKeys[tabItem],
-        tabItem: tabItem,
-        routerName: root,
-        user: widget.user,
+      child: TickerMode(
+        enabled: _currentTab == tabItem,
+        child: TabNavigator(
+          navigationKey: _navigatorKeys[tabItem],
+          tabItem: tabItem,
+          routerName: root,
+          user: widget.user,
+        ),
       ),
     );
   }

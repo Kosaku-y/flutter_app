@@ -31,6 +31,9 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
     super.initState();
   }
 
+  /**
+   *@ToDo validate
+   */
   void submit(String userId) async {
     User user = widget.user;
     user.name = _nameInputController.text;
@@ -42,7 +45,7 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        settings: const RouteSettings(name: "/main"),
+        settings: const RouteSettings(name: "/Main"),
         builder: (context) => MainPage(user: user, message: "登録完了しました"),
       ),
     );
@@ -126,7 +129,7 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
         set
             .picker(
                 adapter: NumberPickerAdapter(data: [NumberPickerColumn(begin: 18, end: 99)]),
-                selecteds: [0], //初期値
+                selected: 0, //初期値
                 onConfirm: (Picker picker, List value) {
                   print(value.toString());
                   print(picker.getSelectedValues());
@@ -166,8 +169,8 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
       onTap: () {
         set
             .picker(
-              adapter: PickerDataAdapter<String>(pickerdata: ['男性', '女性', 'その他']),
-              selecteds: [0], //初期値
+              adapter: PickerDataAdapter<String>(pickerdata: [' ', '男性', '女性', 'その他']),
+              selected: 0, //初期値
               onConfirm: (Picker picker, List value) {
                 if (value.toString() != "") {
                   setState(() {

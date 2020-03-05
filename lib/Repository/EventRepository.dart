@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 class EventRepository {
   final _eventReference = FirebaseDatabase.instance.reference().child("Events");
   final _eventManagerReference = FirebaseDatabase.instance.reference().child("EventManager");
-  final _userReference = FirebaseDatabase.instance.reference();
+  //final _userReference = FirebaseDatabase.instance.reference();
   int eventId;
   final String apiKey = "LE_UaP7Vyjs3wQPa";
 
@@ -31,9 +31,22 @@ class EventRepository {
       event.eventId = "E" + newEventId;
       _eventManagerReference.set({"eventId": "${eventId + 1}"});
       String prefName = await getPrefName(stationCode);
+      event.pref = prefName;
       _eventReference.child(prefName).child(event.station).child(event.eventId).set(event.toJson());
-    } catch (error) {
-      print(error);
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
+    }
+  }
+
+  Future<void> modifyEvent(String stationCode, EventDetail event) async {
+    try {
+      String prefName = await getPrefName(stationCode);
+      event.pref = prefName;
+      _eventReference.child(prefName).child(event.station).child(event.eventId).set(event.toJson());
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
     }
   }
 
@@ -47,27 +60,33 @@ class EventRepository {
       Map<String, dynamic> responseMap = jsonDecode(body); //レスポンス受信用Map
       String prefName = responseMap["ResultSet"]["Point"]["Prefecture"]["Name"];
       return prefName;
-    } catch (error) {
-      print(error);
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
     }
   }
 
   //期限切れイベント削除用メソッド
   Future<void> _delete() async {
-    DateTime now = DateTime.now();
-    await _eventReference.once().then((DataSnapshot snapshot) {
-      Map<dynamic, dynamic> values = snapshot.value;
-      values.forEach((k, v) {
-        v.forEach((k1, v1) {
-          v1.forEach((k2, v2) {
-            if (DateTime.fromMillisecondsSinceEpoch(v2["endingTime"]).isBefore(now)) {
-              _eventReference.child(k).child(k1).child(k2).remove();
-              printMap("remove", v2);
-            }
+    try {
+      DateTime now = DateTime.now();
+      await _eventReference.once().then((DataSnapshot snapshot) {
+        Map<dynamic, dynamic> values = snapshot.value;
+        values.forEach((k, v) {
+          v.forEach((k1, v1) {
+            v1.forEach((k2, v2) {
+              if (DateTime.fromMillisecondsSinceEpoch(v2["endingTime"]).isBefore(now)) {
+                _eventReference.child(k).child(k1).child(k2).remove();
+                printMap("remove", v2);
+              }
+            });
           });
         });
       });
-    });
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
+    }
   }
 
   //イベント検索メソッド
@@ -109,8 +128,9 @@ class EventRepository {
         });
       }
       return eventList;
-    } catch (error) {
-      print(error);
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
     }
   }
 
@@ -131,8 +151,9 @@ class EventRepository {
         lineMap[i["Name"]] = i["code"];
       });
       return lineMap;
-    } catch (error) {
-      print(error);
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
     }
   }
 
@@ -151,8 +172,9 @@ class EventRepository {
         stationMap[i["Station"]["Name"]] = i["Station"]["code"];
       });
       return stationMap;
-    } catch (error) {
-      print(error);
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
     }
   }
 

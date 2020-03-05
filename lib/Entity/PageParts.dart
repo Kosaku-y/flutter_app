@@ -46,24 +46,6 @@ class PageParts {
     );
   }
 
-  Picker picker(
-      {PickerAdapter adapter, List<int> selecteds, Function(Picker picker, List value) onConfirm}) {
-    return Picker(
-      itemExtent: 40.0,
-      height: 200.0,
-      backgroundColor: Colors.white,
-      headercolor: Colors.white,
-      changeToFirst: true,
-      cancelText: "戻る",
-      confirmText: "確定",
-      cancelTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
-      confirmTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
-      adapter: adapter,
-      selecteds: selecteds,
-      onConfirm: onConfirm,
-    );
-  }
-
   Widget iconButton({String message, IconData icon, Function() onPressed}) {
     return RaisedButton.icon(
       label: Text(message),
@@ -72,6 +54,47 @@ class PageParts {
         color: fontColor,
       ),
       onPressed: onPressed,
+    );
+  }
+
+  Widget floatButton({IconData icon, Function() onPressed}) {
+    return Ink(
+      decoration: ShapeDecoration(
+        color: backGroundColor,
+        shape: CircleBorder(
+          side: BorderSide(
+            color: fontColor,
+            width: 1.0,
+            style: BorderStyle.solid,
+          ),
+        ),
+      ),
+      child: IconButton(
+        icon: Icon(
+          icon,
+          color: fontColor,
+        ),
+        color: Colors.white,
+        onPressed: onPressed,
+      ),
+    );
+  }
+
+  Picker picker(
+      {PickerAdapter adapter, int selected, Function(Picker picker, List<int> value) onConfirm}) {
+    return Picker(
+      itemExtent: 40.0,
+      height: 200.0,
+      backgroundColor: Colors.white,
+      headercolor: Colors.white,
+      //changeToFirst: false,
+      cancelText: "戻る",
+      confirmText: "確定",
+      cancelTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
+      confirmTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
+      adapter: adapter,
+      selecteds: [selected],
+      onConfirm: onConfirm,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
+import 'package:flutter_app2/Page/ScoreManagePage.dart';
 import 'package:flutter_app2/Repository/CommonData.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -157,35 +158,42 @@ class HomeState extends State<Home> {
                 this.context,
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/PieChartDetail"),
-                  builder: (context) => new PieChartDetailPage(),
+                  builder: (context) => new PieChartDetailPage(user: widget.user),
                 ),
               ),
             ),
             _buildTile(
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Material(
-                          color: set.fontColor,
-                          shape: CircleBorder(),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Icon(Icons.show_chart, color: Colors.white, size: 30.0),
-                          )),
-                      Padding(padding: EdgeInsets.only(bottom: 12.0)),
-                      Text('戦績',
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0)),
-                      Text(
-                        '勝敗分析をしよう',
-                        style: TextStyle(color: set.fontColor, fontSize: 12.0),
-                      ),
-                    ]),
-              ),
-            ),
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Material(
+                            color: set.fontColor,
+                            shape: CircleBorder(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Icon(Icons.show_chart, color: Colors.white, size: 30.0),
+                            )),
+                        Padding(padding: EdgeInsets.only(bottom: 12.0)),
+                        Text('戦績',
+                            style: TextStyle(
+                                color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0)),
+                        Text(
+                          '勝敗分析をしよう',
+                          style: TextStyle(color: set.fontColor, fontSize: 12.0),
+                        ),
+                      ]),
+                ), onTap: () {
+              Navigator.push(
+                this.context,
+                MaterialPageRoute(
+                  settings: const RouteSettings(name: "/ScoremanagePage"),
+                  builder: (context) => ScoreManagePage(),
+                ),
+              );
+            }),
             _buildTile(
               Padding(
                 padding: const EdgeInsets.all(24.0),

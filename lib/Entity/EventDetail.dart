@@ -11,6 +11,8 @@
 class EventDetail {
   String eventId;
   String recruitMember;
+  String pref;
+  String line;
   String station;
   String startingTime;
   String endingTime;
@@ -18,40 +20,46 @@ class EventDetail {
   String userId;
   String userName;
 
-  EventDetail(this.recruitMember, this.station, this.startingTime, this.endingTime, this.comment,
-      this.userId, this.userName);
+  EventDetail(this.recruitMember, this.line, this.station, this.startingTime, this.endingTime,
+      this.comment, this.userId, this.userName);
 
   EventDetail.fromMap(Map map)
-      : userId = map["userId"],
-        userName = map["userName"],
-        eventId = map["eventId"],
+      : eventId = map["eventId"],
         recruitMember = map["recruitMember"],
+        pref = map["prefName"],
+        line = map["lineName"],
         station = map["station"],
         startingTime = map["startingTime"],
         endingTime = map["endingTime"],
-        comment = map["comment"];
+        comment = map["comment"],
+        userId = map["userId"],
+        userName = map["userName"];
 
   //json化,ログ出力メソッド
   toJson() {
     print("\n-----------send Data-----------\n"
         "eventId:$eventId\n"
-        "userName:$userName\n"
-        "userId:$userId\n"
         "member:$recruitMember\n"
+        "prefecture:$pref\n"
+        "line:$line\n"
         "station:$station\n"
         "start:$startingTime\n"
         "end:$endingTime\n"
         "comment:$comment\n"
+        "userId:$userId\n"
+        "userName:$userName\n"
         "-------------------------------\n");
     return {
-      "eventId": "$eventId",
-      "userId": userId,
-      "userName": userName,
+      "eventId": eventId,
       "recruitMember": recruitMember,
+      "pref": pref,
+      "line": line,
       "station": station,
       "startingTime": startingTime,
       "endingTime": endingTime,
       "comment": comment,
+      "userId": userId,
+      "userName": userName
     };
   }
 }

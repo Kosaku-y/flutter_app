@@ -52,7 +52,7 @@ class LoginPageState extends State<LoginPage> {
           print("自動ログイン完了");
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              settings: RouteSettings(name: "/NewHome"),
+              settings: RouteSettings(name: "/Main"),
               builder: (context) => MainPage(user: user, message: "ログインしました"),
             ),
           );

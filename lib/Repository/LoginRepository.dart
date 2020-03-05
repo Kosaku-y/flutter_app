@@ -88,7 +88,10 @@ class LoginRepository {
         }
       });
       return user;
-    } catch (e) {}
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
+    }
   }
 
   Future<FirebaseUser> isSignedIn() async {

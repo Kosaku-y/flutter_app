@@ -33,7 +33,7 @@ class ReturnTopPage extends StatelessWidget {
               child: set.iconButton(
                 message: "検索ページに戻る",
                 icon: Icons.keyboard_backspace,
-                onPressed: () => Navigator.pushNamedAndRemoveUntil(context, "/", (_) => false),
+                onPressed: () => Navigator.pop(context),
               ),
             ),
           ],

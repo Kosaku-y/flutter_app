@@ -7,6 +7,7 @@ import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Page/EventCreateConfirmPage.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_picker/Picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
 
@@ -18,14 +19,15 @@ import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart
 class EventCreatePage extends StatefulWidget {
   final int mode;
   final User user;
-
-  EventCreatePage({Key key, this.user, this.mode}) : super(key: key);
+  final EventDetail event;
+  EventCreatePage({Key key, this.user, this.mode, this.event}) : super(key: key);
   @override
   EventCreatePageState createState() => new EventCreatePageState();
 }
 
 class EventCreatePageState extends State<EventCreatePage> {
   PageParts set = new PageParts();
+
   final int register = 0;
   final int modify = 1;
 
@@ -42,13 +44,14 @@ class EventCreatePageState extends State<EventCreatePage> {
   Map _lineMap = new Map<String, String>();
   Map _stationMap = new Map<String, String>();
 
-  TextEditingController _startingController = new TextEditingController(text: '');
-  TextEditingController _endingController = new TextEditingController(text: '');
-  TextEditingController _memberController = new TextEditingController(text: '');
-  TextEditingController _prefController = new TextEditingController(text: '');
-  TextEditingController _lineController = new TextEditingController(text: '');
-  TextEditingController _stationController = new TextEditingController(text: '');
-  TextEditingController _commentController = new TextEditingController(text: '');
+  TextEditingController _startingController;
+  TextEditingController _endingController;
+  TextEditingController _memberController;
+  TextEditingController _prefController;
+  TextEditingController _lineController;
+  TextEditingController _stationController;
+  TextEditingController _commentController;
+
   Line _line = Line();
   Station _station = Station();
   DateTime _start;
@@ -60,6 +63,27 @@ class EventCreatePageState extends State<EventCreatePage> {
   @override
   void initState() {
     super.initState();
+    if (widget.mode == register) {
+      _startingController = new TextEditingController(text: '');
+      _endingController = new TextEditingController(text: '');
+      _memberController = new TextEditingController(text: '');
+      _prefController = new TextEditingController(text: '');
+      _lineController = new TextEditingController(text: '');
+      _stationController = new TextEditingController(text: '');
+      _commentController = new TextEditingController(text: '');
+    } else {
+      _bloc.lineApiSink.add(Pref.pref[widget.event.pref]);
+      setState(() {
+        //_bloc.stationApiSink.add(_lineMap[widget.event.line]);
+      });
+      _startingController = new TextEditingController(text: widget.event.startingTime);
+      _endingController = new TextEditingController(text: widget.event.endingTime);
+      _memberController = new TextEditingController(text: widget.event.recruitMember);
+      _prefController = new TextEditingController(text: widget.event.pref);
+      _lineController = new TextEditingController(text: widget.event.line);
+      _stationController = new TextEditingController(text: widget.event.station);
+      _commentController = new TextEditingController(text: widget.event.comment);
+    }
   }
 
   Widget build(BuildContext context) {
@@ -108,7 +132,7 @@ class EventCreatePageState extends State<EventCreatePage> {
                   color: set.fontColor,
                 ),
                 onPressed: () {
-                  Navigator.popUntil(context, ModalRoute.withName("/EventManage"));
+                  Navigator.pop(context);
                 },
               ),
             ]),
@@ -148,6 +172,7 @@ class EventCreatePageState extends State<EventCreatePage> {
 
       EventDetail event = new EventDetail(
         _memberController.text,
+        _lineController.text,
         _stationController.text,
         formatter.format(_start),
         formatter.format(_end),
@@ -216,24 +241,21 @@ class EventCreatePageState extends State<EventCreatePage> {
   Widget _prefPicker() {
     return new InkWell(
       onTap: () {
-        DataPicker.showDatePicker(
-          context,
-          showTitleActions: true,
-          locale: 'en',
-          datas: Pref.pref.keys.toList(),
-          title: '都道府県',
-          onConfirm: (value) {
-            if (_prefController.text != value) {
-              setState(() {
-                _prefController.text = value;
-                if (value != " ") {
-                  _bloc.lineApiSink.add(Pref.pref[value]);
-                  _prefChange();
-                }
-              });
-            }
-          },
-        );
+        set
+            .picker(
+                adapter: PickerDataAdapter<String>(pickerdata: Pref.pref.keys.toList()),
+                selected: 0, //初期値
+                onConfirm: (Picker picker, List value) {
+                  var newData = picker.getSelectedValues()[0].toString();
+                  if (_prefController.text != newData) {
+                    setState(() {
+                      _prefController.text = newData;
+                      if (newData != " ") _bloc.lineApiSink.add(Pref.pref[newData]);
+                      _prefChange();
+                    });
+                  }
+                })
+            .showModal(this.context);
       },
       child: AbsorbPointer(
         child: new TextFormField(

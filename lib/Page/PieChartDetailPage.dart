@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:firebase_database/firebase_database.dart';
 import '../Entity/PageParts.dart';
 import '../Entity/User.dart';
 import '../Repository/CommonData.dart';
@@ -13,6 +12,8 @@ class Data {
 }
 
 class PieChartDetailPage extends StatefulWidget {
+  final User user;
+  PieChartDetailPage({key, this.user});
   @override
   State<StatefulWidget> createState() {
     return new PieChartDetailPageState();
@@ -23,10 +24,7 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
   List<charts.Series<Data, String>> seriesPieData;
   PageParts set = new PageParts();
   CommonData cd = CommonData();
-  User user = new User();
-  final userReference = FirebaseDatabase.instance.reference().child("gmail");
-  int rank = int.parse("21");
-  int max, remain;
+  int max, remain, rank;
   String rankColorString;
 
   PieChartDetailPageState();
@@ -38,6 +36,7 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
   }
 
   generateData() {
+    rank = int.parse(widget.user.rank);
     for (int r in cd.rankMap.keys) {
       if (rank <= r) {
         max = r;
@@ -46,7 +45,6 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
       }
     }
     remain = max - rank;
-//  int rank = int.parse(user.rank);
     var pieData = [
       new Data('rank', rank, cd.colorMap[rankColorString].withOpacity(0.8)),
       new Data('brank', remain, Colors.white.withOpacity(0.0)),

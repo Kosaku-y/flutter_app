@@ -21,8 +21,9 @@ class TalkRepository {
       _userReference.child("${user.userId}/message/").onChildAdded.listen((e) {
         _eventRealTimeStream.add(e.snapshot.key);
       });
-    } catch (error) {
-      print(error);
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
     }
   }
 }

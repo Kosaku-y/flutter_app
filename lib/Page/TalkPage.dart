@@ -99,7 +99,7 @@ class TalkPageState extends State<TalkPage> {
               reverse: true,
               padding: const EdgeInsets.all(16.0),
               itemBuilder: (BuildContext context, int index) {
-                return _buildRow(index);
+                return _buildRow(talkList.length - 1 - index);
               },
               itemCount: talkList.length,
             ),

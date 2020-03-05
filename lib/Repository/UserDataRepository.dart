@@ -8,8 +8,9 @@ class UserDataRepository {
   Future<void> registerUser(User user) async {
     try {
       await _userReference.child(user.userId).set(user.toJson());
-    } catch (e) {
+    } catch (e, stackTrace) {
       print(e);
+      print(stackTrace);
     }
   }
 }

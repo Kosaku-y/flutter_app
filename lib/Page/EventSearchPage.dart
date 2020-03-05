@@ -6,7 +6,6 @@ import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
 import 'package:flutter_app2/Page/EventSerchResultPage.dart';
 import 'EventCreatePage.dart';
 import 'package:flutter_picker/flutter_picker.dart';
@@ -17,8 +16,7 @@ import 'package:flutter_picker/flutter_picker.dart';
 
 ----------------------------------------------*/
 class EventManagePage extends StatefulWidget {
-  @override
-  User user;
+  final User user;
   EventManagePage({Key key, this.user}) : super(key: key);
 
   State<StatefulWidget> createState() {
@@ -40,6 +38,9 @@ class EventManagePageState extends State<EventManagePage> {
   Map _lineMap = new Map<String, String>();
   Map _stationMap = new Map<String, String>();
   EventManageBloc _bloc = EventManageBloc();
+  int _selectedPref = 0;
+  int _selectefLine = 0;
+  int _selectedStation = 0;
 
   TextEditingController _prefController = new TextEditingController(text: " ");
   TextEditingController _lineController = new TextEditingController(text: " ");
@@ -75,26 +76,22 @@ class EventManagePageState extends State<EventManagePage> {
           ),
         ),
       ),
-      floatingActionButton: IconButton(
-        icon: Icon(
-          Icons.person_add,
-          color: set.fontColor,
-        ),
-        onPressed: () => Navigator.of(
-          context,
-          rootNavigator: true,
-        ).push<Widget>(
-          MaterialPageRoute(
-            settings: const RouteSettings(name: "/Recruitment"),
-            builder: (context) => EventCreatePage(user: widget.user, mode: 0),
-          ),
-        ),
-      ),
+      floatingActionButton: set.floatButton(
+          icon: Icons.person_add,
+          onPressed: () {
+            Navigator.of(
+              context,
+              rootNavigator: true,
+            ).push<Widget>(
+              MaterialPageRoute(
+                settings: const RouteSettings(name: "/EventCreate"),
+                builder: (context) => EventCreatePage(user: widget.user, mode: 0),
+                fullscreenDialog: true,
+              ),
+            );
+          }),
     );
   }
-
-  //イベント修正
-  void _correction() {}
 
   //フォーム送信用メソッド
   void _submission() {
@@ -126,11 +123,12 @@ class EventManagePageState extends State<EventManagePage> {
         set
             .picker(
               adapter: PickerDataAdapter<String>(pickerdata: Pref.pref.keys.toList()),
-              selecteds: [0], //初期値
+              selected: _selectedPref, //初期値
               onConfirm: (Picker picker, List value) {
                 var newData = picker.getSelectedValues()[0].toString();
                 if (_prefController.text != newData) {
                   setState(() {
+                    _selectedPref = picker.selecteds[0];
                     _prefController.text = newData;
                     if (newData != " ") _bloc.lineApiSink.add(Pref.pref[newData]);
                     _prefChange();
@@ -187,22 +185,23 @@ class EventManagePageState extends State<EventManagePage> {
               _lineData = _lineMap.keys.toList();
               return new InkWell(
                 onTap: () {
-                  DataPicker.showDatePicker(
-                    context,
-                    showTitleActions: true,
-                    locale: 'en',
-                    datas: _lineData,
-                    title: '路線',
-                    onConfirm: (value) {
-                      if (_lineController.text != value) {
-                        setState(() {
-                          _lineController.text = value;
-                          if (value != " ") _bloc.stationApiSink.add(_lineMap[value]);
-                          _lineChange();
-                        });
-                      }
-                    },
-                  );
+                  set
+                      .picker(
+                        adapter: PickerDataAdapter<String>(pickerdata: _lineData),
+                        selected: _selectefLine, //初期値
+                        onConfirm: (Picker picker, List value) {
+                          var newData = picker.getSelectedValues()[0].toString();
+                          if (_lineController.text != newData) {
+                            setState(() {
+                              _selectefLine = picker.selecteds[0];
+                              _lineController.text = newData;
+                              if (newData != " ") _bloc.stationApiSink.add(_lineMap[newData]);
+                              _lineChange();
+                            });
+                          }
+                        },
+                      )
+                      .showModal(this.context);
                 },
                 child: AbsorbPointer(
                   child: _lineTextFormField(),
@@ -264,21 +263,22 @@ class EventManagePageState extends State<EventManagePage> {
               _stationData = _stationMap.keys.toList();
               return InkWell(
                 onTap: () {
-                  DataPicker.showDatePicker(
-                    context,
-                    showTitleActions: true,
-                    locale: 'en',
-                    datas: _stationData,
-                    title: '駅',
-                    onConfirm: (value) {
-                      if (_stationController.text != value) {
-                        setState(() {
-                          _stationController.text = value;
-                          _stationChange();
-                        });
-                      }
-                    },
-                  );
+                  set
+                      .picker(
+                        adapter: PickerDataAdapter<String>(pickerdata: _stationData),
+                        selected: _selectedStation, //初期値
+                        onConfirm: (Picker picker, List value) {
+                          var newData = picker.getSelectedValues()[0].toString();
+                          if (_stationController.text != newData) {
+                            setState(() {
+                              _selectedStation = picker.selecteds[0];
+                              _stationController.text = newData;
+                              _stationChange();
+                            });
+                          }
+                        },
+                      )
+                      .showModal(this.context);
                 },
                 child: AbsorbPointer(
                   child: _stationTextFormField(),
