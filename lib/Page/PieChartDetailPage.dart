@@ -24,7 +24,7 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
   List<charts.Series<Data, String>> seriesPieData;
   PageParts set = new PageParts();
   CommonData cd = CommonData();
-  int max, remain, rank;
+  int max, remain, userRank;
   String rankColorString;
 
   PieChartDetailPageState();
@@ -32,11 +32,11 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
   void initState() {
     super.initState();
     seriesPieData = List<charts.Series<Data, String>>();
-    generateData();
+    generateData(int.parse(widget.user.rank));
   }
 
-  generateData() {
-    rank = int.parse(widget.user.rank);
+  generateData(int rank) {
+    userRank = rank;
     for (int r in cd.rankMap.keys) {
       if (rank <= r) {
         max = r;

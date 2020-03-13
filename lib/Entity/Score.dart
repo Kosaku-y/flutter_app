@@ -2,6 +2,8 @@
 scoreエンティティ
 1半荘ベースで考える
 ----------------------------------------------*/
+import 'package:flutter_app2/Entity/PageParts.dart';
+
 class Score {
   String date; //日付,primaryKey
   int ranking; //順位
@@ -10,6 +12,7 @@ class Score {
   int rate; //レート
   int balance; //収入
 
+  Score(this.date, this.ranking, this.chip, this.total, this.rate, this.balance);
   Score.fromJson(Map<String, dynamic> json)
       : date = json['date'],
         ranking = json['ranking'],

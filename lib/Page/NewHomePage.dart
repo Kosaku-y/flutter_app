@@ -37,7 +37,7 @@ class HomeState extends State<Home> {
       }
     }
     pie.seriesPieData = List<charts.Series<Data, String>>();
-    pie.generateData();
+    pie.generateData(userRank);
   }
 
   @override

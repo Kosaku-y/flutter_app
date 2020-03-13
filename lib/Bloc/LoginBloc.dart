@@ -11,15 +11,15 @@ class LoginBloc {
   //loginRepositoryからGoogleログイン受け取るためのStream
   final _stateController = StreamController();
 
-  final loginRepository = LoginRepository();
+  final repository = LoginRepository();
 
   LoginBloc() {
     //現在のステータス確認,毎回コールされる
     _stateController.stream.listen((onData) async {
       try {
-        var currentUser = await loginRepository.isSignedIn();
+        var currentUser = await repository.isSignedIn();
         if (currentUser != null) {
-          var user = await loginRepository.checkFireBaseLogin(currentUser);
+          var user = await repository.checkFireBaseLogin(currentUser);
           _currentTempUserController.add(user);
           print("firebaseログイン完了:bloc");
         } else {
@@ -31,9 +31,10 @@ class LoginBloc {
     //Googleログインが必要な時にコールされる
     _googleLoginController.stream.listen((onData) async {
       try {
-        var fireBaseUser = await loginRepository.signInWithGoogle();
+        await repository.signOut();
+        var fireBaseUser = await repository.signInWithGoogle();
         if (fireBaseUser != null) {
-          var user = await loginRepository.checkFireBaseLogin(fireBaseUser);
+          var user = await repository.checkFireBaseLogin(fireBaseUser);
           _currentTempUserController.add(user);
           print("googleログイン完了:bloc");
         } else {

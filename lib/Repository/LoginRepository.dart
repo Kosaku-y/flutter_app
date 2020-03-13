@@ -74,7 +74,7 @@ class LoginRepository {
   * */
 
   //fireBaseサインイン部分
-  Future<User> checkFireBaseLogin(FirebaseUser currentUser) async {
+  checkFireBaseLogin(FirebaseUser currentUser) async {
     final _mainReference = FirebaseDatabase.instance.reference().child("User");
     //メールアドレス正規化
     var userId = makeUserId(currentUser.email);
@@ -94,17 +94,27 @@ class LoginRepository {
     }
   }
 
-  Future<FirebaseUser> isSignedIn() async {
-    final currentUser = await _firebaseAuth.currentUser();
-    return currentUser;
+  isSignedIn() async {
+    try {
+      final currentUser = await _firebaseAuth.currentUser();
+      return currentUser;
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
+    }
   }
 
   //ログアウト
   Future<void> signOut() async {
-    return Future.wait([
-      _firebaseAuth.signOut(),
-      _googleSignIn.signOut(),
-    ]);
+    try {
+      return Future.wait([
+        _firebaseAuth.signOut(),
+        _googleSignIn.signOut(),
+      ]);
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
+    }
   }
 
   String makeUserId(String key) {

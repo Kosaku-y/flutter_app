@@ -39,7 +39,7 @@ class EventManagePageState extends State<EventManagePage> {
   Map _stationMap = new Map<String, String>();
   EventManageBloc _bloc = EventManageBloc();
   int _selectedPref = 0;
-  int _selectefLine = 0;
+  int _selectedLine = 0;
   int _selectedStation = 0;
 
   TextEditingController _prefController = new TextEditingController(text: " ");
@@ -86,7 +86,7 @@ class EventManagePageState extends State<EventManagePage> {
               MaterialPageRoute(
                 settings: const RouteSettings(name: "/EventCreate"),
                 builder: (context) => EventCreatePage(user: widget.user, mode: 0),
-                fullscreenDialog: true,
+                //fullscreenDialog: true,
               ),
             );
           }),
@@ -188,12 +188,12 @@ class EventManagePageState extends State<EventManagePage> {
                   set
                       .picker(
                         adapter: PickerDataAdapter<String>(pickerdata: _lineData),
-                        selected: _selectefLine, //初期値
+                        selected: _selectedLine, //初期値
                         onConfirm: (Picker picker, List value) {
                           var newData = picker.getSelectedValues()[0].toString();
                           if (_lineController.text != newData) {
                             setState(() {
-                              _selectefLine = picker.selecteds[0];
+                              _selectedLine = picker.selecteds[0];
                               _lineController.text = newData;
                               if (newData != " ") _bloc.stationApiSink.add(_lineMap[newData]);
                               _lineChange();
