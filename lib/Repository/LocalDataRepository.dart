@@ -44,17 +44,33 @@ class LocalDataRepository {
     formatter = DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY);
   }
 
-  Future<Map<DateTime, dynamic>> getScore() async {
+//  Future<Map<DateTime, dynamic>> getScore() async {
+//    prefs = await SharedPreferences.getInstance();
+//    var resource = prefs.getString(scoreKey);
+//    if (resource == null) return null;
+//    Map<String, dynamic> tmpMap = json.decode(resource);
+//    // string to List<User>
+//    var scoreMap = Map<DateTime, List<Score>>();
+//    tmpMap.forEach((key, value) {
+//      scoreMap[formatter.parse(key)] = List<Score>();
+//      value.forEach((i) {
+//        scoreMap[formatter.parse(key)].add(Score.fromJson(i));
+//      });
+//    });
+//    print("get$scoreMap");
+//    return scoreMap;
+//  }
+  Future<Map<String, List<Score>>> getScore() async {
     prefs = await SharedPreferences.getInstance();
     var resource = prefs.getString(scoreKey);
-    if (resource == null) return null;
+    var scoreMap = Map<String, List<Score>>();
+    if (resource == null) return scoreMap;
     Map<String, dynamic> tmpMap = json.decode(resource);
     // string to List<User>
-    var scoreMap = Map<DateTime, List<Score>>();
     tmpMap.forEach((key, value) {
-      scoreMap[formatter.parse(key)] = List<Score>();
+      scoreMap[key] = [];
       value.forEach((i) {
-        scoreMap[formatter.parse(key)].add(Score.fromJson(i));
+        scoreMap[key].add(Score.fromJson(i));
       });
     });
     print("get$scoreMap");
@@ -62,28 +78,45 @@ class LocalDataRepository {
   }
 
   Future<void> addScore(Score score) async {
-    Map<DateTime, dynamic> map = await getScore();
+    Map<String, dynamic> map = await getScore();
     Map<String, dynamic> submitMap = Map<String, dynamic>();
 
     if (map == null) {
       submitMap[score.date] = [score];
     } else {
-      submitMap = convertMap(map);
+      submitMap = map;
       if (submitMap.containsKey(score.date)) {
         submitMap[score.date].add(score);
       } else {
         submitMap[score.date] = [score];
       }
     }
-    //prefs.setString(scoreKey, null);
     print("保存$submitMap");
     await prefs.setString(scoreKey, json.encode(submitMap));
   }
+//  Future<void> addScore(Score score) async {
+//    Map<DateTime, dynamic> map = await getScore();
+//    Map<String, dynamic> submitMap = Map<String, dynamic>();
+//
+//    if (map == null) {
+//      submitMap[score.date] = [score];
+//    } else {
+//      submitMap = convertMap(map);
+//      if (submitMap.containsKey(score.date)) {
+//        submitMap[score.date].add(score);
+//      } else {
+//        submitMap[score.date] = [score];
+//      }
+//    }
+//    //prefs.setString(scoreKey, null);
+//    print("保存$submitMap");
+//    await prefs.setString(scoreKey, json.encode(submitMap));
+//  }
 
   Map<String, dynamic> convertMap(Map<DateTime, dynamic> scoreMap) {
     Map<String, List<Score>> returnMap = Map();
     scoreMap.forEach((key, value) {
-      returnMap[formatter.format(key)] = value;
+      returnMap[key.toIso8601String()] = value;
     });
     return returnMap;
   }

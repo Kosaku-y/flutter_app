@@ -98,4 +98,30 @@ class PageParts {
       onConfirm: onConfirm,
     );
   }
+
+  Picker dateTimePicker(
+      {PickerAdapter adapter, Function(Picker picker, List<int> value) onConfirm}) {
+    return Picker(
+      itemExtent: 40.0,
+      height: 200.0,
+      backgroundColor: Colors.white,
+      headercolor: Colors.white,
+      cancelText: "戻る",
+      confirmText: "確定",
+      cancelTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
+      confirmTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
+      delimiter: [
+        PickerDelimiter(
+            column: 4,
+            child: Container(
+              width: 10.0,
+              alignment: Alignment.center,
+              child: Text(':', style: TextStyle(fontWeight: FontWeight.bold)),
+              color: Colors.white,
+            ))
+      ],
+      adapter: adapter,
+      onConfirm: onConfirm,
+    );
+  }
 }

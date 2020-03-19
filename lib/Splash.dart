@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_app2/Entity/AuthStatus.dart';
+import 'Entity/User.dart';
 import 'Page/LoginPage.dart';
+import 'main.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -8,6 +11,11 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  int mode = 1;
+  /*
+  * 実機 0
+  * ログインスルー 1
+  * */
   @override
   void initState() {
     super.initState();
@@ -27,11 +35,25 @@ class _SplashState extends State<Splash> {
 
   void handleTimeout() {
     // ログイン画面へ
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        settings: const RouteSettings(name: "/login"),
-        builder: (context) => LoginPage(),
-      ),
-    );
+    switch (mode) {
+      case 0:
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            settings: const RouteSettings(name: "/login"),
+            builder: (context) => LoginPage(),
+          ),
+        );
+        return;
+      case 1:
+        User user = User.tmpUser(AuthStatus.signedUp, "test");
+        user.name = "テストユーザ";
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            settings: RouteSettings(name: "/Main"),
+            builder: (context) => MainPage(user: user, message: "ログインしました"),
+          ),
+        );
+        return;
+    }
   }
 }

@@ -6,7 +6,6 @@ import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Page/EventCreateConfirmPage.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
@@ -437,18 +436,22 @@ class EventCreatePageState extends State<EventCreatePage> {
   Widget _startTimePicker() {
     return new InkWell(
       onTap: () {
-        DatePicker.showDateTimePicker(context,
-            showTitleActions: true,
-            theme: DatePickerTheme(
-              backgroundColor: Colors.white,
-              itemStyle: TextStyle(color: Colors.black),
-              doneStyle: TextStyle(color: Colors.black),
-            ), onConfirm: (date) {
-          setState(() {
-            _start = date;
-            _startingController.text = formatter.format(date);
-          });
-        }, currentTime: DateTime.now(), locale: LocaleType.en);
+        set
+            .dateTimePicker(
+              adapter: new DateTimePickerAdapter(
+                type: PickerDateTimeType.kYMDHM,
+                isNumberMonth: true,
+                yearSuffix: "年",
+                monthSuffix: "月",
+                daySuffix: "日",
+                value: _start ?? DateTime.now(),
+              ),
+              onConfirm: (picker, _) {
+                _start = DateTime.parse(picker.adapter.toString());
+                _startingController.text = formatter.format(_start);
+              },
+            )
+            .showModal(this.context);
       },
       child: AbsorbPointer(
         child: new TextFormField(
@@ -478,18 +481,22 @@ class EventCreatePageState extends State<EventCreatePage> {
   Widget _endTimePicker() {
     return new InkWell(
       onTap: () {
-        DatePicker.showDateTimePicker(context,
-            showTitleActions: true,
-            theme: DatePickerTheme(
-              backgroundColor: Colors.white,
-              itemStyle: TextStyle(color: Colors.black),
-              doneStyle: TextStyle(color: Colors.black),
-            ), onConfirm: (date) {
-          setState(() {
-            _endingController.text = formatter.format(date);
-            _end = date;
-          });
-        }, currentTime: DateTime.now(), locale: LocaleType.en);
+        set
+            .dateTimePicker(
+              adapter: new DateTimePickerAdapter(
+                type: PickerDateTimeType.kYMDHM,
+                isNumberMonth: true,
+                yearSuffix: "年",
+                monthSuffix: "月",
+                daySuffix: "日",
+                value: _start ?? DateTime.now(),
+              ),
+              onConfirm: (picker, _) {
+                _end = DateTime.parse(picker.adapter.toString());
+                _endingController.text = formatter.format(_end);
+              },
+            )
+            .showModal(this.context);
       },
       child: AbsorbPointer(
         child: new TextFormField(

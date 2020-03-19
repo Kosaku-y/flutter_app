@@ -9,8 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_datetime_picker: ^1.2.1
-  provider: 3.0.0+1
+  provider: ^4.0.4
   bloc_provider: ^0.6.2
   rxdart: 0.22.1
   intl: ^0.16.1
@@ -31,9 +30,9 @@ dependencies:
   flutter_twitter_login: ^1.1.0
   flutter_spinkit: ^2.1.0
   shared_preferences: ^0.5.6+2
-  table_calendar: ^2.2.2
+  table_calendar: ^2.2.3
   syncfusion_flutter_charts: ^17.4.51
-  fl_animated_linechart: ^1.1.1
+  fl_chart: ^0.8.3
 
 
 

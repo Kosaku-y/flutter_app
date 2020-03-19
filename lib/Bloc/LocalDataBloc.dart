@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_app2/Entity/Score.dart';
 import 'package:flutter_app2/Repository/LocalDataRepository.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -7,8 +8,8 @@ class LocalDataBloc {
   final StreamController _callSignController = StreamController();
   Sink get callMapSink => _callSignController.sink;
   //ページMap<DateTime,dynamic>を返すStream
-  final _scoreMapController = BehaviorSubject<Map<DateTime, dynamic>>();
-  Stream<Map<DateTime, dynamic>> get scoreMapStream => _scoreMapController.stream;
+  final _scoreMapController = BehaviorSubject<Map<String, List<Score>>>();
+  Stream<Map<String, List<Score>>> get scoreMapStream => _scoreMapController.stream;
 
   final LocalDataRepository repository = LocalDataRepository();
 

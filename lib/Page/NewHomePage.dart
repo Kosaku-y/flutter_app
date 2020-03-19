@@ -9,6 +9,7 @@ import 'package:firebase_database/firebase_database.dart';
 
 import 'PieChartDetailPage.dart';
 import 'MahjongHandPage.dart';
+import 'ScoreManagePage2.dart';
 
 class Home extends StatefulWidget {
   final User user;
@@ -189,7 +190,7 @@ class HomeState extends State<Home> {
               Navigator.push(
                 this.context,
                 MaterialPageRoute(
-                  settings: const RouteSettings(name: "/ScoremanagePage"),
+                  settings: const RouteSettings(name: "/ScoreManagePage"),
                   builder: (context) => ScoreManagePage(),
                 ),
               );

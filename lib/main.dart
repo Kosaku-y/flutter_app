@@ -38,6 +38,16 @@ class _MainPageState extends State<MainPage> {
   TabItem _currentTab = TabItem.NewHome;
   List<Widget> tabs;
   PageParts set = PageParts();
+  bool once = true;
+//  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+//
+//  void _showSnackBar() {
+//    if (once) {
+//      _scaffoldKey.currentState.showSnackBar(new SnackBar(content: Text(widget.message)));
+//      once = false;
+//    }
+//  }
+
   Map<TabItem, GlobalKey<NavigatorState>> _navigatorKeys = {
     TabItem.NewHome: GlobalKey<NavigatorState>(),
     TabItem.EventManage: GlobalKey<NavigatorState>(),
@@ -65,6 +75,7 @@ class _MainPageState extends State<MainPage> {
       TalkRoomPage(widget.user),
       SettingPage(user: widget.user),
     ];
+    //_showSnackBar();
   }
 
   Future<bool> onWillPop() async {
@@ -83,6 +94,7 @@ class _MainPageState extends State<MainPage> {
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
+        //key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
             _buildTabItem(
@@ -237,8 +249,6 @@ class BottomNavigation extends StatelessWidget {
       ],
       type: BottomNavigationBarType.fixed,
       backgroundColor: set.baseColor,
-//      fixedColor: set.fontColor,
-//      unselectedItemColor: Colors.white,
       onTap: (index) {
         onSelect(TabItem.values[index]);
       },

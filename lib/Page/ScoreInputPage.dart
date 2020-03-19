@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/Repository/LocalDataRepository.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/Score.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_picker/Picker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
@@ -82,7 +82,7 @@ class ScoreInputPageState extends State<ScoreInputPage> {
 
   void submit() async {
     Score score = Score(
-        formatter.format(_date),
+        (DateTime(_date.year, _date.month, _date.day, 21).toUtc()).toIso8601String(),
         int.parse(rankingController.text),
         int.parse(chipController.text),
         int.parse(totalController.text),
@@ -94,18 +94,28 @@ class ScoreInputPageState extends State<ScoreInputPage> {
   Widget dateField() {
     return new InkWell(
       onTap: () {
-        DatePicker.showDatePicker(context,
-            showTitleActions: true,
-            theme: DatePickerTheme(
-              backgroundColor: Colors.white,
-              itemStyle: TextStyle(color: Colors.black),
-              doneStyle: TextStyle(color: Colors.black),
-            ), onConfirm: (date) {
-          setState(() {
-            _date = date;
-            dateController.text = formatter.format(date);
-          });
-        }, currentTime: DateTime.now(), locale: LocaleType.en);
+        Picker(
+          itemExtent: 40.0,
+          height: 200.0,
+          backgroundColor: Colors.white,
+          headercolor: Colors.white,
+          cancelText: "戻る",
+          confirmText: "確定",
+          cancelTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
+          confirmTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
+          adapter: DateTimePickerAdapter(
+            type: PickerDateTimeType.kYMD,
+            isNumberMonth: true,
+            yearSuffix: "年",
+            monthSuffix: "月",
+            daySuffix: "日",
+            value: _date ?? DateTime.now(),
+          ),
+          onConfirm: (picker, _) {
+            _date = DateTime.parse(picker.adapter.toString());
+            dateController.text = formatter.format(_date);
+          },
+        ).showModal(this.context);
       },
       child: AbsorbPointer(
         child: new TextFormField(
