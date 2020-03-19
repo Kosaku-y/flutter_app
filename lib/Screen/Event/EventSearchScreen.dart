@@ -6,26 +6,27 @@ import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import 'package:flutter_app2/Page/EventSerchResultPage.dart';
-import 'EventCreatePage.dart';
+import 'EventCreateScreen.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+
+import 'EventSerchResultScreen.dart';
 
 /*----------------------------------------------
 
 イベント検索フォームページクラス
 
 ----------------------------------------------*/
-class EventManagePage extends StatefulWidget {
+class EventManageScreen extends StatefulWidget {
   final User user;
-  EventManagePage({Key key, this.user}) : super(key: key);
+  EventManageScreen({Key key, this.user}) : super(key: key);
 
   State<StatefulWidget> createState() {
-    return new EventManagePageState();
+    return new EventManageScreenState();
   }
 }
 
-class EventManagePageState extends State<EventManagePage> {
-  PageParts set = new PageParts();
+class EventManageScreenState extends State<EventManageScreen> {
+  final PageParts _parts = new PageParts();
   final _formKey = GlobalKey<FormState>();
 
   Pref pref;
@@ -50,33 +51,27 @@ class EventManagePageState extends State<EventManagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          elevation: 2.0,
-          backgroundColor: set.baseColor,
-          title: Text('イベント検索',
-              style: TextStyle(
-                color: set.pointColor,
-              ))),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: "イベント検索"),
+      backgroundColor: _parts.backGroundColor,
       body: Form(
         key: _formKey,
         child: Container(
           padding: const EdgeInsets.all(30.0),
           child: SingleChildScrollView(
             child: Column(children: <Widget>[
-              Text("検索条件を入力してください", style: TextStyle(color: set.fontColor)),
+              Text("検索条件を入力してください", style: TextStyle(color: _parts.fontColor)),
               _prefPicker(),
               _linePicker(),
               _stationPicker(),
               Container(
                 padding: EdgeInsets.only(top: 20.0),
-                child: set.iconButton(message: "検索", icon: Icons.search, onPressed: _submission),
+                child: _parts.iconButton(message: "検索", icon: Icons.search, onPressed: _submission),
               ),
             ]),
           ),
         ),
       ),
-      floatingActionButton: set.floatButton(
+      floatingActionButton: _parts.floatButton(
           icon: Icons.person_add,
           onPressed: () {
             Navigator.of(
@@ -85,7 +80,7 @@ class EventManagePageState extends State<EventManagePage> {
             ).push<Widget>(
               MaterialPageRoute(
                 settings: const RouteSettings(name: "/EventCreate"),
-                builder: (context) => EventCreatePage(user: widget.user, mode: 0),
+                builder: (context) => EventCreateScreen(user: widget.user, mode: 0),
                 //fullscreenDialog: true,
               ),
             );
@@ -103,7 +98,7 @@ class EventManagePageState extends State<EventManagePage> {
           MaterialPageRoute(
             // パラメータを渡す
             settings: const RouteSettings(name: "/EventSearchResult"),
-            builder: (context) => new EventSearchResultPage(
+            builder: (context) => new EventSearchResultScreen(
               user: widget.user,
               eventSearch: EventSearch(
                   pref: _prefController.text == " " ? null : _prefController.text,
@@ -120,7 +115,7 @@ class EventManagePageState extends State<EventManagePage> {
   Widget _prefPicker() {
     return new InkWell(
       onTap: () {
-        set
+        _parts
             .picker(
               adapter: PickerDataAdapter<String>(pickerdata: Pref.pref.keys.toList()),
               selected: _selectedPref, //初期値
@@ -146,14 +141,14 @@ class EventManagePageState extends State<EventManagePage> {
           decoration: InputDecoration(
             icon: Icon(
               Icons.place,
-              color: set.fontColor,
+              color: _parts.fontColor,
             ),
             hintText: 'Choose a prefecture',
             labelText: '都道府県',
-            labelStyle: TextStyle(color: set.fontColor),
+            labelStyle: TextStyle(color: _parts.fontColor),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
           ),
           validator: (String value) {
             if (changePref == 2) {
@@ -185,7 +180,7 @@ class EventManagePageState extends State<EventManagePage> {
               _lineData = _lineMap.keys.toList();
               return new InkWell(
                 onTap: () {
-                  set
+                  _parts
                       .picker(
                         adapter: PickerDataAdapter<String>(pickerdata: _lineData),
                         selected: _selectedLine, //初期値
@@ -220,14 +215,14 @@ class EventManagePageState extends State<EventManagePage> {
       decoration: InputDecoration(
         icon: Icon(
           Icons.train,
-          color: set.fontColor,
+          color: _parts.fontColor,
         ),
         hintText: 'Choose a line',
         labelText: '路線',
-        labelStyle: TextStyle(color: set.fontColor),
+        labelStyle: TextStyle(color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
           borderRadius: BorderRadius.circular(1.0),
-          borderSide: BorderSide(color: set.fontColor, width: 3.0),
+          borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
         ),
       ),
       validator: (String value) {
@@ -263,7 +258,7 @@ class EventManagePageState extends State<EventManagePage> {
               _stationData = _stationMap.keys.toList();
               return InkWell(
                 onTap: () {
-                  set
+                  _parts
                       .picker(
                         adapter: PickerDataAdapter<String>(pickerdata: _stationData),
                         selected: _selectedStation, //初期値
@@ -297,14 +292,14 @@ class EventManagePageState extends State<EventManagePage> {
       decoration: InputDecoration(
         icon: Icon(
           Icons.subway,
-          color: set.fontColor,
+          color: _parts.fontColor,
         ),
         hintText: 'Choose a station',
         labelText: '駅名',
-        labelStyle: TextStyle(color: set.fontColor),
+        labelStyle: TextStyle(color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
-            borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
       ),
       validator: (String value) {
         if ((value != " " && _prefController.text == " ") ||
@@ -330,10 +325,10 @@ class EventManagePageState extends State<EventManagePage> {
           icon: Icon(Icons.format_list_numbered),
           hintText: 'input eventID',
           labelText: 'イベントID(管理者用)',
-          labelStyle: TextStyle(color: set.fontColor),
+          labelStyle: TextStyle(color: _parts.fontColor),
           enabledBorder: UnderlineInputBorder(
               borderRadius: BorderRadius.circular(1.0),
-              borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+              borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
         ),
         validator: (String value) {
           return null;

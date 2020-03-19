@@ -4,52 +4,35 @@ import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/LoginRepository.dart';
 
-import 'package:flutter_app2/Page/ProfilePage.dart';
+import 'ProfileScreen.dart';
+import 'TermsOfServiceScreen.dart';
 
-class SettingPage extends StatelessWidget {
+class SettingScreen extends StatelessWidget {
   final LoginRepository repository = LoginRepository();
-  final PageParts set = PageParts();
+  final PageParts _parts = PageParts();
   final User user;
-  SettingPage({Key key, this.user});
+  SettingScreen({Key key, this.user});
   // 画面全体のビルド
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text('設定＆ログアウト',
-            style: TextStyle(
-              color: set.pointColor,
-            )),
-      ),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: "設定"),
+      backgroundColor: _parts.backGroundColor,
       body: Container(
         child: ListView(children: <Widget>[
-          ListTile(
-              title: Text(
-                "プロフィールを見る",
-                style: TextStyle(color: set.pointColor),
-              ),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () {
-                Navigator.of(context).push<Widget>(
-                  MaterialPageRoute(
-                    settings: const RouteSettings(name: "/Profile"),
-                    builder: (context) => new ProfilePage(user: user),
-                  ),
-                );
-              }),
-          Divider(
-            color: set.fontColor,
-            height: 4.0,
+          _listElement(
+            title: "プロフィールを見る",
+            onTap: () {
+              Navigator.of(context).push<Widget>(
+                MaterialPageRoute(
+                  settings: const RouteSettings(name: "/Profile"),
+                  builder: (context) => new ProfileScreen(user: user),
+                ),
+              );
+            },
           ),
-          ListTile(
-            title: Text(
-              "ログアウト",
-              style: TextStyle(color: set.pointColor),
-            ),
-            trailing: Icon(Icons.arrow_forward),
+          _listElement(
+            title: "ログアウト",
             onTap: () {
               showDialog<bool>(
                 context: context,
@@ -76,12 +59,37 @@ class SettingPage extends StatelessWidget {
               );
             },
           ),
-          Divider(
-            color: set.fontColor,
-            height: 4.0,
+          _listElement(
+            title: "利用規約",
+            onTap: () {
+              Navigator.of(context).push<Widget>(
+                MaterialPageRoute(
+                  settings: const RouteSettings(name: "/TermOfService"),
+                  builder: (context) => new TermsOfServiceScreen(),
+                ),
+              );
+            },
           ),
         ]),
       ),
+    );
+  }
+
+  Widget _listElement({String title, Function() onTap}) {
+    return Column(
+      children: <Widget>[
+        ListTile(
+            title: Text(
+              title,
+              style: TextStyle(color: _parts.pointColor),
+            ),
+            trailing: Icon(Icons.arrow_forward, color: _parts.pointColor),
+            onTap: onTap),
+        Divider(
+          color: _parts.fontColor,
+          height: 4.0,
+        ),
+      ],
     );
   }
 }

@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_app2/Splash.dart';
 import 'Entity/PageParts.dart';
 import 'Entity/User.dart';
-import 'Page/EventSearchPage.dart';
-import 'Page/NewHomePage.dart';
-import 'Page/SettingPage.dart';
-import 'Page/TalkRoomPage.dart';
+import 'Screen/Event/EventSearchScreen.dart';
+import 'Screen/HomeScreen.dart';
+import 'Screen/SettingScreen.dart';
+import 'Screen/TalkRoomScreen.dart';
 
 //ホーム画面のrun
 void main() {
@@ -70,10 +70,10 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     tabs = [
-      Home(user: widget.user),
-      EventManagePage(user: widget.user),
-      TalkRoomPage(widget.user),
-      SettingPage(user: widget.user),
+      HomeScreen(user: widget.user),
+      EventManageScreen(user: widget.user),
+      TalkRoomScreen(widget.user),
+      SettingScreen(user: widget.user),
     ];
     //_showSnackBar();
   }
@@ -159,10 +159,10 @@ class TabNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> navigationKey;
 
   Map<String, Widget Function(BuildContext)> _routerBuilder(BuildContext context) => {
-        '/NewHome': (context) => new Home(user: user),
-        '/EventManage': (context) => new EventManagePage(user: user),
-        '/RoomPage': (context) => new TalkRoomPage(user),
-        '/Setting': (context) => new SettingPage(user: user)
+        '/NewHome': (context) => new HomeScreen(user: user),
+        '/EventManage': (context) => new EventManageScreen(user: user),
+        '/RoomPage': (context) => new TalkRoomScreen(user),
+        '/Setting': (context) => new SettingScreen(user: user)
       };
 
   @override

@@ -8,24 +8,22 @@ import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:intl/intl.dart';
-
-import 'package:flutter_app2/Page/EventSearchResultDetailPage.dart';
-
-import 'TalkPage.dart';
+import 'EventDetailScreen.dart';
+import '../TalkScreen.dart';
 
 /*----------------------------------------------
 
 イベント検索　結果表示ページ出力（リスト表示）クラス
 
 ----------------------------------------------*/
-class EventSearchResultPage extends StatelessWidget {
-  User user;
-  EventSearch eventSearch;
-  EventSearchResultPage({Key key, this.user, this.eventSearch}) : super(key: key);
-  PageParts set = new PageParts();
+class EventSearchResultScreen extends StatelessWidget {
+  final User user;
+  final EventSearch eventSearch;
+  EventSearchResultScreen({Key key, this.user, this.eventSearch}) : super(key: key);
+  final PageParts _parts = new PageParts();
 
-  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
-  EventRepository eventRepository = new EventRepository();
+  final formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
+  final EventRepository eventRepository = new EventRepository();
   List<EventDetail> eventList = new List();
   //画面全体のビルド
   @override
@@ -33,15 +31,8 @@ class EventSearchResultPage extends StatelessWidget {
     EventSearchBloc bloc = EventSearchBloc();
     bloc.eventSearchSink.add(eventSearch);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text('検索結果',
-            style: TextStyle(
-              color: set.pointColor,
-            )),
-      ),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: "検索結果"),
+      backgroundColor: _parts.backGroundColor,
       body: StreamBuilder<List<EventDetail>>(
         stream: bloc.searchResultStream,
         builder: (context, snapshot) {
@@ -49,7 +40,7 @@ class EventSearchResultPage extends StatelessWidget {
 
           if (!snapshot.hasData)
             return Center(
-              child: set.indicator(),
+              child: _parts.indicator(),
             );
           if (snapshot.data == null || snapshot.data.isEmpty) {
             return Container(
@@ -59,9 +50,9 @@ class EventSearchResultPage extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                       child: Center(
-                    child: Text("指定の条件では見つかりませんでした。", style: TextStyle(color: set.pointColor)),
+                    child: Text("指定の条件では見つかりませんでした。", style: TextStyle(color: _parts.pointColor)),
                   )),
-                  set.backButton(onPressed: () => Navigator.pop(context)),
+                  _parts.backButton(onPressed: () => Navigator.pop(context)),
                 ],
               ),
             );
@@ -72,7 +63,8 @@ class EventSearchResultPage extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Text(eventList.length.toString() + '件見つかりました。',
-                    style: TextStyle(color: set.fontColor, backgroundColor: set.backGroundColor)),
+                    style: TextStyle(
+                        color: _parts.fontColor, backgroundColor: _parts.backGroundColor)),
                 Expanded(
                   child: ListView.builder(
                     //padding: const EdgeInsets.all(16.0),
@@ -85,7 +77,7 @@ class EventSearchResultPage extends StatelessWidget {
                 Divider(
                   height: 8.0,
                 ),
-                set.backButton(onPressed: () => Navigator.pop(context)),
+                _parts.backButton(onPressed: () => Navigator.pop(context)),
               ],
             ),
           );
@@ -103,17 +95,17 @@ class EventSearchResultPage extends StatelessWidget {
           MaterialPageRoute(
             settings:
                 RouteSettings(name: "/EventSearchResultDetail/code=${eventList[index].eventId}"),
-            builder: (context) => EventSearchResultDetailPage(user: user, event: eventList[index]),
+            builder: (context) => EventDetailScreen(user: user, event: eventList[index]),
           ),
         );
       },
       child: new SizedBox(
         child: new Card(
           elevation: 10,
-          color: set.backGroundColor,
+          color: _parts.backGroundColor,
           child: new Container(
             decoration: BoxDecoration(
-              border: Border.all(color: set.fontColor),
+              border: Border.all(color: _parts.fontColor),
               borderRadius: BorderRadius.circular(5),
             ),
             child: Row(
@@ -130,7 +122,7 @@ class EventSearchResultPage extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20.0,
-                            color: set.pointColor,
+                            color: _parts.pointColor,
                           ),
                         ),
                       ),
@@ -140,7 +132,7 @@ class EventSearchResultPage extends StatelessWidget {
                           eventList[index].userName,
                           style: TextStyle(
                             fontSize: 16.0,
-                            color: set.fontColor,
+                            color: _parts.fontColor,
                           ),
                         ),
                       ),
@@ -150,7 +142,7 @@ class EventSearchResultPage extends StatelessWidget {
                           "EventID :" + eventList[index].eventId.toString(),
                           style: TextStyle(
                             fontSize: 16.0,
-                            color: set.fontColor,
+                            color: _parts.fontColor,
                           ),
                         ),
                       ),
@@ -179,7 +171,7 @@ class EventSearchResultPage extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
                   Icons.check,
-                  color: set.pointColor,
+                  color: _parts.pointColor,
                 ),
               ),
             ),
@@ -191,7 +183,7 @@ class EventSearchResultPage extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
                   Icons.delete,
-                  color: set.pointColor,
+                  color: _parts.pointColor,
                 ),
               ),
             ),
@@ -204,7 +196,7 @@ class EventSearchResultPage extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push<Widget>(MaterialPageRoute(
                 settings: const RouteSettings(name: "/Talk"),
-                builder: (context) => new TalkPage(
+                builder: (context) => new TalkScreen(
                       user: user,
                       opponentId: event.userId,
                       opponentName: event.userName,
@@ -214,7 +206,7 @@ class EventSearchResultPage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Icon(
               Icons.mail,
-              color: set.pointColor,
+              color: _parts.pointColor,
             ),
           ),
         ),

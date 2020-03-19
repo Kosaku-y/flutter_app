@@ -11,23 +11,23 @@ class Data {
   Data(this.name, this.value, this.color);
 }
 
-class PieChartDetailPage extends StatefulWidget {
+class PieChartScreen extends StatefulWidget {
   final User user;
-  PieChartDetailPage({key, this.user});
+  PieChartScreen({key, this.user});
   @override
   State<StatefulWidget> createState() {
-    return new PieChartDetailPageState();
+    return new PieChartScreenState();
   }
 }
 
-class PieChartDetailPageState extends State<PieChartDetailPage> {
+class PieChartScreenState extends State<PieChartScreen> {
   List<charts.Series<Data, String>> seriesPieData;
-  PageParts set = new PageParts();
+  PageParts _parts = new PageParts();
   CommonData cd = CommonData();
   int max, remain, userRank;
   String rankColorString;
 
-  PieChartDetailPageState();
+  PieChartScreenState();
   @override
   void initState() {
     super.initState();
@@ -64,15 +64,8 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
 
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text('現在のランク',
-            style: TextStyle(
-              color: set.pointColor,
-            )),
-      ),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: "ランク"),
+      backgroundColor: _parts.backGroundColor,
       body: Container(
         padding: EdgeInsets.all(16.0),
         child: Center(
@@ -80,7 +73,7 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
             children: <Widget>[
               Text('Player rank',
                   style: TextStyle(
-                    color: set.pointColor,
+                    color: _parts.pointColor,
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
                   )),
@@ -88,18 +81,18 @@ class PieChartDetailPageState extends State<PieChartDetailPage> {
                 TextSpan(
                   children: <TextSpan>[
                     TextSpan(
-                        text: '現在のランク:', style: TextStyle(color: set.fontColor, fontSize: 20.0)),
+                        text: '現在のランク:', style: TextStyle(color: _parts.fontColor, fontSize: 20.0)),
                     TextSpan(
                         text: '$rankColorString',
                         style: TextStyle(color: cd.colorMap[rankColorString], fontSize: 25.0)),
                   ],
                 ),
               ),
-              Text('ランクアップまであと $remain', style: TextStyle(color: set.fontColor, fontSize: 20.0)),
+              Text('ランクアップまであと $remain', style: TextStyle(color: _parts.fontColor, fontSize: 20.0)),
               Expanded(
                 child: pieChart(),
               ),
-              set.backButton(
+              _parts.backButton(
                 onPressed: () => Navigator.pop(context),
               ),
             ],

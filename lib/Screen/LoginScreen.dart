@@ -4,19 +4,18 @@ import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-
-import 'package:flutter_app2/Page/AccountRegisterPage.dart';
 import '../main.dart';
+import 'AccountRegisterScreen.dart';
 
 /*----------------------------------------------
 ログインページ
 ----------------------------------------------*/
 
-class LoginPage extends StatefulWidget {
-  const LoginPage();
+class LoginScreen extends StatefulWidget {
+  const LoginScreen();
 
   @override
-  State<LoginPage> createState() => LoginPageState();
+  State<LoginScreen> createState() => LoginScreenState();
 }
 
 /* * *
@@ -37,8 +36,8 @@ class LoginPage extends StatefulWidget {
 *
 *
 * */
-class LoginPageState extends State<LoginPage> {
-  PageParts set = PageParts();
+class LoginScreenState extends State<LoginScreen> {
+  PageParts _parts = PageParts();
   LoginBloc loginBloc = LoginBloc();
 
   @override
@@ -62,7 +61,7 @@ class LoginPageState extends State<LoginPage> {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               settings: const RouteSettings(name: "/AccountSetting"),
-              builder: (BuildContext context) => AccountRegisterPage(user: user),
+              builder: (BuildContext context) => AccountRegisterScreen(user: user),
             ),
           );
         }
@@ -74,11 +73,8 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: new AppBar(
-          title: new Text("ログイン", style: TextStyle(color: set.pointColor)),
-          backgroundColor: set.baseColor,
-        ),
-        backgroundColor: set.backGroundColor,
+        appBar: _parts.appBar(title: "ログイン"),
+        backgroundColor: _parts.backGroundColor,
         body: Padding(
           padding: const EdgeInsets.all(80),
           child: StreamBuilder<User>(

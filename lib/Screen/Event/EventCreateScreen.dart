@@ -5,27 +5,28 @@ import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import 'package:flutter_app2/Page/EventCreateConfirmPage.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
+
+import 'EventCreateConfirmScreen.dart';
 
 /*----------------------------------------------
 
 イベント作成・編集フォームページクラス
 
 ----------------------------------------------*/
-class EventCreatePage extends StatefulWidget {
+class EventCreateScreen extends StatefulWidget {
   final int mode;
   final User user;
   final EventDetail event;
-  EventCreatePage({Key key, this.user, this.mode, this.event}) : super(key: key);
+  EventCreateScreen({Key key, this.user, this.mode, this.event}) : super(key: key);
   @override
-  EventCreatePageState createState() => new EventCreatePageState();
+  EventCreateScreenState createState() => new EventCreateScreenState();
 }
 
-class EventCreatePageState extends State<EventCreatePage> {
-  PageParts set = new PageParts();
+class EventCreateScreenState extends State<EventCreateScreen> {
+  final PageParts _parts = new PageParts();
 
   final int register = 0;
   final int modify = 1;
@@ -87,22 +88,15 @@ class EventCreatePageState extends State<EventCreatePage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text('イベント作成ページ',
-            style: TextStyle(
-              color: set.pointColor,
-            )),
-      ),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: "イベント作成"),
+      backgroundColor: _parts.backGroundColor,
       body: Form(
         key: _formKey,
         child: Container(
           padding: const EdgeInsets.all(40.0),
           child: SingleChildScrollView(
             child: Column(children: <Widget>[
-              Text('募集条件を入力してください', style: TextStyle(color: set.fontColor)),
+              Text('募集条件を入力してください', style: TextStyle(color: _parts.fontColor)),
               _recruitMemberPicker(), //募集人数プルダウン
               _prefPicker(), //都道府県Picker
               _linePicker(), //路線Picker
@@ -114,10 +108,10 @@ class EventCreatePageState extends State<EventCreatePage> {
                 padding: EdgeInsets.only(top: 20.0),
                 child: RaisedButton.icon(
                     label: Text("募集する"),
-                    color: set.pointColor,
+                    color: _parts.pointColor,
                     icon: Icon(
                       Icons.event_available,
-                      color: set.fontColor,
+                      color: _parts.fontColor,
                     ),
                     onPressed: () {
                       //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Processing Data')));
@@ -128,7 +122,7 @@ class EventCreatePageState extends State<EventCreatePage> {
                 label: Text("検索ページへ戻る"),
                 icon: Icon(
                   Icons.search,
-                  color: set.fontColor,
+                  color: _parts.fontColor,
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -185,7 +179,7 @@ class EventCreatePageState extends State<EventCreatePage> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           settings: const RouteSettings(name: "/EventCreateConfirm"),
-          builder: (BuildContext context) => EventCreateConfirmPage(
+          builder: (BuildContext context) => EventCreateConfirmScreen(
               line: _line, station: _station, user: widget.user, event: event),
         ),
       );
@@ -212,21 +206,21 @@ class EventCreatePageState extends State<EventCreatePage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: set.pointColor),
+          style: TextStyle(color: _parts.pointColor),
           enableInteractiveSelection: false,
           controller: _memberController,
           decoration: InputDecoration(
             icon: Icon(
               Icons.people,
-              color: set.fontColor,
+              color: _parts.fontColor,
             ),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
             hintText: 'Choose a number of recruiting member',
-            hintStyle: TextStyle(color: set.fontColor),
+            hintStyle: TextStyle(color: _parts.fontColor),
             labelText: '*募集人数',
-            labelStyle: TextStyle(color: set.fontColor),
+            labelStyle: TextStyle(color: _parts.fontColor),
           ),
           validator: (String value) {
             return value.isEmpty ? '必須項目です' : null;
@@ -240,7 +234,7 @@ class EventCreatePageState extends State<EventCreatePage> {
   Widget _prefPicker() {
     return new InkWell(
       onTap: () {
-        set
+        _parts
             .picker(
                 adapter: PickerDataAdapter<String>(pickerdata: Pref.pref.keys.toList()),
                 selected: 0, //初期値
@@ -264,14 +258,14 @@ class EventCreatePageState extends State<EventCreatePage> {
           decoration: InputDecoration(
             icon: Icon(
               Icons.place,
-              color: set.fontColor,
+              color: _parts.fontColor,
             ),
             hintText: 'Choose a prefecture',
             labelText: '都道府県',
-            labelStyle: TextStyle(color: set.fontColor),
+            labelStyle: TextStyle(color: _parts.fontColor),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
           ),
           validator: (String value) {
             if (changePref == 2) {
@@ -340,14 +334,14 @@ class EventCreatePageState extends State<EventCreatePage> {
       decoration: InputDecoration(
         icon: Icon(
           Icons.train,
-          color: set.fontColor,
+          color: _parts.fontColor,
         ),
         hintText: 'Choose a line',
         labelText: '路線',
-        labelStyle: TextStyle(color: set.fontColor),
+        labelStyle: TextStyle(color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
           borderRadius: BorderRadius.circular(1.0),
-          borderSide: BorderSide(color: set.fontColor, width: 3.0),
+          borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
         ),
       ),
       validator: (String value) {
@@ -414,14 +408,14 @@ class EventCreatePageState extends State<EventCreatePage> {
       decoration: InputDecoration(
         icon: Icon(
           Icons.subway,
-          color: set.fontColor,
+          color: _parts.fontColor,
         ),
         hintText: 'Choose a station',
         labelText: '駅名',
-        labelStyle: TextStyle(color: set.fontColor),
+        labelStyle: TextStyle(color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
-            borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
       ),
       validator: (String value) {
         if (changeStation == 2) {
@@ -436,7 +430,7 @@ class EventCreatePageState extends State<EventCreatePage> {
   Widget _startTimePicker() {
     return new InkWell(
       onTap: () {
-        set
+        _parts
             .dateTimePicker(
               adapter: new DateTimePickerAdapter(
                 type: PickerDateTimeType.kYMDHM,
@@ -455,20 +449,20 @@ class EventCreatePageState extends State<EventCreatePage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: set.pointColor),
+          style: TextStyle(color: _parts.pointColor),
           enableInteractiveSelection: false,
           controller: _startingController,
           decoration: InputDecoration(
             icon: Icon(
               Icons.calendar_today,
-              color: set.fontColor,
+              color: _parts.fontColor,
             ),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
             hintText: 'Choose a starting Time',
             labelText: '*開始日時',
-            labelStyle: TextStyle(color: set.fontColor),
+            labelStyle: TextStyle(color: _parts.fontColor),
           ),
           validator: (String value) {
             return value.isEmpty ? '開始時間が未選択です' : null;
@@ -481,7 +475,7 @@ class EventCreatePageState extends State<EventCreatePage> {
   Widget _endTimePicker() {
     return new InkWell(
       onTap: () {
-        set
+        _parts
             .dateTimePicker(
               adapter: new DateTimePickerAdapter(
                 type: PickerDateTimeType.kYMDHM,
@@ -500,20 +494,20 @@ class EventCreatePageState extends State<EventCreatePage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: set.pointColor),
+          style: TextStyle(color: _parts.pointColor),
           enableInteractiveSelection: false,
           controller: _endingController,
           decoration: InputDecoration(
             icon: Icon(
               Icons.calendar_today,
-              color: set.fontColor,
+              color: _parts.fontColor,
             ),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
             hintText: 'Choose a station',
             labelText: '*終了日時',
-            labelStyle: TextStyle(color: set.fontColor),
+            labelStyle: TextStyle(color: _parts.fontColor),
           ),
           validator: (String value) {
             if (value.isEmpty) return '終了時間が未選択です';
@@ -531,19 +525,19 @@ class EventCreatePageState extends State<EventCreatePage> {
   Widget _commentField() {
     return new Container(
       child: new TextFormField(
-          style: TextStyle(color: set.pointColor),
+          style: TextStyle(color: _parts.pointColor),
           decoration: InputDecoration(
             icon: Icon(
               Icons.note,
-              color: set.fontColor,
+              color: _parts.fontColor,
             ),
             enabledBorder: UnderlineInputBorder(
               borderRadius: BorderRadius.circular(1.0),
-              borderSide: BorderSide(color: set.fontColor, width: 3.0),
+              borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
             ),
             hintText: 'add comment',
             labelText: '備考',
-            labelStyle: TextStyle(color: set.fontColor),
+            labelStyle: TextStyle(color: _parts.fontColor),
           ),
           keyboardType: TextInputType.multiline,
           textInputAction: TextInputAction.newline,

@@ -2,28 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import 'package:flutter_app2/Page/ScoreManagePage.dart';
 import 'package:flutter_app2/Repository/CommonData.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import 'PieChartDetailPage.dart';
-import 'MahjongHandPage.dart';
-import 'ScoreManagePage2.dart';
+import 'PieChartScreen.dart';
+import 'MahjongHandScreen.dart';
+import 'Score/ScoreManagePage.dart';
+import 'Score/ScoreManagePage2.dart';
 
-class Home extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   final User user;
-  Home({Key key, this.user}) : super(key: key);
-  HomeState createState() => HomeState();
+  HomeScreen({Key key, this.user}) : super(key: key);
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeState extends State<Home> {
-  PageParts set = new PageParts();
+class HomeScreenState extends State<HomeScreen> {
+  PageParts _parts = new PageParts();
   CommonData cd = CommonData();
   final userReference = FirebaseDatabase.instance.reference().child("gmail");
   int totalInfo = 0; //お知らせ件数
 
-  PieChartDetailPageState pie = new PieChartDetailPageState();
+  PieChartScreenState pie = new PieChartScreenState();
   int userRank;
   String rankColorString;
 
@@ -44,15 +44,8 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 2.0,
-          backgroundColor: set.baseColor,
-          title: Text('ホーム',
-              style: TextStyle(
-                color: set.pointColor,
-              )),
-        ),
-        backgroundColor: set.backGroundColor,
+        appBar: _parts.appBar(title: "ホーム"),
+        backgroundColor: _parts.backGroundColor,
         body: StaggeredGridView.count(
           crossAxisCount: 2,
           crossAxisSpacing: 12.0,
@@ -62,8 +55,8 @@ class HomeState extends State<Home> {
             Container(
               padding: const EdgeInsets.all(2.0),
               child: Text('ようこそ ${widget.user.name} さん',
-                  style:
-                      TextStyle(color: set.fontColor, fontWeight: FontWeight.w700, fontSize: 20.0)),
+                  style: TextStyle(
+                      color: _parts.fontColor, fontWeight: FontWeight.w700, fontSize: 20.0)),
             ),
             _buildTile(
               Padding(
@@ -82,13 +75,13 @@ class HomeState extends State<Home> {
                                   fontWeight: FontWeight.w700,
                                   fontSize: 20.0)),
                           Text('新着$totalInfo件',
-                              style: TextStyle(color: set.fontColor, fontSize: 12.0)),
+                              style: TextStyle(color: _parts.fontColor, fontSize: 12.0)),
                           //                          Text('$totalInfo件', style: TextStyle(color: Colors.blueAccent)),
                         ],
                       ),
                       Material(
                           //                        color: Colors.blue,
-                          color: set.fontColor,
+                          color: _parts.fontColor,
                           borderRadius: BorderRadius.circular(24.0),
                           child: Center(
                               child: Padding(
@@ -106,7 +99,7 @@ class HomeState extends State<Home> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Material(
-                          color: set.fontColor,
+                          color: _parts.fontColor,
                           shape: CircleBorder(),
                           child: Padding(
                             padding: EdgeInsets.all(16.0),
@@ -116,14 +109,14 @@ class HomeState extends State<Home> {
                       Text('How to 役',
                           style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0)),
-                      Text('役を覚えよう', style: TextStyle(color: set.fontColor, fontSize: 12.0)),
+                      Text('役を覚えよう', style: TextStyle(color: _parts.fontColor, fontSize: 12.0)),
                     ]),
               ),
               onTap: () => Navigator.push(
                 this.context,
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/MahjongHand"),
-                  builder: (context) => MahjongHandPage(),
+                  builder: (context) => MahjongHandScreen(),
                 ),
               ),
             ),
@@ -141,7 +134,7 @@ class HomeState extends State<Home> {
                         children: <TextSpan>[
                           TextSpan(
                               text: '現在のランク:',
-                              style: TextStyle(color: set.fontColor, fontSize: 12.0)),
+                              style: TextStyle(color: _parts.fontColor, fontSize: 12.0)),
                           TextSpan(
                               text: '$rankColorString',
                               style:
@@ -159,7 +152,7 @@ class HomeState extends State<Home> {
                 this.context,
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/PieChartDetail"),
-                  builder: (context) => new PieChartDetailPage(user: widget.user),
+                  builder: (context) => new PieChartScreen(user: widget.user),
                 ),
               ),
             ),
@@ -171,7 +164,7 @@ class HomeState extends State<Home> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Material(
-                            color: set.fontColor,
+                            color: _parts.fontColor,
                             shape: CircleBorder(),
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -183,7 +176,7 @@ class HomeState extends State<Home> {
                                 color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0)),
                         Text(
                           '勝敗分析をしよう',
-                          style: TextStyle(color: set.fontColor, fontSize: 12.0),
+                          style: TextStyle(color: _parts.fontColor, fontSize: 12.0),
                         ),
                       ]),
                 ), onTap: () {
@@ -191,7 +184,7 @@ class HomeState extends State<Home> {
                 this.context,
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/ScoreManagePage"),
-                  builder: (context) => ScoreManagePage(),
+                  builder: (context) => ScoreManagePage2(),
                 ),
               );
             }),
@@ -206,7 +199,8 @@ class HomeState extends State<Home> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('一言コメント欄', style: TextStyle(color: set.fontColor, fontSize: 12.0)),
+                          Text('一言コメント欄',
+                              style: TextStyle(color: _parts.fontColor, fontSize: 12.0)),
                           Text('開発中',
                               style: TextStyle(
                                 color: Colors.black,
@@ -216,7 +210,7 @@ class HomeState extends State<Home> {
                         ],
                       ),
                       Material(
-                          color: set.fontColor,
+                          color: _parts.fontColor,
                           borderRadius: BorderRadius.circular(24.0),
                           child: Center(
                               child: Padding(

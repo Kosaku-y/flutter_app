@@ -20,15 +20,15 @@ import 'package:intl/intl.dart';
   int rate; //レート
   int balance; //収入
 * */
-class ScoreInputPage extends StatefulWidget {
-  ScoreInputPage({Key key}) : super(key: key);
+class ScoreInputScreen extends StatefulWidget {
+  ScoreInputScreen({Key key}) : super(key: key);
   State<StatefulWidget> createState() {
-    return new ScoreInputPageState();
+    return new ScoreInputScreenState();
   }
 }
 
-class ScoreInputPageState extends State<ScoreInputPage> {
-  PageParts set = new PageParts();
+class ScoreInputScreenState extends State<ScoreInputScreen> {
+  final PageParts _parts = new PageParts();
   Score score;
   List<Score> listScore;
   DateTime _date;
@@ -53,11 +53,8 @@ class ScoreInputPageState extends State<ScoreInputPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          elevation: 2.0,
-          backgroundColor: set.baseColor,
-          title: Text('スコア入力', style: TextStyle(color: set.pointColor))),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: "スコア入力"),
+      backgroundColor: _parts.backGroundColor,
       body: Container(
         padding: const EdgeInsets.all(40.0),
         child: Column(
@@ -68,7 +65,7 @@ class ScoreInputPageState extends State<ScoreInputPage> {
             totalField(),
             rateField(),
             balanceField(),
-            set.iconButton(
+            _parts.iconButton(
                 message: "記録する",
                 icon: Icons.send,
                 onPressed: () {
@@ -119,20 +116,20 @@ class ScoreInputPageState extends State<ScoreInputPage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: set.pointColor),
+          style: TextStyle(color: _parts.pointColor),
           enableInteractiveSelection: false,
           controller: dateController,
           decoration: InputDecoration(
             icon: Icon(
               Icons.calendar_today,
-              color: set.fontColor,
+              color: _parts.fontColor,
             ),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
             hintText: 'Choose a starting Time',
             labelText: '*日時',
-            labelStyle: TextStyle(color: set.fontColor),
+            labelStyle: TextStyle(color: _parts.fontColor),
           ),
           validator: (String value) {
             return value.isEmpty ? '開始時間が未選択です' : null;
@@ -144,21 +141,21 @@ class ScoreInputPageState extends State<ScoreInputPage> {
 
   Widget rankingField() {
     return TextFormField(
-      style: TextStyle(color: set.pointColor),
+      style: TextStyle(color: _parts.pointColor),
       enableInteractiveSelection: false,
       controller: rankingController,
       decoration: InputDecoration(
         icon: Icon(
           Icons.people,
-          color: set.fontColor,
+          color: _parts.fontColor,
         ),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
-            borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
         hintText: 'Choose a number of recruiting member',
-        hintStyle: TextStyle(color: set.fontColor),
+        hintStyle: TextStyle(color: _parts.fontColor),
         labelText: '*着順',
-        labelStyle: TextStyle(color: set.fontColor),
+        labelStyle: TextStyle(color: _parts.fontColor),
       ),
       validator: (String value) {
         return value.isEmpty ? '必須項目です' : null;
@@ -168,21 +165,21 @@ class ScoreInputPageState extends State<ScoreInputPage> {
 
   Widget chipField() {
     return TextFormField(
-      style: TextStyle(color: set.pointColor),
+      style: TextStyle(color: _parts.pointColor),
       enableInteractiveSelection: false,
       controller: chipController,
       decoration: InputDecoration(
         icon: Icon(
           Icons.people,
-          color: set.fontColor,
+          color: _parts.fontColor,
         ),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
-            borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
         hintText: 'Choose a number of recruiting member',
-        hintStyle: TextStyle(color: set.fontColor),
+        hintStyle: TextStyle(color: _parts.fontColor),
         labelText: '*チップ',
-        labelStyle: TextStyle(color: set.fontColor),
+        labelStyle: TextStyle(color: _parts.fontColor),
       ),
       validator: (String value) {
         return value.isEmpty ? '必須項目です' : null;
@@ -192,21 +189,21 @@ class ScoreInputPageState extends State<ScoreInputPage> {
 
   Widget totalField() {
     return TextFormField(
-      style: TextStyle(color: set.pointColor),
+      style: TextStyle(color: _parts.pointColor),
       enableInteractiveSelection: false,
       controller: totalController,
       decoration: InputDecoration(
         icon: Icon(
           Icons.people,
-          color: set.fontColor,
+          color: _parts.fontColor,
         ),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
-            borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
         hintText: 'Choose a number of recruiting member',
-        hintStyle: TextStyle(color: set.fontColor),
+        hintStyle: TextStyle(color: _parts.fontColor),
         labelText: '*トータル',
-        labelStyle: TextStyle(color: set.fontColor),
+        labelStyle: TextStyle(color: _parts.fontColor),
       ),
       validator: (String value) {
         return value.isEmpty ? '必須項目です' : null;
@@ -216,21 +213,21 @@ class ScoreInputPageState extends State<ScoreInputPage> {
 
   Widget rateField() {
     return TextFormField(
-      style: TextStyle(color: set.pointColor),
+      style: TextStyle(color: _parts.pointColor),
       enableInteractiveSelection: false,
       controller: rateController,
       decoration: InputDecoration(
         icon: Icon(
           Icons.people,
-          color: set.fontColor,
+          color: _parts.fontColor,
         ),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
-            borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
         hintText: 'Choose a number of recruiting member',
-        hintStyle: TextStyle(color: set.fontColor),
+        hintStyle: TextStyle(color: _parts.fontColor),
         labelText: '*レート',
-        labelStyle: TextStyle(color: set.fontColor),
+        labelStyle: TextStyle(color: _parts.fontColor),
       ),
       validator: (String value) {
         return value.isEmpty ? '必須項目です' : null;
@@ -240,21 +237,21 @@ class ScoreInputPageState extends State<ScoreInputPage> {
 
   Widget balanceField() {
     return TextFormField(
-      style: TextStyle(color: set.pointColor),
+      style: TextStyle(color: _parts.pointColor),
       enableInteractiveSelection: false,
       controller: balanceController,
       decoration: InputDecoration(
         icon: Icon(
           Icons.people,
-          color: set.fontColor,
+          color: _parts.fontColor,
         ),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
-            borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+            borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
         hintText: 'Choose a number of recruiting member',
-        hintStyle: TextStyle(color: set.fontColor),
+        hintStyle: TextStyle(color: _parts.fontColor),
         labelText: '*収支',
-        labelStyle: TextStyle(color: set.fontColor),
+        labelStyle: TextStyle(color: _parts.fontColor),
       ),
       validator: (String value) {
         return value.isEmpty ? '必須項目です' : null;

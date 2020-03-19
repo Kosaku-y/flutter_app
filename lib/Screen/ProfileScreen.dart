@@ -3,27 +3,20 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 
-import 'TalkPage.dart';
+import 'TalkScreen.dart';
 
-class ProfilePage extends StatelessWidget {
-  ProfilePage({Key key, @required this.user, this.userId}) : super(key: key);
+class ProfileScreen extends StatelessWidget {
+  ProfileScreen({Key key, @required this.user, this.userId}) : super(key: key);
 
   final User user;
   final String userId;
-  final PageParts set = PageParts();
+  final PageParts _parts = PageParts();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text('プロフィール詳細',
-            style: TextStyle(
-              color: set.pointColor,
-            )),
-      ),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: "プロフィール詳細"),
+      backgroundColor: _parts.backGroundColor,
       body: Container(
         child: new Column(
           children: <Widget>[
@@ -42,7 +35,7 @@ class ProfilePage extends StatelessWidget {
               label: Text("戻る"),
               icon: Icon(
                 Icons.arrow_back_ios,
-                color: set.fontColor,
+                color: _parts.fontColor,
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -77,7 +70,7 @@ class ProfilePage extends StatelessWidget {
                     // 3.1.2行目
                     child: Text(
                       "${user.age}",
-                      style: TextStyle(fontSize: 12.0, color: set.fontColor),
+                      style: TextStyle(fontSize: 12.0, color: _parts.fontColor),
                     ),
                   ),
                   Container(
@@ -86,7 +79,7 @@ class ProfilePage extends StatelessWidget {
                       Navigator.of(context).push<Widget>(
                         MaterialPageRoute(
                           settings: const RouteSettings(name: "/Talk"),
-                          builder: (context) => new TalkPage(user: user),
+                          builder: (context) => new TalkScreen(user: user),
                         ),
                       );
                     },
@@ -98,7 +91,7 @@ class ProfilePage extends StatelessWidget {
             Icon(
               // 2.2列目
               Icons.star,
-              color: set.pointColor,
+              color: _parts.pointColor,
             ),
             Text('${user.rank}'), // 2.3列目
           ],

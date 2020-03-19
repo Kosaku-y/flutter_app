@@ -6,7 +6,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'ScoreInputPage.dart';
+import 'ScoreInputScreen.dart';
 import 'package:fl_chart/fl_chart.dart';
 /*----------------------------------------------
 
@@ -14,17 +14,17 @@ import 'package:fl_chart/fl_chart.dart';
 
 ----------------------------------------------*/
 
-class ScoreManagePage extends StatefulWidget {
-  ScoreManagePage({Key key}) : super(key: key);
+class ScoreManageScreen extends StatefulWidget {
+  ScoreManageScreen({Key key}) : super(key: key);
 
   State<StatefulWidget> createState() {
-    return new ScoreManagePageState();
+    return new ScoreManageScreenState();
   }
 }
 
-class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderStateMixin {
+class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProviderStateMixin {
   TabController _tabController;
-  PageParts set = new PageParts();
+  final PageParts _parts = new PageParts();
   Map<DateTime, List<Score>> _events;
   List _selectedEvents;
   CalendarController _calendarController;
@@ -61,22 +61,22 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
     return Scaffold(
         appBar: AppBar(
           elevation: 2.0,
-          backgroundColor: set.baseColor,
-          title: Text('スコア管理', style: TextStyle(color: set.pointColor)),
+          backgroundColor: _parts.baseColor,
+          title: Text('スコア管理', style: TextStyle(color: _parts.pointColor)),
           bottom: TabBar(
             //isScrollable: true,
             tabs: tabs,
             controller: _tabController,
             unselectedLabelColor: Colors.grey,
-            labelColor: set.pointColor,
+            labelColor: _parts.pointColor,
           ),
         ),
-        backgroundColor: set.backGroundColor,
+        backgroundColor: _parts.backGroundColor,
         body: TabBarView(controller: _tabController, children: <Widget>[
           _byPeriod(),
           _bySynthesis(),
         ]),
-        floatingActionButton: set.floatButton(
+        floatingActionButton: _parts.floatButton(
             icon: Icons.add,
             onPressed: () {
               Navigator.of(
@@ -85,7 +85,7 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
               ).push(
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/ScoreInput"),
-                  builder: (context) => ScoreInputPage(),
+                  builder: (context) => ScoreInputScreen(),
                   fullscreenDialog: true,
                 ),
               );
@@ -99,7 +99,7 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
         stream: bloc.scoreMapStream,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return set.indicator();
+            return _parts.indicator();
           } else {
 //            if (snapshot.data.isEmpty) {
 //              return Expanded(
@@ -132,13 +132,13 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
   Widget _calendar() {
     return Container(
       child: Card(
-        color: set.pointColor,
+        color: _parts.pointColor,
         child: TableCalendar(
           locale: 'ja_JP',
           events: _events,
           calendarController: _calendarController,
           calendarStyle: CalendarStyle(
-            markersColor: set.fontColor,
+            markersColor: _parts.fontColor,
           ),
           onDaySelected: (date, events) {
             _onDaySelected(date, events);
@@ -177,7 +177,7 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
               decoration: BoxDecoration(
                 border: Border.all(width: 0.8),
                 borderRadius: BorderRadius.circular(12.0),
-                color: set.pointColor,
+                color: _parts.pointColor,
               ),
               margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               child: ListTile(
@@ -220,7 +220,7 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
         stream: bloc.scoreMapStream,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return set.indicator();
+            return _parts.indicator();
           } else {
             return Stack(
               children: <Widget>[

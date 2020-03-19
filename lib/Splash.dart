@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
 import 'Entity/User.dart';
-import 'Page/LoginPage.dart';
+import 'Screen/LoginScreen.dart';
 import 'main.dart';
 
 class Splash extends StatefulWidget {
@@ -40,7 +40,7 @@ class _SplashState extends State<Splash> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             settings: const RouteSettings(name: "/login"),
-            builder: (context) => LoginPage(),
+            builder: (context) => LoginScreen(),
           ),
         );
         return;

@@ -8,22 +8,19 @@ class MahjongHand {
   MahjongHand(this.handName, this.hansu, this.explain);
 }
 
-class MahjongHandPage extends StatelessWidget {
-  final PageParts set = PageParts();
+class MahjongHandScreen extends StatelessWidget {
+  final PageParts _parts = PageParts();
   final List<MahjongHand> entries = [
     MahjongHand("断么(タンヤオ)", "1", "中張牌（数牌の2〜8）のみを使って手牌を完成させた場合に成立する。断ヤオと略すことが多い。"),
     MahjongHand("平和(ピンフ)", "1", "面子が全て順子で、雀頭が役牌でなく、待ちが両面待ちになっている場合に成立する。"),
   ];
-  MahjongHandPage();
+  MahjongHandScreen();
   //画面全体のビルド
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(
-        title: new Text("役一覧", style: TextStyle(color: set.pointColor)),
-        backgroundColor: set.baseColor,
-      ),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: "役一覧"),
+      backgroundColor: _parts.backGroundColor,
       body: Container(
           padding: const EdgeInsets.all(20.0),
           child: new Column(
@@ -39,7 +36,7 @@ class MahjongHandPage extends StatelessWidget {
               Divider(
                 height: 8.0,
               ),
-              set.backButton(onPressed: () => Navigator.pop(context))
+              _parts.backButton(onPressed: () => Navigator.pop(context))
 //              Container(
 //                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
 //                  child: _buildInputArea()
@@ -63,10 +60,10 @@ class MahjongHandPage extends StatelessWidget {
       child: new SizedBox(
         child: new Card(
           elevation: 10,
-          color: set.backGroundColor,
+          color: _parts.backGroundColor,
           child: new Container(
             decoration: BoxDecoration(
-              border: Border.all(color: set.fontColor),
+              border: Border.all(color: _parts.fontColor),
               borderRadius: BorderRadius.circular(5),
             ),
             child: Column(
@@ -89,14 +86,14 @@ class MahjongHandPage extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
-                                  color: set.fontColor),
+                                  color: _parts.fontColor),
                             ),
                           ),
                           Container(
                             // 3.1.2行目
                             child: Text(
                               entries[index].explain,
-                              style: TextStyle(fontSize: 12.0, color: set.fontColor),
+                              style: TextStyle(fontSize: 12.0, color: _parts.fontColor),
                             ),
                           ),
                         ],
@@ -104,7 +101,7 @@ class MahjongHandPage extends StatelessWidget {
                     ),
                     Text(
                       entries[index].hansu + "飜",
-                      style: TextStyle(fontSize: 26.0, color: set.pointColor),
+                      style: TextStyle(fontSize: 26.0, color: _parts.pointColor),
                     ),
                   ]),
                 ),

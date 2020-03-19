@@ -7,25 +7,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
 
-import 'ProfilePage.dart';
+import 'ProfileScreen.dart';
 
 /*----------------------------------------------
 
 　チャットページクラス
 
 ----------------------------------------------*/
-class TalkPage extends StatefulWidget {
+class TalkScreen extends StatefulWidget {
   final User user;
   final String opponentId;
   final String opponentName;
 
-  TalkPage({Key key, this.user, this.opponentId, this.opponentName}) : super(key: key);
+  TalkScreen({Key key, this.user, this.opponentId, this.opponentName}) : super(key: key);
   @override
-  TalkPageState createState() => new TalkPageState();
+  TalkScreenState createState() => new TalkScreenState();
 }
 
-class TalkPageState extends State<TalkPage> {
-  PageParts set = PageParts();
+class TalkScreenState extends State<TalkScreen> {
+  final PageParts _parts = PageParts();
   final _mainReference = FirebaseDatabase.instance.reference().child("User");
   final _textEditController = TextEditingController();
 //  ScrollController _scrollController;
@@ -81,15 +81,8 @@ class TalkPageState extends State<TalkPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text(widget.opponentId,
-            style: TextStyle(
-              color: set.pointColor,
-            )),
-      ),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: widget.opponentName),
+      backgroundColor: _parts.backGroundColor,
       body: Container(
           child: new Column(
         children: <Widget>[
@@ -151,7 +144,7 @@ class TalkPageState extends State<TalkPage> {
       children: <Widget>[
         Text(talk.fromUserId + " ${formatter.format(talk.dateTime)}",
             style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-        Text(talk.message, style: TextStyle(fontSize: 10.0, color: set.pointColor)),
+        Text(talk.message, style: TextStyle(fontSize: 10.0, color: _parts.pointColor)),
       ],
     );
   }
@@ -165,7 +158,7 @@ class TalkPageState extends State<TalkPage> {
       onTap: () => Navigator.of(context).push<Widget>(
         MaterialPageRoute(
           settings: const RouteSettings(name: "/Profile"),
-          builder: (context) => new ProfilePage(user: widget.user, userId: talk.fromUserId),
+          builder: (context) => new ProfileScreen(user: widget.user, userId: talk.fromUserId),
         ),
       ),
     );
@@ -184,7 +177,7 @@ class TalkPageState extends State<TalkPage> {
           ),
         ),
         CupertinoButton(
-          child: Icon(Icons.send, color: set.baseColor),
+          child: Icon(Icons.send, color: _parts.baseColor),
           onPressed: () {
             var json = Talk(widget.opponentId, widget.opponentName, widget.user.userId,
                     widget.user.name, _textEditController.text)

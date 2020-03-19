@@ -8,18 +8,18 @@ import 'package:flutter_app2/Repository/UserDataRepository.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
 import '../main.dart';
-import 'LoginPage.dart';
+import 'LoginScreen.dart';
 
-class AccountRegisterPage extends StatefulWidget {
+class AccountRegisterScreen extends StatefulWidget {
   final User user;
-  AccountRegisterPage({Key key, @required this.user}) : super(key: key);
+  AccountRegisterScreen({Key key, @required this.user}) : super(key: key);
 
   @override
-  _AccountRegisterPageState createState() => new _AccountRegisterPageState();
+  _AccountRegisterScreenState createState() => new _AccountRegisterScreenState();
 }
 
-class _AccountRegisterPageState extends State<AccountRegisterPage> {
-  PageParts set = PageParts();
+class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
+  PageParts _parts = PageParts();
   TextEditingController _nameInputController = new TextEditingController(text: '');
   TextEditingController _ageInputController = new TextEditingController(text: '');
   TextEditingController _sexInputController = new TextEditingController(text: '');
@@ -55,12 +55,8 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(
-        title: new Text("初回登録", style: TextStyle(color: set.pointColor)),
-        backgroundColor: set.baseColor,
-        actions: [],
-      ),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: "初回登録"),
+      backgroundColor: _parts.backGroundColor,
       body: Form(
         key: _formKey,
         child: Container(
@@ -71,7 +67,7 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
                 userNameField(),
                 agePicker(),
                 sexPicker(),
-                set.iconButton(
+                _parts.iconButton(
                   message: "登録(ホームへ)",
                   icon: Icons.check,
                   onPressed: () {
@@ -81,14 +77,14 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
                     }
                   },
                 ),
-                set.backButton(
+                _parts.backButton(
                   onPressed: () {
                     LoginRepository repository = LoginRepository();
                     repository.signOut();
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         settings: const RouteSettings(name: "/Login"),
-                        builder: (BuildContext context) => LoginPage(),
+                        builder: (BuildContext context) => LoginScreen(),
                       ),
                     );
                   },
@@ -104,18 +100,18 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
   Widget userNameField() {
     return new Container(
       child: new TextFormField(
-          style: TextStyle(color: set.pointColor),
+          style: TextStyle(color: _parts.pointColor),
           decoration: InputDecoration(
             icon: Icon(
               Icons.note, //変更必要
-              color: set.fontColor,
+              color: _parts.fontColor,
             ),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
             hintText: 'userName',
             labelText: 'ユーザーネーム',
-            labelStyle: TextStyle(color: set.fontColor),
+            labelStyle: TextStyle(color: _parts.fontColor),
           ),
           onSaved: (String value) {
             _nameInputController.text = value;
@@ -126,7 +122,7 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
   Widget agePicker() {
     return InkWell(
       onTap: () {
-        set
+        _parts
             .picker(
                 adapter: NumberPickerAdapter(data: [NumberPickerColumn(begin: 18, end: 99)]),
                 selected: 0, //初期値
@@ -143,21 +139,21 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: set.pointColor),
+          style: TextStyle(color: _parts.pointColor),
           enableInteractiveSelection: false,
           controller: _ageInputController,
           decoration: InputDecoration(
             icon: Icon(
               IconData(57959, fontFamily: 'MaterialIcons'),
-              color: set.fontColor,
+              color: _parts.fontColor,
             ),
             hintText: '年齢を選択してください',
             labelText: '年齢',
-            labelStyle: TextStyle(color: set.fontColor),
+            labelStyle: TextStyle(color: _parts.fontColor),
             contentPadding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
           ),
         ),
       ),
@@ -167,7 +163,7 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
   Widget sexPicker() {
     return InkWell(
       onTap: () {
-        set
+        _parts
             .picker(
               adapter: PickerDataAdapter<String>(pickerdata: [' ', '男性', '女性', 'その他']),
               selected: 0, //初期値
@@ -183,20 +179,20 @@ class _AccountRegisterPageState extends State<AccountRegisterPage> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: set.pointColor),
+          style: TextStyle(color: _parts.pointColor),
           enableInteractiveSelection: false,
           controller: _sexInputController,
           decoration: InputDecoration(
             icon: Icon(
               Icons.wc,
-              color: set.fontColor,
+              color: _parts.fontColor,
             ),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: set.fontColor, width: 3.0)),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
             hintText: '性別を選択してください',
             labelText: '性別',
-            labelStyle: TextStyle(color: set.fontColor),
+            labelStyle: TextStyle(color: _parts.fontColor),
             contentPadding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
           ),
         ),

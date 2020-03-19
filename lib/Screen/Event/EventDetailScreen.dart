@@ -4,9 +4,9 @@ import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
 
-import 'EventCreatePage.dart';
-import 'ProfilePage.dart';
-import 'TalkPage.dart';
+import 'EventCreateScreen.dart';
+import '../ProfileScreen.dart';
+import '../TalkScreen.dart';
 import 'package:flutter/gestures.dart';
 
 /*----------------------------------------------
@@ -15,21 +15,17 @@ import 'package:flutter/gestures.dart';
 
 ----------------------------------------------*/
 
-class EventSearchResultDetailPage extends StatelessWidget {
-  EventDetail event;
-  User user;
-  EventSearchResultDetailPage({Key key, this.user, this.event}) : super(key: key);
-  PageParts set = new PageParts();
-  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
+class EventDetailScreen extends StatelessWidget {
+  final EventDetail event;
+  final User user;
+  EventDetailScreen({Key key, this.user, this.event}) : super(key: key);
+  final PageParts _parts = new PageParts();
+  final formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text('イベント詳細', style: TextStyle(color: set.pointColor)),
-      ),
-      backgroundColor: set.backGroundColor,
+      appBar: _parts.appBar(title: "イベント詳細"),
+      backgroundColor: _parts.backGroundColor,
       body: Container(
         padding: const EdgeInsets.all(40.0),
         child: Column(
@@ -40,40 +36,41 @@ class EventSearchResultDetailPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text("募集人数：${event.recruitMember}",
-                      style: TextStyle(color: set.pointColor, fontSize: 18)),
+                      style: TextStyle(color: _parts.pointColor, fontSize: 18)),
                   Text("駅　　　：${event.station}",
-                      style: TextStyle(color: set.pointColor, fontSize: 18)),
+                      style: TextStyle(color: _parts.pointColor, fontSize: 18)),
                   Text("開始時間：${event.startingTime}",
-                      style: TextStyle(color: set.pointColor, fontSize: 17)),
+                      style: TextStyle(color: _parts.pointColor, fontSize: 17)),
                   Text("終了時間：${event.endingTime}",
-                      style: TextStyle(color: set.pointColor, fontSize: 17)),
+                      style: TextStyle(color: _parts.pointColor, fontSize: 17)),
                   RichText(
                     text: TextSpan(children: [
-                      TextSpan(text: "主催者：", style: TextStyle(color: set.pointColor, fontSize: 18)),
+                      TextSpan(
+                          text: "主催者：", style: TextStyle(color: _parts.pointColor, fontSize: 18)),
                       TextSpan(
                           text: event.userName,
-                          style: TextStyle(color: set.fontColor, fontSize: 17),
+                          style: TextStyle(color: _parts.fontColor, fontSize: 17),
                           recognizer: new TapGestureRecognizer()
                             ..onTap = () {
                               Navigator.of(context).push<Widget>(
                                 MaterialPageRoute(
                                   settings: const RouteSettings(name: "/Profile"),
                                   builder: (context) =>
-                                      new ProfilePage(user: user, userId: event.userId),
+                                      new ProfileScreen(user: user, userId: event.userId),
                                 ),
                               );
                             }),
                     ]),
                   ),
                   Text("コメント：${event.comment}",
-                      style: TextStyle(color: set.pointColor, fontSize: 18)),
+                      style: TextStyle(color: _parts.pointColor, fontSize: 18)),
                   _actionWidget(context),
                 ],
               ),
             ),
 
             //戻るボタン
-            set.backButton(
+            _parts.backButton(
               onPressed: () => Navigator.pop(context),
             ),
           ],
@@ -89,10 +86,10 @@ class EventSearchResultDetailPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Center(
-              child: set.iconButton(message: "削除", icon: Icons.delete, onPressed: () {}),
+              child: _parts.iconButton(message: "削除", icon: Icons.delete, onPressed: () {}),
             ),
             Center(
-              child: set.iconButton(
+              child: _parts.iconButton(
                   message: "修正",
                   icon: Icons.check,
                   onPressed: () {
@@ -102,7 +99,7 @@ class EventSearchResultDetailPage extends StatelessWidget {
                     ).push<Widget>(
                       MaterialPageRoute(
                         settings: const RouteSettings(name: "/EventCreate"),
-                        builder: (context) => EventCreatePage(user: user, mode: 1, event: event),
+                        builder: (context) => EventCreateScreen(user: user, mode: 1, event: event),
                       ),
                     );
                   }),
@@ -114,13 +111,13 @@ class EventSearchResultDetailPage extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(20.0),
         child: Center(
-          child: set.iconButton(
+          child: _parts.iconButton(
               message: "メッセージを送る",
               icon: Icons.mail,
               onPressed: () {
                 Navigator.of(context).push<Widget>(MaterialPageRoute(
                     settings: const RouteSettings(name: "/Talk"),
-                    builder: (context) => new TalkPage(
+                    builder: (context) => new TalkScreen(
                         user: user, opponentId: event.userId, opponentName: event.userName)));
               }),
         ),

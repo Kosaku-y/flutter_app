@@ -9,31 +9,24 @@ import 'package:flutter_app2/Bloc/TalkBloc.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 
-import 'TalkPage.dart';
+import 'TalkScreen.dart';
 
 /*----------------------------------------------
 　ルームページクラス
 ----------------------------------------------*/
-class TalkRoomPage extends StatelessWidget {
+class TalkRoomScreen extends StatelessWidget {
   final User user;
-  final PageParts set = PageParts();
+  final PageParts _parts = PageParts();
 
-  TalkRoomPage(this.user);
+  TalkRoomScreen(this.user);
 
   @override
   Widget build(BuildContext context) {
     List<String> rooms;
     TalkBloc bloc = new TalkBloc(user);
     return Scaffold(
-        appBar: AppBar(
-          elevation: 2.0,
-          backgroundColor: set.baseColor,
-          title: Text('トークルーム一覧',
-              style: TextStyle(
-                color: set.pointColor,
-              )),
-        ),
-        backgroundColor: set.backGroundColor,
+        appBar: _parts.appBar(title: "トークルーム"),
+        backgroundColor: _parts.backGroundColor,
         body: Padding(
           padding: const EdgeInsets.all(15.0),
           child: StreamBuilder<List<String>>(
@@ -44,7 +37,7 @@ class TalkRoomPage extends StatelessWidget {
                     child: Text(
                       "トークルームはありません",
                       style: TextStyle(
-                        color: set.pointColor,
+                        color: _parts.pointColor,
                         fontSize: 20,
                       ),
                     ),
@@ -58,7 +51,7 @@ class TalkRoomPage extends StatelessWidget {
                   return Center(
                     child: Text("トークルームはありません",
                         style: TextStyle(
-                          color: set.pointColor,
+                          color: _parts.pointColor,
                           fontSize: 20,
                         )),
                   );
@@ -89,13 +82,13 @@ class TalkRoomPage extends StatelessWidget {
           context,
           MaterialPageRoute(
             settings: const RouteSettings(name: "/Talk"),
-            builder: (context) => new TalkPage(user: user, opponentId: room),
+            builder: (context) => new TalkScreen(user: user, opponentId: room),
           ),
         );
       },
       child: new Column(children: <Widget>[
         Card(
-          color: set.backGroundColor,
+          color: _parts.backGroundColor,
           child: ListTile(
             leading: CircleAvatar(
               //backgroundImage: NetworkImage(entry.userImageUrl),
@@ -105,12 +98,12 @@ class TalkRoomPage extends StatelessWidget {
               room,
               style: TextStyle(
                 fontSize: 20.0,
-                color: set.pointColor,
+                color: _parts.pointColor,
               ),
             ),
           ),
         ),
-        Divider(color: set.pointColor),
+        Divider(color: _parts.pointColor),
       ]),
     );
   }

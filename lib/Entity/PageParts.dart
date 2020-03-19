@@ -32,6 +32,19 @@ class PageParts {
     );
   }
 
+  Widget appBar({String title}) {
+    return AppBar(
+      elevation: 2.0,
+      backgroundColor: baseColor,
+      title: Text(
+        title,
+        style: TextStyle(
+          color: pointColor,
+        ),
+      ),
+    );
+  }
+
   Widget backButton({Function() onPressed}) {
     return RaisedButton.icon(
       label: Text("戻る"),
