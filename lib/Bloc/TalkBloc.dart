@@ -3,6 +3,11 @@ import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/TalkRepository.dart';
 import 'package:rxdart/rxdart.dart';
 
+/*----------------------------------------------
+
+トークBlocクラス
+
+----------------------------------------------*/
 class TalkBloc {
   User user;
   TalkRepository repository;

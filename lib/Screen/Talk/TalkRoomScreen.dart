@@ -6,13 +6,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Bloc/TalkBloc.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 
 import 'TalkScreen.dart';
 
 /*----------------------------------------------
+
 　ルームページクラス
+
 ----------------------------------------------*/
 class TalkRoomScreen extends StatelessWidget {
   final User user;
@@ -27,8 +29,8 @@ class TalkRoomScreen extends StatelessWidget {
     return Scaffold(
         appBar: _parts.appBar(title: "トークルーム"),
         backgroundColor: _parts.backGroundColor,
-        body: Padding(
-          padding: const EdgeInsets.all(15.0),
+        body: Container(
+          padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 0.0),
           child: StreamBuilder<List<String>>(
               stream: bloc.eventListStream,
               builder: (context, snapshot) {
@@ -87,7 +89,7 @@ class TalkRoomScreen extends StatelessWidget {
         );
       },
       child: new Column(children: <Widget>[
-        Card(
+        Container(
           color: _parts.backGroundColor,
           child: ListTile(
             leading: CircleAvatar(

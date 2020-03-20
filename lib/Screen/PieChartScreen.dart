@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import '../Entity/PageParts.dart';
+import '../PageParts.dart';
 import '../Entity/User.dart';
-import '../Repository/CommonData.dart';
+import '../CommonData.dart';
 
 class Data {
   String name;

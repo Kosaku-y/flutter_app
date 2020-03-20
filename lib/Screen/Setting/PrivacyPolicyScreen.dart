@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 
-class TermsOfServiceScreen extends StatelessWidget {
-  final PageParts parts = PageParts();
+/*----------------------------------------------
+
+プライバシーポリシーScreenクラス
+
+----------------------------------------------*/
+class PrivacyPolicyScreen extends StatelessWidget {
+  final PageParts _parts = PageParts();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: parts.appBar(title: "利用規約"),
-      backgroundColor: parts.backGroundColor,
+      appBar: _parts.appBar(title: "プライバシーポリシー"),
+      backgroundColor: _parts.backGroundColor,
       body: FutureBuilder(
         future: _loadAsset(),
         builder: (context, snapshot) {
           // 非同期処理が完了している場合にWidgetの中身を呼び出す
           if (!snapshot.hasData) {
-            return parts.indicator();
+            return _parts.indicator();
             // 非同期処理が未完了の場合にインジケータを表示する
           } else {
             return Column(
@@ -36,7 +41,7 @@ class TermsOfServiceScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                parts.backButton(onPressed: () => Navigator.pop(context))
+                _parts.backButton(onPressed: () => Navigator.pop(context))
               ],
             );
           }
@@ -46,6 +51,6 @@ class TermsOfServiceScreen extends StatelessWidget {
   }
 
   Future<String> _loadAsset() async {
-    return rootBundle.loadString('assets/TermsOfService.txt');
+    return rootBundle.loadString('assets/PrivacyPolicy.txt');
   }
 }

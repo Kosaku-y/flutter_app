@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 
 class ReturnTopScreen extends StatelessWidget {
   final PageParts _parts = PageParts();

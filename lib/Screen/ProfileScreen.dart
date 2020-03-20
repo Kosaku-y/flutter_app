@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 
-import 'TalkScreen.dart';
+import 'Talk/TalkScreen.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({Key key, @required this.user, this.userId}) : super(key: key);

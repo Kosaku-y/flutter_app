@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
 import 'Entity/User.dart';
-import 'Screen/LoginScreen.dart';
+import 'Screen/Login/LoginScreen.dart';
 import 'main.dart';
 
 class Splash extends StatefulWidget {
@@ -11,7 +11,7 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  int mode = 1;
+  int mode = 0;
   /*
   * 実機 0
   * ログインスルー 1
@@ -50,7 +50,7 @@ class _SplashState extends State<Splash> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             settings: RouteSettings(name: "/Main"),
-            builder: (context) => MainPage(user: user, message: "ログインしました"),
+            builder: (context) => MainScreen(user: user, message: "ログインしました"),
           ),
         );
         return;

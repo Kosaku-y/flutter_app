@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import 'package:flutter_app2/Repository/CommonData.dart';
+import 'package:flutter_app2/CommonData.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -184,7 +184,7 @@ class HomeScreenState extends State<HomeScreen> {
                 this.context,
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/ScoreManagePage"),
-                  builder: (context) => ScoreManagePage2(),
+                  builder: (context) => ScoreManageScreen(),
                 ),
               );
             }),

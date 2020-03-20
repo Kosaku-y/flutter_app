@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 
 class MahjongHand {
   String handName;

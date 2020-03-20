@@ -19,4 +19,10 @@
 //        this._status = status;
 //}
 //
+
+/*----------------------------------------------
+
+認証状態enum
+
+----------------------------------------------*/
 enum AuthStatus { notSignedIn, signedUp, signedIn }

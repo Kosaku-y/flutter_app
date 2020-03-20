@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/LoginRepository.dart';
 
-import 'ProfileScreen.dart';
-import 'TermsOfServiceScreen.dart';
+import '../ProfileScreen.dart';
+import 'PrivacyPolicyScreen.dart';
 
+/*----------------------------------------------
+
+設定Screenクラス
+
+----------------------------------------------*/
 class SettingScreen extends StatelessWidget {
   final LoginRepository repository = LoginRepository();
   final PageParts _parts = PageParts();
@@ -60,12 +65,12 @@ class SettingScreen extends StatelessWidget {
             },
           ),
           _listElement(
-            title: "利用規約",
+            title: "プライバシーポリシー",
             onTap: () {
               Navigator.of(context).push<Widget>(
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/TermOfService"),
-                  builder: (context) => new TermsOfServiceScreen(),
+                  builder: (context) => new PrivacyPolicyScreen(),
                 ),
               );
             },

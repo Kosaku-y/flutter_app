@@ -1,10 +1,10 @@
 import 'package:flutter_app2/Bloc/LoginBloc.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-import '../main.dart';
+import '../../main.dart';
 import 'AccountRegisterScreen.dart';
 
 /*----------------------------------------------
@@ -37,8 +37,8 @@ class LoginScreen extends StatefulWidget {
 *
 * */
 class LoginScreenState extends State<LoginScreen> {
-  PageParts _parts = PageParts();
-  LoginBloc loginBloc = LoginBloc();
+  final PageParts _parts = PageParts();
+  final LoginBloc loginBloc = LoginBloc();
 
   @override
   void initState() {
@@ -52,7 +52,7 @@ class LoginScreenState extends State<LoginScreen> {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               settings: RouteSettings(name: "/Main"),
-              builder: (context) => MainPage(user: user, message: "ログインしました"),
+              builder: (context) => MainScreen(user: user, message: "ログインしました"),
             ),
           );
           //初回登録フォームへ

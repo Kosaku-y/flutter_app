@@ -2,12 +2,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Entity/Talk.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
 
-import 'ProfileScreen.dart';
+import '../ProfileScreen.dart';
 
 /*----------------------------------------------
 

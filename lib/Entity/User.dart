@@ -1,17 +1,21 @@
 import 'AuthStatus.dart';
 
+/*----------------------------------------------
+
+ユーザーエンティティクラス
+
+----------------------------------------------*/
 class User {
   String _userId = "";
   String _name = "";
   String _age = "";
   String _sex = "";
-  String _rank = "";
-  String _score = "";
+  String _rank = "0";
   Map _event;
   AuthStatus _status;
 
   User();
-  User.tmpUser(this._status, this._userId) : _rank = "0";
+  User.tmpUser(this._status, this._userId);
 
   User.fromMap(String userId, Map map)
       : _userId = userId,
@@ -19,7 +23,6 @@ class User {
         _age = map["age"],
         _sex = map["sex"],
         _rank = map["rank"],
-        _score = map["score"],
         _status = AuthStatus.signedIn;
 
   toJson() {
@@ -29,7 +32,6 @@ class User {
         "age:$age\n"
         "sex:$sex\n"
         "rank:$rank\n"
-        "score:$score\n"
         "-------------------------------\n");
     return {
       "userId": userId,
@@ -37,7 +39,6 @@ class User {
       "age": age,
       "sex": sex,
       "rank": rank,
-      "score": score,
     };
   }
 
@@ -55,11 +56,6 @@ class User {
   Map get event => _event;
   set event(Map value) {
     _event = value;
-  }
-
-  String get score => _score;
-  set score(String value) {
-    _score = value;
   }
 
   String get rank => _rank;

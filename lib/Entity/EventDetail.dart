@@ -3,10 +3,12 @@
   eventId         イベントID
   userId          ユーザーID
   recruitMember   募集人数
+  pref            都道府県
+  line            路線
   station         最寄駅
   startingTime    開始時間
   endingTime      終了時間
-  remarks         備考
+  comment         コメント
 ----------------------------------------------*/
 class EventDetail {
   String eventId;

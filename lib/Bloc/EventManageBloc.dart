@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'package:flutter_app2/Repository/EventRepository.dart';
 
+/*----------------------------------------------
+
+イベント管理Blocクラス
+
+----------------------------------------------*/
 class EventManageBloc {
   //イベント作成ページからpicker作成のためのprefCodeを受け取るStream
   final StreamController _lineApiController = StreamController<String>();

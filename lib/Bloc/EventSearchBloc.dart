@@ -4,6 +4,11 @@ import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:rxdart/rxdart.dart';
 
+/*----------------------------------------------
+
+イベント検索Blocクラス
+
+----------------------------------------------*/
 class EventSearchBloc {
   //イベント検索ページから要素を受け取るStream
   final StreamController _eventSearchController = StreamController<EventSearch>();

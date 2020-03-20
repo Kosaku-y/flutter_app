@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Bloc/LocalDataBloc.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/Score.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

@@ -4,12 +4,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Bloc/EventSearchBloc.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:intl/intl.dart';
 import 'EventDetailScreen.dart';
-import '../TalkScreen.dart';
+import '../Talk/TalkScreen.dart';
 
 /*----------------------------------------------
 
@@ -25,7 +25,7 @@ class EventSearchResultScreen extends StatelessWidget {
   final formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
   final EventRepository eventRepository = new EventRepository();
   List<EventDetail> eventList = new List();
-  //画面全体のビルド
+
   @override
   Widget build(BuildContext context) {
     EventSearchBloc bloc = EventSearchBloc();
@@ -37,7 +37,6 @@ class EventSearchResultScreen extends StatelessWidget {
         stream: bloc.searchResultStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) return Text("エラーが発生しました");
-
           if (!snapshot.hasData)
             return Center(
               child: _parts.indicator(),
@@ -93,8 +92,7 @@ class EventSearchResultScreen extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push<Widget>(
           MaterialPageRoute(
-            settings:
-                RouteSettings(name: "/EventSearchResultDetail/code=${eventList[index].eventId}"),
+            settings: RouteSettings(name: "/EventDetail/code=${eventList[index].eventId}"),
             builder: (context) => EventDetailScreen(user: user, event: eventList[index]),
           ),
         );

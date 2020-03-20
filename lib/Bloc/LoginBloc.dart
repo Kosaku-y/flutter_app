@@ -3,6 +3,11 @@ import 'package:flutter_app2/Entity/User.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_app2/Repository/LoginRepository.dart';
 
+/*----------------------------------------------
+
+ログインBlocクラス
+
+----------------------------------------------*/
 class LoginBloc {
   //final _currentTempUserController = PublishSubject<TempUser>();
   final _currentTempUserController = BehaviorSubject<User>.seeded(null);

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
 
 import 'EventCreateScreen.dart';
 import '../ProfileScreen.dart';
-import '../TalkScreen.dart';
+import '../Talk/TalkScreen.dart';
 import 'package:flutter/gestures.dart';
 
 /*----------------------------------------------

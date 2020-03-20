@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app2/Splash.dart';
-import 'Entity/PageParts.dart';
+import 'PageParts.dart';
 import 'Entity/User.dart';
 import 'Screen/Event/EventSearchScreen.dart';
 import 'Screen/HomeScreen.dart';
-import 'Screen/SettingScreen.dart';
-import 'Screen/TalkRoomScreen.dart';
+import 'Screen/Setting/SettingScreen.dart';
+import 'Screen/Talk/TalkRoomScreen.dart';
 
 //ホーム画面のrun
 void main() {
@@ -22,20 +22,20 @@ void main() {
 
 /*----------------------------------------------
 
-ホーム(MainPage)クラス
+main screen(BottomNavigation)クラス
 
 ----------------------------------------------*/
 
-class MainPage extends StatefulWidget {
-  User user;
-  String message; //前の画面からの遷移の場合はSnackBarで処理結果を表示する
-  MainPage({Key key, @required this.user, @required this.message}) : super(key: key);
+class MainScreen extends StatefulWidget {
+  final User user;
+  final String message; //前の画面からの遷移の場合はSnackBarで処理結果を表示する
+  MainScreen({Key key, @required this.user, @required this.message}) : super(key: key);
   @override
-  _MainPageState createState() => _MainPageState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainPageState extends State<MainPage> {
-  TabItem _currentTab = TabItem.NewHome;
+class _MainScreenState extends State<MainScreen> {
+  TabItem _currentTab = TabItem.Home;
   List<Widget> tabs;
   PageParts set = PageParts();
   bool once = true;
@@ -49,9 +49,9 @@ class _MainPageState extends State<MainPage> {
 //  }
 
   Map<TabItem, GlobalKey<NavigatorState>> _navigatorKeys = {
-    TabItem.NewHome: GlobalKey<NavigatorState>(),
+    TabItem.Home: GlobalKey<NavigatorState>(),
     TabItem.EventManage: GlobalKey<NavigatorState>(),
-    TabItem.RoomPage: GlobalKey<NavigatorState>(),
+    TabItem.Room: GlobalKey<NavigatorState>(),
     TabItem.Setting: GlobalKey<NavigatorState>(),
   };
 
@@ -81,8 +81,8 @@ class _MainPageState extends State<MainPage> {
   Future<bool> onWillPop() async {
     final isFirstRoute = !await _navigatorKeys[_currentTab].currentState.maybePop();
     if (isFirstRoute) {
-      if (_currentTab != TabItem.NewHome) {
-        onSelect(TabItem.NewHome);
+      if (_currentTab != TabItem.Home) {
+        onSelect(TabItem.Home);
       }
       return false;
     }
@@ -98,16 +98,16 @@ class _MainPageState extends State<MainPage> {
         body: Stack(
           children: <Widget>[
             _buildTabItem(
-              TabItem.NewHome,
-              '/NewHome',
+              TabItem.Home,
+              '/Home',
             ),
             _buildTabItem(
               TabItem.EventManage,
               '/EventManage',
             ),
             _buildTabItem(
-              TabItem.RoomPage,
-              '/RoomPage',
+              TabItem.Room,
+              '/Room',
             ),
             _buildTabItem(
               TabItem.Setting,
@@ -159,9 +159,9 @@ class TabNavigator extends StatelessWidget {
   final GlobalKey<NavigatorState> navigationKey;
 
   Map<String, Widget Function(BuildContext)> _routerBuilder(BuildContext context) => {
-        '/NewHome': (context) => new HomeScreen(user: user),
+        '/Home': (context) => new HomeScreen(user: user),
         '/EventManage': (context) => new EventManageScreen(user: user),
-        '/RoomPage': (context) => new TalkRoomScreen(user),
+        '/Room': (context) => new TalkRoomScreen(user),
         '/Setting': (context) => new SettingScreen(user: user)
       };
 
@@ -190,9 +190,9 @@ BottomNavigationBar定義 enum
 ----------------------------------------------*/
 
 enum TabItem {
-  NewHome,
+  Home,
   EventManage,
-  RoomPage,
+  Room,
   Setting,
 }
 
@@ -203,15 +203,15 @@ BottomNavigationBarのWidgetクラス
 ----------------------------------------------*/
 
 const tabTitle = <TabItem, String>{
-  TabItem.NewHome: 'ホーム',
+  TabItem.Home: 'ホーム',
   TabItem.EventManage: 'イベント',
-  TabItem.RoomPage: 'トーク',
+  TabItem.Room: 'トーク',
   TabItem.Setting: '設定',
 };
 const tabIcon = <TabItem, IconData>{
-  TabItem.NewHome: Icons.home,
+  TabItem.Home: Icons.home,
   TabItem.EventManage: IconData(59574, fontFamily: 'MaterialIcons'),
-  TabItem.RoomPage: Icons.message,
+  TabItem.Room: Icons.message,
   TabItem.Setting: Icons.settings,
 };
 
@@ -232,7 +232,7 @@ class BottomNavigation extends StatelessWidget {
       items: <BottomNavigationBarItem>[
         bottomItem(
           context,
-          tabItem: TabItem.NewHome,
+          tabItem: TabItem.Home,
         ),
         bottomItem(
           context,
@@ -240,7 +240,7 @@ class BottomNavigation extends StatelessWidget {
         ),
         bottomItem(
           context,
-          tabItem: TabItem.RoomPage,
+          tabItem: TabItem.Room,
         ),
         bottomItem(
           context,

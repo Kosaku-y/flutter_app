@@ -1,0 +1,33 @@
+
+
+{
+  "users": {
+    "shiroyama": { "name": "Fumihiko Shiroyama" },
+    "tanaka": { ... },
+    "sato": { ... }
+  },
+  "rooms": {
+    "room01": {
+      "title": "チャットルーム01",
+      "members": {
+        "member01": "shiroyama",
+        "member02": "tanaka"
+      }
+    },
+    "room02": { ... }
+  },
+  "messages": {
+    "room01": {
+      "message01": {
+        "sender": "shiroyama",
+        "message": "こんにちは。誰かいますか？"
+      },
+      "message02": {
+        "sender": "tanaka",
+        "message": "はい，いますよ。"
+      },
+      "message03": { ... }
+    },
+    "room02": { ... }
+  }
+}

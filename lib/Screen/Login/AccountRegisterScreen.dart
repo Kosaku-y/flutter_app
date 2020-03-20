@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/LoginRepository.dart';
 import 'package:flutter_app2/Repository/UserDataRepository.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
-import '../main.dart';
+import '../../main.dart';
 import 'LoginScreen.dart';
 
 class AccountRegisterScreen extends StatefulWidget {
@@ -46,7 +46,7 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         settings: const RouteSettings(name: "/Main"),
-        builder: (context) => MainPage(user: user, message: "登録完了しました"),
+        builder: (context) => MainScreen(user: user, message: "登録完了しました"),
       ),
     );
     print('finish register');

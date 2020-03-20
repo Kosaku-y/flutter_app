@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_picker/flutter_picker.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 /*----------------------------------------------
 部品クラス
@@ -99,7 +98,8 @@ class PageParts {
     return Picker(
       itemExtent: 40.0,
       height: 200.0,
-      backgroundColor: Colors.white,
+      backgroundColor: baseColor,
+      textStyle: TextStyle(color: pointColor),
       headercolor: Colors.white,
       //changeToFirst: false,
       cancelText: "戻る",

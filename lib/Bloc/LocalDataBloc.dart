@@ -3,6 +3,11 @@ import 'package:flutter_app2/Entity/Score.dart';
 import 'package:flutter_app2/Repository/LocalDataRepository.dart';
 import 'package:rxdart/rxdart.dart';
 
+/*----------------------------------------------
+
+ローカルデータBlocクラス
+
+----------------------------------------------*/
 class LocalDataBloc {
   //ページからcallサインを受け取るStream
   final StreamController _callSignController = StreamController();
