@@ -1,113 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter_app2/Screen/HomeScreenElement.dart';
 import '../PageParts.dart';
-import '../Entity/User.dart';
 import '../CommonData.dart';
 
-class Data {
-  String name;
-  int value;
-  Color color;
-  Data(this.name, this.value, this.color);
-}
+class PieChartScreen extends StatelessWidget {
+  HomeScreenElement element = HomeScreenElement();
+  final String rank;
+  PieChartScreen({key, @required this.rank});
+  final PageParts _parts = new PageParts();
+  final CommonData _data = CommonData();
+  Color _rankColor; //ランクカラー
+  String _colorStr; //カラーの文字列(ex."赤")
+  double remain = 0; //ランクアップまでのポイント
+  int _max = 0;
 
-class PieChartScreen extends StatefulWidget {
-  final User user;
-  PieChartScreen({key, this.user});
-  @override
-  State<StatefulWidget> createState() {
-    return new PieChartScreenState();
-  }
-}
-
-class PieChartScreenState extends State<PieChartScreen> {
-  List<charts.Series<Data, String>> seriesPieData;
-  PageParts _parts = new PageParts();
-  CommonData cd = CommonData();
-  int max, remain, userRank;
-  String rankColorString;
-
-  PieChartScreenState();
-  @override
-  void initState() {
-    super.initState();
-    seriesPieData = List<charts.Series<Data, String>>();
-    generateData(int.parse(widget.user.rank));
-  }
-
-  generateData(int rank) {
-    userRank = rank;
-    for (int r in cd.rankMap.keys) {
-      if (rank <= r) {
-        max = r;
-        rankColorString = cd.rankMap[r];
+  Future<void> _generateData() async {
+    double userRank = double.parse(rank);
+    for (int r in _data.rankMap.keys) {
+      if (userRank <= r) {
+        _max = r;
+        _colorStr = _data.rankMap[r];
+        _rankColor = _data.colorMap[_colorStr];
         break;
       }
     }
-    remain = max - rank;
-    var pieData = [
-      new Data('rank', rank, cd.colorMap[rankColorString].withOpacity(0.8)),
-      new Data('brank', remain, Colors.white.withOpacity(0.0)),
-    ];
-
-    seriesPieData.add(
-      charts.Series(
-        domainFn: (Data data, _) => data.name,
-        measureFn: (Data data, _) => data.value,
-        colorFn: (Data data, _) => charts.ColorUtil.fromDartColor(data.color),
-        data: pieData,
-        id: 'rank',
-        labelAccessorFn: (Data row, _) => '${row.value}',
-      ),
-    );
+    remain = _max - userRank;
+    return;
   }
 
   Widget build(BuildContext context) {
+    _generateData();
     return new Scaffold(
-      appBar: _parts.appBar(title: "ランク"),
+      appBar: _parts.appBar(title: "ランク(プレイヤー評価)"),
       backgroundColor: _parts.backGroundColor,
       body: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 40.0),
         child: Center(
-          child: Column(
-            children: <Widget>[
-              Text('Player rank',
-                  style: TextStyle(
-                    color: _parts.pointColor,
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                  )),
-              Text.rich(
-                TextSpan(
-                  children: <TextSpan>[
-                    TextSpan(
-                        text: '現在のランク:', style: TextStyle(color: _parts.fontColor, fontSize: 20.0)),
-                    TextSpan(
-                        text: '$rankColorString',
-                        style: TextStyle(color: cd.colorMap[rankColorString], fontSize: 25.0)),
-                  ],
-                ),
+          child: Column(children: <Widget>[
+            Text.rich(
+              TextSpan(
+                children: <TextSpan>[
+                  TextSpan(
+                      text: '現在のランク:', style: TextStyle(color: _parts.fontColor, fontSize: 20.0)),
+                  TextSpan(text: '$_colorStr', style: TextStyle(color: _rankColor, fontSize: 25.0)),
+                ],
               ),
-              Text('ランクアップまであと $remain', style: TextStyle(color: _parts.fontColor, fontSize: 20.0)),
-              Expanded(
-                child: pieChart(),
-              ),
-              _parts.backButton(
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: element.rankGage(
+                  size: const Size(300.0, 300.0),
+                  labelSize: 60.0,
+                  rank: int.parse(rank),
+                  max: _max,
+                  color: _rankColor),
+            ),
+            Text('ランクアップまであと $remain', style: TextStyle(color: _parts.fontColor, fontSize: 20.0)),
+            _parts.backButton(
+              onPressed: () => Navigator.pop(context),
+            ),
+          ]),
         ),
       ),
     );
-  }
-
-  Widget pieChart() {
-    return charts.PieChart(seriesPieData,
-        animate: true,
-        animationDuration: Duration(seconds: 2),
-        defaultRenderer: new charts.ArcRendererConfig(arcWidth: 70, arcRendererDecorators: [
-          new charts.ArcLabelDecorator(labelPosition: charts.ArcLabelPosition.inside)
-        ]));
   }
 }

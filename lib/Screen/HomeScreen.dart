@@ -1,11 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/CommonData.dart';
+import 'package:flutter_app2/Screen/HomeScreenElement.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:firebase_database/firebase_database.dart';
-
 import 'PieChartScreen.dart';
 import 'MahjongHandScreen.dart';
 import 'Score/ScoreManagePage.dart';
@@ -18,31 +18,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  PageParts _parts = new PageParts();
-  CommonData cd = CommonData();
-  final userReference = FirebaseDatabase.instance.reference().child("gmail");
+  final PageParts _parts = new PageParts();
+  final CommonData _data = CommonData();
+  int _max = 0;
+  final HomeScreenElement element = HomeScreenElement();
   int totalInfo = 0; //お知らせ件数
-
-  PieChartScreenState pie = new PieChartScreenState();
-  int userRank;
-  String rankColorString;
+  String _rankColor;
 
   @override
   void initState() {
-    super.initState();
-    userRank = int.parse(widget.user.rank);
-    for (int r in cd.rankMap.keys) {
-      if (userRank <= r) {
-        rankColorString = cd.rankMap[r];
+    for (int r in _data.rankMap.keys) {
+      if (int.parse(widget.user.rank) <= r) {
+        _max = r;
+        _rankColor = _data.rankMap[r];
         break;
       }
     }
-    pie.seriesPieData = List<charts.Series<Data, String>>();
-    pie.generateData(userRank);
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle titleStyle =
+        TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0);
+    final TextStyle explainStyle = TextStyle(color: _parts.fontColor, fontSize: 12.0);
     return Scaffold(
         appBar: _parts.appBar(title: "ホーム"),
         backgroundColor: _parts.backGroundColor,
@@ -59,6 +58,7 @@ class HomeScreenState extends State<HomeScreen> {
                       color: _parts.fontColor, fontWeight: FontWeight.w700, fontSize: 20.0)),
             ),
             _buildTile(
+              //お知らせ
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Row(
@@ -69,29 +69,59 @@ class HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('お知らせ',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20.0)),
-                          Text('新着$totalInfo件',
-                              style: TextStyle(color: _parts.fontColor, fontSize: 12.0)),
+                          Text('お知らせ', style: titleStyle),
+                          Text('新着$totalInfo件', style: explainStyle),
                           //                          Text('$totalInfo件', style: TextStyle(color: Colors.blueAccent)),
                         ],
                       ),
                       Material(
-                          //                        color: Colors.blue,
-                          color: _parts.fontColor,
-                          borderRadius: BorderRadius.circular(24.0),
-                          child: Center(
-                              child: Padding(
+                        color: _parts.fontColor,
+                        borderRadius: BorderRadius.circular(24.0),
+                        child: Center(
+                          child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Icon(Icons.info, color: Colors.white, size: 30.0),
-                          )))
+                          ),
+                        ),
+                      )
                     ]),
               ),
             ),
             _buildTile(
+              //戦績管理
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Material(
+                          color: _parts.fontColor,
+                          shape: CircleBorder(),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Icon(Icons.show_chart, color: Colors.white, size: 30.0),
+                          )),
+                      Padding(padding: EdgeInsets.only(bottom: 12.0)),
+                      Text('戦績', style: titleStyle),
+                      Text(
+                        '勝敗分析をしよう',
+                        style: explainStyle,
+                      ),
+                    ]),
+              ),
+              onTap: () {
+                Navigator.push(
+                  this.context,
+                  MaterialPageRoute(
+                    settings: const RouteSettings(name: "/ScoreManagePage"),
+                    builder: (context) => ScoreManageScreen(),
+                  ),
+                );
+              },
+            ),
+            _buildTile(
+              //役一覧
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -106,10 +136,8 @@ class HomeScreenState extends State<HomeScreen> {
                             child: Image.asset('assets/piece/0m5.png'),
                           )),
                       Padding(padding: EdgeInsets.only(bottom: 12.0)),
-                      Text('How to 役',
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0)),
-                      Text('役を覚えよう', style: TextStyle(color: _parts.fontColor, fontSize: 12.0)),
+                      Text('How to 役', style: titleStyle),
+                      Text('役を覚えよう', style: explainStyle),
                     ]),
               ),
               onTap: () => Navigator.push(
@@ -121,29 +149,30 @@ class HomeScreenState extends State<HomeScreen> {
               ),
             ),
             _buildTile(
+              //playerRank
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 24.0),
+                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 12.0),
                 child: Column(
 //                  mainAxisAlignment: MainAxisAlignment.start,
 //                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('Player rank',
-                        style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+                    Text('Player rank', style: titleStyle),
                     Text.rich(
                       TextSpan(
                         children: <TextSpan>[
+                          TextSpan(text: '現在のランクカラー:', style: explainStyle),
                           TextSpan(
-                              text: '現在のランク:',
-                              style: TextStyle(color: _parts.fontColor, fontSize: 12.0)),
-                          TextSpan(
-                              text: '$rankColorString',
-                              style:
-                                  TextStyle(color: cd.colorMap[rankColorString], fontSize: 12.0)),
+                              text: '$_rankColor',
+                              style: TextStyle(color: _data.colorMap[_rankColor], fontSize: 12.0)),
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: pie.pieChart(),
+                    element.rankGage(
+                      size: const Size(150, 150),
+                      labelSize: 40.0,
+                      rank: int.parse(widget.user.rank),
+                      max: _max,
+                      color: _data.colorMap[_rankColor],
                     ),
                   ],
                 ),
@@ -151,44 +180,13 @@ class HomeScreenState extends State<HomeScreen> {
               onTap: () => Navigator.push(
                 this.context,
                 MaterialPageRoute(
-                  settings: const RouteSettings(name: "/PieChartDetail"),
-                  builder: (context) => new PieChartScreen(user: widget.user),
+                  settings: const RouteSettings(name: "/PieChart"),
+                  builder: (context) => new PieChartScreen(rank: widget.user.rank),
                 ),
               ),
             ),
             _buildTile(
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Material(
-                            color: _parts.fontColor,
-                            shape: CircleBorder(),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Icon(Icons.show_chart, color: Colors.white, size: 30.0),
-                            )),
-                        Padding(padding: EdgeInsets.only(bottom: 12.0)),
-                        Text('戦績',
-                            style: TextStyle(
-                                color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0)),
-                        Text(
-                          '勝敗分析をしよう',
-                          style: TextStyle(color: _parts.fontColor, fontSize: 12.0),
-                        ),
-                      ]),
-                ), onTap: () {
-              Navigator.push(
-                this.context,
-                MaterialPageRoute(
-                  settings: const RouteSettings(name: "/ScoreManagePage"),
-                  builder: (context) => ScoreManageScreen(),
-                ),
-              );
-            }),
-            _buildTile(
+              //開発中
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Row(
@@ -199,14 +197,8 @@ class HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('一言コメント欄',
-                              style: TextStyle(color: _parts.fontColor, fontSize: 12.0)),
-                          Text('開発中',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20.0,
-                              ))
+                          Text('一言コメント欄', style: explainStyle),
+                          Text('開発中', style: titleStyle)
                         ],
                       ),
                       Material(
@@ -223,11 +215,11 @@ class HomeScreenState extends State<HomeScreen> {
             )
           ],
           staggeredTiles: [
-            StaggeredTile.extent(2, 40.0), //メッセージ部分
+            StaggeredTile.extent(2, 40.0), //メッセージ部
             StaggeredTile.extent(2, 110.0), //お知らせ
-            StaggeredTile.extent(1, 180.0), //How to 役
-            StaggeredTile.extent(1, 360.0), //rank
-            StaggeredTile.extent(1, 170.0), //戦績
+            StaggeredTile.extent(2, 200.0), //戦績
+            StaggeredTile.extent(1, 220.0), //How to 役
+            StaggeredTile.extent(1, 220.0), //rank
             StaggeredTile.extent(2, 110.0), //開発中
           ],
         ));

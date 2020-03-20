@@ -10,7 +10,7 @@ class User {
   String _name = "";
   String _age = "";
   String _sex = "";
-  String _rank = "0";
+  String _rank = "1";
   Map _event;
   AuthStatus _status;
 

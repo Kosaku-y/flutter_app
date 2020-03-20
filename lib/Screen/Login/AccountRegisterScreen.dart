@@ -31,15 +31,13 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
     super.initState();
   }
 
-  /**
-   *@ToDo validate
-   */
+  ///ToDo validate
+
   void submit(String userId) async {
     User user = widget.user;
     user.name = _nameInputController.text;
     user.age = _ageInputController.text;
     user.sex = _sexInputController.text;
-    user.rank = "0";
     UserDataRepository repository = UserDataRepository();
     await repository.registerUser(user);
 
