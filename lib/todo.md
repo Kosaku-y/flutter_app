@@ -1,25 +1,28 @@
 
 
-/*
-最優先バグ事項
+
+#最優先バグ事項
 未登録ユーザーがログインしようとすると落ちる
-・ログインプロセスの見直し
+->ログインプロセスの見直し
 LoginBloc
 var user = await repository.checkFireBaseLogin(fireBaseUser);
 
-*/
-/*
-* To do
-*   文言日本語化
-*   変数整理
-*   非同期処理(Indicator)
-*   db処理 try-catch
-    * theme
-    * profile画面の作成
 
-・DateTimePickerの受け取り型と渡し型
-・flutter_datetime_pickerのパッケージビルドエラー
-・Home画面の遷移後の snackBar
+#To do
+*文言日本語化
+*変数整理
+*非同期処理(Indicator)
+*db処理 try-catch
+*theme
+*profile画面の作成
+
+~~・DateTimePickerの受け取り型と渡し型~~
+~~・flutter_datetime_pickerのパッケージビルドエラー~~
+~~・Home画面の遷移後の snackBar~~
+->無理そう
+~~・piechart stateless化~~
+
+
 ・NewHomeの改善
 ・自身のイベント管理
 ・themeでレイアウト色管理
@@ -29,93 +32,12 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 	→路線検索：駅の路線APIを使えば、なんとかなりそう
 ・別の認証間で同じIDは？
 ・戦績管理(Preferenceshared)
+・DBルール制約
 ・
-piechart stateless化
-https://medium.com/better-programming/flutter-how-to-save-objects-in-sharedpreferences-b7880d0ee2e4
 
-------realtime database--------
--User
-	-tatsuro
-		-rank:”16”
-		-sex:”0”
-		-name:tatsuro
-		-mail:”tatsumiya”
-		-age:”25”
-		-lineId:”abcdefg”
-		-event:
-			(-“所持イベント数”:”イベントID”)
-			-“0”:”20”
-			-“1”:”30”
-
------preference-------
--scoreKey:{
--”2019/11/07”:{
-            {{'ranking':1,
-            'chip':23,
-            'total':201,
-            'rate':5,
-            'balance':12400}}
--”2019/11/09”:{
-            {{'ranking':1,
-            'chip':23,
-            total':201,
-            'rate':5,
-            'balance':12400},
-            {'ranking':1,
-            'chip':23,
-            total':201,
-            'rate':5,
-            'balance':12400}}
+[Preferenceshared](https://medium.com/better-programming/flutter-how-to-save-objects-in-sharedpreferences-b7880d0ee2e4)
 
 
-
-
-}
-
-			　	(-1着)
-				-first:4
-				(-2着)
-				-second:5
-				(-3着)
-				-third:9
-				(-4着)
-				-fourth
-				(-収支)
-				-balance:-250
-				(-金額)
-				-total:-25000
-
-
-
-起動画面
-
-ログイン画面
-
-ホーム画面
-    ダッシュボード
-        お知らせ
-        How to 役
-        Player Rank
-        戦績
-
-    イベント検索画面
-        イベント検索結果画面
-
-        イベント作成画面
-
-        イベント確認画面
-
-        イベント修正画面
-        　
-    プロフィール修正画面
-
-    メッセージ画面
-
-    設定画面
-        ログアウト
-*/
-
-/*
 覚え書き
 --変数の変化(状態の変化)によってwidgetが変わる場合setState呼んで値を変える
 ->bloc を使ったり、providerやInheritedWidgetを使うことによって回避できる
@@ -138,49 +60,46 @@ http://api.ekispert.jp/v1/json/operationLine?prefectureCode=13&offset=1&limit=10
 http://api.ekispert.jp/v1/json/station?operationLineCode=98&offset=1&limit=100&direction=up&gcs=tokyo&key=key=LE_UaP7Vyjs3wQPa
 
 
-    Score s1 = Score("2020年3月13日金曜日", 1, 1, 1, 1, 1);
-    Score s2 = Score("2020年3月13日金曜日", 2, 31, 41, 5, 51);
-    Score s3 = Score("2020年3月17日金曜日", 2, 31, 41, 5, 51);
-
-    _events = {
-      formatter.parse(s1.date): [s1, s2],
-      formatter.parse(s3.date): [s3]
-    };
-
-------------------
+```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Bloc/LocalDataBloc.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
 import 'package:flutter_app2/Entity/Score.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'ScoreInputPage.dart';
 import 'package:fl_chart/fl_chart.dart';
+
+import '../../PageParts.dart';
+import 'ScoreInputScreen.dart';
+
 /*----------------------------------------------
 
 スコア管理ページクラス
 
 ----------------------------------------------*/
 
-class ScoreManagePage extends StatefulWidget {
-  ScoreManagePage({Key key}) : super(key: key);
+class ScoreManageScreen3 extends StatefulWidget {
+  ScoreManageScreen3({Key key}) : super(key: key);
 
   State<StatefulWidget> createState() {
-    return new ScoreManagePageState();
+    return new ScoreManageScreen3State();
   }
 }
-class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderStateMixin {
+
+class ScoreManageScreen3State extends State<ScoreManageScreen3> with TickerProviderStateMixin {
   TabController _tabController;
   PageParts set = new PageParts();
   Map<DateTime, List<Score>> _events;
   List _selectedEvents;
-  CalendarController _calendarController;
   Map<DateTime, dynamic> scoreMap;
   DateTime selectedDay;
   var formatter = DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY);
   final LocalDataBloc bloc = LocalDataBloc();
+  int _max = 0;
+  int grid = 50;
+  ScoreAnalyze analyze;
+  CalendarController _calendarController;
 
   bool showAvg = false;
   List<Color> gradientColors = [
@@ -202,73 +121,73 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
     super.initState();
     Intl.defaultLocale = 'ja_JP';
     initializeDateFormatting('ja_JP');
-    var today = DateTime.now();
-    selectedDay = DateTime(today.year, today.month, today.day);
+    var today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    selectedDay = today;
     _tabController = TabController(length: tabs.length, vsync: this);
-    bloc.callMapSink.add(null);
+    _calendarController = CalendarController();
+    //bloc.callMapSink.add(null);
+    Score s1 = Score(today.toString(), 1, 20, 135, 5, 2506);
+    Score s2 = Score((today.add(Duration(days: 1))).toString(), 2, -14, -100, 5, -500);
+    Score s3 = Score((today.add(Duration(days: 2))).toString(), 3, 10, 200, 5, 1000);
+    Score s4 = Score((today.add(Duration(days: 2))).toString(), 4, 19, -240, 5, -1200);
+    _events = {
+      today: [s1],
+      today.add(Duration(days: 1)): [s2],
+      today.add(Duration(days: 2)): [s3, s4],
+      today.add(Duration(days: 3)): [s3, s4],
+      today.add(Duration(days: 8)): [s1, s3, s4],
+    };
+    _selectedEvents = _events[selectedDay] ?? [];
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 2.0,
-          backgroundColor: set.baseColor,
-          title: Text('スコア管理', style: TextStyle(color: set.pointColor)),
-          bottom: TabBar(
-            //isScrollable: true,
-            tabs: tabs,
-            controller: _tabController,
-            unselectedLabelColor: Colors.grey,
-            labelColor: set.pointColor,
-          ),
+      appBar: AppBar(
+        elevation: 2.0,
+        backgroundColor: set.baseColor,
+        title: Text('スコア管理', style: TextStyle(color: set.pointColor)),
+        bottom: TabBar(
+          //isScrollable: true,
+          tabs: tabs,
+          controller: _tabController,
+          unselectedLabelColor: Colors.grey,
+          labelColor: set.pointColor,
         ),
-        backgroundColor: set.backGroundColor,
-        body: TabBarView(controller: _tabController, children: <Widget>[
-          _byPeriod(),
-          _bySynthesis(),
-        ]),
-        floatingActionButton: set.floatButton(
-            icon: Icons.add,
-            onPressed: () {
-              Navigator.of(
-                context,
-                rootNavigator: true,
-              ).push(
-                MaterialPageRoute(
-                  settings: const RouteSettings(name: "/ScoreInput"),
-                  builder: (context) => ScoreInputPage(),
-                  fullscreenDialog: true,
-                ),
-              );
-            }));
+      ),
+      backgroundColor: set.backGroundColor,
+      body: TabBarView(controller: _tabController, children: <Widget>[
+        _byPeriod(),
+        _bySynthesis(),
+      ]),
+      floatingActionButton: set.floatButton(
+        icon: Icons.add,
+        onPressed: () {
+          Navigator.of(
+            context,
+            rootNavigator: true,
+          ).push(
+            MaterialPageRoute(
+              settings: const RouteSettings(name: "/ScoreInput"),
+              builder: (context) => ScoreInputScreen(),
+              fullscreenDialog: true,
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget _byPeriod() {
     return Container(
       padding: const EdgeInsets.all(20.0),
-      child: StreamBuilder<Map<String, dynamic>>(
-        stream: bloc.scoreMapStream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return set.indicator();
-          } else {
-            _events = {};
-            snapshot.data.forEach((k, v) {
-              _events[formatter.parse(k)] = v;
-            });
-            _selectedEvents = _events[selectedDay] ?? [];
-            _calendarController = CalendarController();
-            return Column(
-              children: <Widget>[
-                _calendar(),
-                const SizedBox(height: 8.0),
-                Expanded(
-                  child: _buildEventList(),
-                ),
-              ],
-            );
-          }
-        },
+      child: Column(
+        children: <Widget>[
+          _calendar(),
+          const SizedBox(height: 8.0),
+          Expanded(
+            child: _buildEventList(),
+          ),
+        ],
       ),
     );
   }
@@ -295,7 +214,7 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
                   Positioned(
                     right: 1,
                     bottom: 1,
-                    child: _buildEventsMarker(date, events),
+                    child: _buildEventsMarker(date, events, _calendarController),
                   ),
                 );
               }
@@ -307,9 +226,31 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
     );
   }
 
+  Widget _buildEventsMarker(DateTime date, List events, CalendarController controller) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: controller.isSelected(date)
+            ? Colors.brown[500]
+            : controller.isToday(date) ? Colors.brown[300] : Colors.blue[400],
+      ),
+      width: 16.0,
+      height: 16.0,
+      child: Center(
+        child: Text(
+          '${events.length}',
+          style: TextStyle().copyWith(
+            color: Colors.white,
+            fontSize: 12.0,
+          ),
+        ),
+      ),
+    );
+  }
+
   void _onDaySelected(DateTime day, List<dynamic> events) {
     setState(() {
-      //_calendarController.setSelectedDay(DateTime(day.year, day.month, day.day));
       selectedDay = DateTime(day.year, day.month, day.day);
       _selectedEvents = _events[selectedDay] ?? [];
     });
@@ -336,109 +277,99 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
     );
   }
 
-  Widget _buildEventsMarker(DateTime date, List events) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: _calendarController.isSelected(date)
-            ? Colors.brown[500]
-            : _calendarController.isToday(date) ? Colors.brown[300] : Colors.blue[400],
-      ),
-      width: 16.0,
-      height: 16.0,
-      child: Center(
-        child: Text(
-          '${events.length}',
-          style: TextStyle().copyWith(
-            color: Colors.white,
-            fontSize: 12.0,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _bySynthesis() {
     return Container(
       padding: const EdgeInsets.all(20.0),
-      child: StreamBuilder<Map<String, List<Score>>>(
-        stream: bloc.scoreMapStream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return set.indicator();
-          } else {
-            return Stack(
-              children: <Widget>[
-                AspectRatio(
-                  aspectRatio: 1.70,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(18),
-                        ),
-                        color: const Color(0xff232d37)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 18.0, left: 12.0, top: 24, bottom: 12),
-                      child: LineChart(
-                        //showAvg ? avgData() : mainData(),
-                        mainData(),
-                      ),
-                    ),
+      child: Stack(
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.70,
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(18),
                   ),
+                  color: const Color(0xff232d37)),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 18.0, left: 12.0, top: 24, bottom: 12),
+                child: LineChart(
+                  //showAvg ? avgData() : mainData(),
+                  mainData(),
                 ),
-                SizedBox(
-                  width: 60,
-                  height: 34,
-                  child: FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        //showAvg = !showAvg;
-                      });
-                    },
-                    child: Text(
-                      'avg',
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
-        },
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 60,
+            height: 34,
+            child: FlatButton(
+              onPressed: () {
+                setState(() {
+                  //showAvg = !showAvg;
+                });
+              },
+              child: Text(
+                'avg',
+                style: TextStyle(
+                    fontSize: 12, color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  void dataCleansing() {}
+  List<FlSpot> dataCleansing() {
+    List<FlSpot> _lineData = [];
+    int i = 0;
+    int sum = 0;
+    _events.forEach((key, value) {
+      value.forEach((element) {
+        sum += element.total;
+      });
+      _max = sum > _max ? sum : _max;
+      _lineData.add(FlSpot(i.toDouble(), sum.toDouble()));
+      i++;
+    });
+    grid = _max ~/ 5;
+    return _lineData;
+  }
+
   LineChartData mainData() {
     //データクレンジング
     /*
     * Map<DateTime,List<Score>>からMap<DateTime,Score>の変換
     * */
+    var lineData = dataCleansing();
     return LineChartData(
       gridData: FlGridData(
-        show: true,
-        drawVerticalLine: true,
-        getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingVerticalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
+          show: true,
+          drawVerticalLine: true,
+          drawHorizontalLine: true,
+          checkToShowHorizontalLine: (value) {
+            return value % grid == 0;
+          }
+//        getDrawingHorizontalLine: (value) {
+//                return const FlLine(
+//              color: Color(0xff37434d),
+//              strokeWidth: 50,
+//            );
+//        ),
+//        getDrawingVerticalLine: (value) {
+//          if (value == 0) {
+//            return const FlLine(
+//              color: Color(0xff37434d),
+//              strokeWidth: 50,
+//            );
+//          }
+//          return null;
+//        },
+          ),
       titlesData: FlTitlesData(
         show: true,
         bottomTitles: SideTitles(
-          showTitles: true,
+          showTitles: false,
           reservedSize: 22,
           textStyle:
               TextStyle(color: const Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
@@ -463,13 +394,10 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
             fontSize: 15,
           ),
           getTitles: (value) {
-            switch (value.toInt()) {
-              case 1:
-                return '10k';
-              case 3:
-                return '30k';
-              case 5:
-                return '50k';
+            if (value.toInt() == 0) {
+              return '0';
+            } else if (value % grid == 0) {
+              return '${value.toInt()}';
             }
             return '';
           },
@@ -479,21 +407,10 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
       ),
       borderData:
           FlBorderData(show: true, border: Border.all(color: const Color(0xff37434d), width: 1)),
-//      minX: 0,
-//      maxX: 11,
-//      minY: 0,
-//      maxY: 6,
+      maxY: _max.toDouble() + grid,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-          ],
+          spots: lineData,
           //isCurved: true,
           colors: gradientColors,
           barWidth: 5,
@@ -514,10 +431,13 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
   void dispose() {
     super.dispose();
     bloc.dispose();
-    _calendarController.dispose();
   }
 }
--------------データnoload------------
+
+```
+
+
+```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Bloc/LocalDataBloc.dart';
 import 'package:flutter_app2/Entity/PageParts.dart';
@@ -838,6 +758,9 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
     _calendarController.dispose();
   }
 }
+
+```
+-------------データnoload------------
 
 ---------
         new Picker(

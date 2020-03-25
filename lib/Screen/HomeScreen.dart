@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
@@ -9,7 +7,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'PieChartScreen.dart';
 import 'MahjongHandScreen.dart';
 import 'Score/ScoreManagePage.dart';
-import 'Score/ScoreManagePage2.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
@@ -28,7 +25,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     for (int r in _data.rankMap.keys) {
-      if (int.parse(widget.user.rank) <= r) {
+      if (int.parse(widget.user.rank) < r) {
         _max = r;
         _rankColor = _data.rankMap[r];
         break;
@@ -114,7 +111,7 @@ class HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   this.context,
                   MaterialPageRoute(
-                    settings: const RouteSettings(name: "/ScoreManagePage"),
+                    settings: const RouteSettings(name: "/ScoreManage"),
                     builder: (context) => ScoreManageScreen(),
                   ),
                 );
@@ -129,13 +126,17 @@ class HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Material(
-                          color: _parts.fontColor,
-                          shape: CircleBorder(),
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Image.asset('assets/piece/0m5.png'),
-                          )),
-                      Padding(padding: EdgeInsets.only(bottom: 12.0)),
+                        color: _parts.fontColor,
+                        shape: CircleBorder(),
+                        child: Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Image.asset(
+                            'assets/piece/0m5.png',
+                            scale: 0.75,
+                          ),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.only(bottom: 30.0)),
                       Text('How to 役', style: titleStyle),
                       Text('役を覚えよう', style: explainStyle),
                     ]),
@@ -167,7 +168,7 @@ class HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
-                    element.rankGage(
+                    element.rankGauge(
                       size: const Size(150, 150),
                       labelSize: 40.0,
                       rank: int.parse(widget.user.rank),

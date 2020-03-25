@@ -33,6 +33,8 @@ dependencies:
   table_calendar: ^2.2.3
   fl_chart: ^0.8.3
   flutter_circular_chart: ^0.1.0
+  gradient_app_bar: ^0.1.3
+  gradient_bottom_navigation_bar: ^1.0.0+4
 
 
 
@@ -48,3 +50,4 @@ flutter:
   assets:
     - assets/piece/
     - assets/PrivacyPolicy.txt
+    - assets/TermsOfService.txt

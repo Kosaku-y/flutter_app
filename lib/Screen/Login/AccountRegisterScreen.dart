@@ -113,6 +113,11 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
           ),
           onSaved: (String value) {
             _nameInputController.text = value;
+          },
+          validator: (String value) {
+            if (value.isEmpty) return '必須項目です';
+
+            return null;
           }),
     );
   }

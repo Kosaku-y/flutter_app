@@ -1,7 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app2/Bloc/TalkBloc.dart';
 import 'package:flutter_app2/Entity/Talk.dart';
+import 'package:flutter_app2/Entity/TalkRoom.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app2/Entity/User.dart';
@@ -16,10 +18,12 @@ import '../ProfileScreen.dart';
 ----------------------------------------------*/
 class TalkScreen extends StatefulWidget {
   final User user;
-  final String opponentId;
-  final String opponentName;
+  final TalkRoom room;
+  final String opponentUserId;
+  final String opponentUserName;
 
-  TalkScreen({Key key, this.user, this.opponentId, this.opponentName}) : super(key: key);
+  TalkScreen({Key key, this.user, @required this.room, this.opponentUserId, this.opponentUserName})
+      : super(key: key);
   @override
   TalkScreenState createState() => new TalkScreenState();
 }
@@ -30,14 +34,25 @@ class TalkScreenState extends State<TalkScreen> {
   final _textEditController = TextEditingController();
 //  ScrollController _scrollController;
   var formatter = new DateFormat('yyyy/M/d/ HH:mm');
-
+  String roomId;
+  String opponentUserName;
   List<Talk> talkList = new List();
+  TalkBloc bloc;
 
   @override
   initState() {
     super.initState();
+    //ユーザーIDリンクからの遷移
+    if (widget.room != null) {
+      roomId = widget.room.roomId;
+      opponentUserName = widget.room.userName;
+    } else {
+      opponentUserName = widget.opponentUserName;
+    }
+    //
+    bloc = new TalkBloc(roomId);
 
-    ///todo
+    ///@Todo
 //    _scrollController = ScrollController();
 //    _scrollController.addListener(() {
 //      final maxScrollExtent = _scrollController.position.maxScrollExtent;
@@ -46,22 +61,7 @@ class TalkScreenState extends State<TalkScreen> {
 //        _addContents();
 //      }
 //    });
-    try {
-      _mainReference
-          .child("${widget.user.userId}/message/${widget.opponentId}")
-          .onChildAdded
-          .listen(_onEntryAdded);
-    } catch (e) {
-      print(e);
-    }
   }
-
-  _onEntryAdded(Event e) {
-    setState(() {
-      talkList.add(new Talk.fromSnapShot(e.snapshot));
-    });
-  }
-
 //  bool _isLoading = false;
 
 //  _addContents() {
@@ -81,30 +81,41 @@ class TalkScreenState extends State<TalkScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _parts.appBar(title: widget.opponentName),
+      appBar: _parts.appBar(title: opponentUserName),
       backgroundColor: _parts.backGroundColor,
-      body: Container(
-          child: new Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              //controller: _scrollController,
-              reverse: true,
-              padding: const EdgeInsets.all(16.0),
-              itemBuilder: (BuildContext context, int index) {
-                return _buildRow(talkList.length - 1 - index);
-              },
-              itemCount: talkList.length,
+      body: StreamBuilder<List<Talk>>(
+        stream: bloc.eventListStream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return _parts.indicator();
+          if (snapshot.hasError) {
+            return Text("エラーが発生しました：" + snapshot.error.toString());
+          }
+          talkList = snapshot.data;
+          return Container(
+            child: new Column(
+              children: <Widget>[
+                Expanded(
+                  child: ListView.builder(
+                    //controller: _scrollController,
+                    reverse: true,
+                    padding: const EdgeInsets.all(16.0),
+                    itemBuilder: (BuildContext context, int index) {
+                      return _buildRow(talkList.length - 1 - index);
+                    },
+                    itemCount: talkList.length,
+                  ),
+                ),
+                Divider(
+                  height: 4.0,
+                ),
+                Container(
+                    decoration: BoxDecoration(color: Theme.of(context).cardColor),
+                    child: _buildInputArea())
+              ],
             ),
-          ),
-          Divider(
-            height: 4.0,
-          ),
-          Container(
-              decoration: BoxDecoration(color: Theme.of(context).cardColor),
-              child: _buildInputArea())
-        ],
-      )),
+          );
+        },
+      ),
     );
   }
 
@@ -153,7 +164,7 @@ class TalkScreenState extends State<TalkScreen> {
     return InkWell(
       child: CircleAvatar(
         //backgroundImage: NetworkImage(entry.userImageUrl),
-        child: Text(talk.fromUserId[0]),
+        child: Text(talk.fromUserName[0]),
       ),
       onTap: () => Navigator.of(context).push<Widget>(
         MaterialPageRoute(
@@ -179,17 +190,8 @@ class TalkScreenState extends State<TalkScreen> {
         CupertinoButton(
           child: Icon(Icons.send, color: _parts.baseColor),
           onPressed: () {
-            var json = Talk(widget.opponentId, widget.opponentName, widget.user.userId,
-                    widget.user.name, _textEditController.text)
-                .toJson();
-            _mainReference
-                .child("${widget.user.userId}/message/${widget.opponentId}")
-                .push()
-                .set(json);
-            _mainReference
-                .child("${widget.opponentId}/message/${widget.user.userId}")
-                .push()
-                .set(json);
+            var talk = Talk(widget.user.userId, widget.user.name, _textEditController.text);
+            bloc.sendMessageSink.add(talk);
             print("send message :${_textEditController.text}");
             _textEditController.clear();
             // キーボードを閉じる
@@ -203,5 +205,6 @@ class TalkScreenState extends State<TalkScreen> {
   @override
   void dispose() {
     super.dispose();
+    bloc.dispose();
   }
 }

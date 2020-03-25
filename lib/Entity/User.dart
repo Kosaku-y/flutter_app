@@ -11,7 +11,7 @@ class User {
   String _age = "";
   String _sex = "";
   String _rank = "1";
-  Map _event;
+  List<String> _event = [];
   AuthStatus _status;
 
   User();
@@ -44,19 +44,8 @@ class User {
 
   String get userId => _userId;
 
-  set userId(String value) {
-    _userId = value;
-  }
-
   String get name => _name;
-  set name(String value) {
-    _name = value;
-  }
-
-  Map get event => _event;
-  set event(Map value) {
-    _event = value;
-  }
+  set name(String value) => _name = value;
 
   String get rank => _rank;
   set rank(String value) {
@@ -74,7 +63,6 @@ class User {
   }
 
   AuthStatus get status => _status;
-
   set status(AuthStatus value) {
     _status = value;
   }

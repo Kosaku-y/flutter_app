@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 /*----------------------------------------------
 部品クラス
@@ -11,6 +12,8 @@ class PageParts {
   var backGroundColor = Color(0xff00152d);
   var fontColor = Color(0xff00A968);
   var pointColor = Colors.white;
+  var startGradient = Color(0xff4a148c);
+  var endGradient = Color(0xff311b92);
 
   ThemeData defaultTheme = ThemeData(
     backgroundColor: Color(0xff00152d),
@@ -32,6 +35,17 @@ class PageParts {
   }
 
   Widget appBar({String title}) {
+    return GradientAppBar(
+        title: Text(
+          title,
+          style: TextStyle(
+            color: pointColor,
+          ),
+        ),
+        gradient: LinearGradient(colors: [startGradient, endGradient]));
+  }
+
+  Widget appBarNormal({String title}) {
     return AppBar(
       elevation: 2.0,
       backgroundColor: baseColor,

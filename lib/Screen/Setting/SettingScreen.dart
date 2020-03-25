@@ -6,6 +6,7 @@ import 'package:flutter_app2/Repository/LoginRepository.dart';
 
 import '../ProfileScreen.dart';
 import 'PrivacyPolicyScreen.dart';
+import 'TermsOfServiceScreen.dart';
 
 /*----------------------------------------------
 
@@ -69,8 +70,19 @@ class SettingScreen extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push<Widget>(
                 MaterialPageRoute(
-                  settings: const RouteSettings(name: "/TermOfService"),
+                  settings: const RouteSettings(name: "/PrivacyPolicy"),
                   builder: (context) => new PrivacyPolicyScreen(),
+                ),
+              );
+            },
+          ),
+          _listElement(
+            title: "利用規約",
+            onTap: () {
+              Navigator.of(context).push<Widget>(
+                MaterialPageRoute(
+                  settings: const RouteSettings(name: "/TermsOfService"),
+                  builder: (context) => new TermsOfServiceScreen(),
                 ),
               );
             },

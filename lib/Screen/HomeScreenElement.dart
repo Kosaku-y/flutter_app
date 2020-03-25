@@ -4,12 +4,13 @@ import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 class HomeScreenElement {
   HomeScreenElement();
 
-  Widget rankGage({Size size, double labelSize, int rank, int max, Color color}) {
+  Widget rankGauge({Size size, double labelSize, int rank, int max, Color color}) {
     double rankPercentage = rank * 100 / max;
     return AnimatedCircularChart(
       key: GlobalKey<AnimatedCircularChartState>(),
       size: size,
       duration: Duration(milliseconds: 1500),
+      //holeRadius: 40.0,
       initialChartData: <CircularStackEntry>[
         new CircularStackEntry(
           <CircularSegmentEntry>[
@@ -28,6 +29,7 @@ class HomeScreenElement {
       ],
       chartType: CircularChartType.Radial,
       percentageValues: true,
+      edgeStyle: SegmentEdgeStyle.round,
       holeLabel: '$rank',
       labelStyle: new TextStyle(
         color: color,

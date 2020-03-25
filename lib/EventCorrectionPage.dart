@@ -16,14 +16,9 @@ class EventCorrectionPage extends StatefulWidget {
   EventCorrectionPageState createState() => new EventCorrectionPageState();
 }
 
-
 class EventCorrectionPageState extends State<EventCorrectionPage> {
-
   final _mainReference = FirebaseDatabase.instance.reference().child("Events");
 
-
   @override
-  Widget build(BuildContext context) {
-
-  }
+  Widget build(BuildContext context) {}
 }

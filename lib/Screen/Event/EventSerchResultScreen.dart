@@ -195,10 +195,7 @@ class EventSearchResultScreen extends StatelessWidget {
             Navigator.of(context).push<Widget>(MaterialPageRoute(
                 settings: const RouteSettings(name: "/Talk"),
                 builder: (context) => new TalkScreen(
-                      user: user,
-                      opponentId: event.userId,
-                      opponentName: event.userName,
-                    )));
+                    user: user, opponentUserId: event.userId, opponentUserName: event.userName)));
           },
           child: Container(
             padding: const EdgeInsets.all(8.0),

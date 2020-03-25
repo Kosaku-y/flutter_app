@@ -2,19 +2,26 @@
 
 {
   "users": {
-    "shiroyama": { "name": "Fumihiko Shiroyama" },
+    "shiroyama": { "name": "Fumihiko Shiroyama", "room":["R0":{UserName:"",userID:"",nonRead:""},"Room":"R2"]},
     "tanaka": { ... },
     "sato": { ... }
   },
+  "TalkRoomManager":"3"
   "rooms": {
-    "room01": {
-      "title": "チャットルーム01",
+    "R0":{
+        "title": "チャットルーム0",
+        "members": {
+          "member01": "shiroyama",
+        }
+    }
+    "R1": {
+      "title": "チャットルーム1",
       "members": {
         "member01": "shiroyama",
         "member02": "tanaka"
       }
     },
-    "room02": { ... }
+    "R2": { ... }
   },
   "messages": {
     "room01": {

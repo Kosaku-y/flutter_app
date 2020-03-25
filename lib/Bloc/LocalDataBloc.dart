@@ -20,8 +20,8 @@ class LocalDataBloc {
 
   LocalDataBloc() {
     _callSignController.stream.listen((event) async {
-      var map = await repository.getScore();
-      _scoreMapController.add(map);
+      //var map = await repository.getScore();
+      //_scoreMapController.add(map);
     });
   }
 

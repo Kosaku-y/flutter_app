@@ -12,7 +12,7 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  int mode = 1;
+  final int mode = 0;
   /*
   * 実機 0
   * ログインスルー 1
@@ -40,7 +40,7 @@ class _SplashState extends State<Splash> {
       case 0:
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            settings: const RouteSettings(name: "/login"),
+            settings: const RouteSettings(name: "/Login"),
             builder: (context) => LoginScreen(),
           ),
         );
@@ -51,7 +51,7 @@ class _SplashState extends State<Splash> {
           "name": "テストユーザ",
           "age": "25",
           "sex": "男性",
-          "rank": "1",
+          "rank": "5",
         });
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
@@ -65,7 +65,7 @@ class _SplashState extends State<Splash> {
         user.name = "テストユーザ";
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            settings: const RouteSettings(name: "/AccountSetting"),
+            settings: const RouteSettings(name: "/AccountRegister"),
             builder: (BuildContext context) => AccountRegisterScreen(user: user),
           ),
         );

@@ -3,7 +3,6 @@ import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
-
 import 'EventCreateScreen.dart';
 import '../ProfileScreen.dart';
 import '../Talk/TalkScreen.dart';
@@ -118,7 +117,9 @@ class EventDetailScreen extends StatelessWidget {
                 Navigator.of(context).push<Widget>(MaterialPageRoute(
                     settings: const RouteSettings(name: "/Talk"),
                     builder: (context) => new TalkScreen(
-                        user: user, opponentId: event.userId, opponentName: event.userName)));
+                        user: user,
+                        opponentUserId: event.userId,
+                        opponentUserName: event.userName)));
               }),
         ),
       );

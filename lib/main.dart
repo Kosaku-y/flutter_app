@@ -7,6 +7,7 @@ import 'Screen/Event/EventSearchScreen.dart';
 import 'Screen/HomeScreen.dart';
 import 'Screen/Setting/SettingScreen.dart';
 import 'Screen/Talk/TalkRoomScreen.dart';
+import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.dart';
 
 //ホーム画面のrun
 void main() {
@@ -228,7 +229,9 @@ class BottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PageParts set = PageParts();
-    return BottomNavigationBar(
+    return GradientBottomNavigationBar(
+      backgroundColorStart: set.startGradient,
+      backgroundColorEnd: set.endGradient,
       items: <BottomNavigationBarItem>[
         bottomItem(
           context,
@@ -248,7 +251,6 @@ class BottomNavigation extends StatelessWidget {
         )
       ],
       type: BottomNavigationBarType.fixed,
-      backgroundColor: set.baseColor,
       onTap: (index) {
         onSelect(TabItem.values[index]);
       },

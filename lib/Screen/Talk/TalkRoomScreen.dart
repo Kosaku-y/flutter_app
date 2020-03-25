@@ -5,7 +5,8 @@
 * */
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app2/Bloc/TalkBloc.dart';
+import 'package:flutter_app2/Bloc/TalkRoomBloc.dart';
+import 'package:flutter_app2/Entity/TalkRoom.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 
@@ -24,14 +25,14 @@ class TalkRoomScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> rooms;
-    TalkBloc bloc = new TalkBloc(user);
+    List<TalkRoom> roomList;
+    TalkRoomBloc bloc = new TalkRoomBloc(user);
     return Scaffold(
         appBar: _parts.appBar(title: "トークルーム"),
         backgroundColor: _parts.backGroundColor,
         body: Container(
           padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 0.0),
-          child: StreamBuilder<List<String>>(
+          child: StreamBuilder<List<TalkRoom>>(
               stream: bloc.eventListStream,
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -46,9 +47,9 @@ class TalkRoomScreen extends StatelessWidget {
                   );
                 }
                 if (snapshot.hasError) {
-                  return Text("エラーが発生しました" + snapshot.error.toString());
+                  return Text("エラーが発生しました：" + snapshot.error.toString());
                 }
-                rooms = snapshot.data;
+                roomList = snapshot.data;
                 if (snapshot.data.length == 0) {
                   return Center(
                     child: Text("トークルームはありません",
@@ -64,7 +65,7 @@ class TalkRoomScreen extends StatelessWidget {
                       Expanded(
                         child: ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
-                            return _buildRow(context, rooms[index]);
+                            return _buildRow(context, roomList[index]);
                           },
                           itemCount: snapshot.data.length,
                         ),
@@ -77,14 +78,14 @@ class TalkRoomScreen extends StatelessWidget {
   }
 
   // 投稿されたメッセージの1行を表示するWidgetを生成
-  Widget _buildRow(BuildContext context, String room) {
+  Widget _buildRow(BuildContext context, TalkRoom room) {
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            settings: const RouteSettings(name: "/Talk"),
-            builder: (context) => new TalkScreen(user: user, opponentId: room),
+            settings: RouteSettings(name: "/Talk/${room.roomId}"),
+            builder: (context) => new TalkScreen(user: user, room: room),
           ),
         );
       },
@@ -94,10 +95,10 @@ class TalkRoomScreen extends StatelessWidget {
           child: ListTile(
             leading: CircleAvatar(
               //backgroundImage: NetworkImage(entry.userImageUrl),
-              child: Text(room[0]),
+              child: Text(room.userName[0]),
             ),
             title: Text(
-              room,
+              room.userName,
               style: TextStyle(
                 fontSize: 20.0,
                 color: _parts.pointColor,

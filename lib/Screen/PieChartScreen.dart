@@ -11,20 +11,20 @@ class PieChartScreen extends StatelessWidget {
   final CommonData _data = CommonData();
   Color _rankColor; //ランクカラー
   String _colorStr; //カラーの文字列(ex."赤")
-  double remain = 0; //ランクアップまでのポイント
-  int _max = 0;
+  int remain = 0; //ランクアップまでのポイント
+  int _max = 0; //現ランクのmaxポイント
 
   Future<void> _generateData() async {
     double userRank = double.parse(rank);
     for (int r in _data.rankMap.keys) {
-      if (userRank <= r) {
+      if (userRank < r) {
         _max = r;
         _colorStr = _data.rankMap[r];
         _rankColor = _data.colorMap[_colorStr];
         break;
       }
     }
-    remain = _max - userRank;
+    remain = (_max - userRank).toInt();
     return;
   }
 
@@ -47,7 +47,7 @@ class PieChartScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: element.rankGage(
+              child: element.rankGauge(
                   size: const Size(300.0, 300.0),
                   labelSize: 60.0,
                   rank: int.parse(rank),

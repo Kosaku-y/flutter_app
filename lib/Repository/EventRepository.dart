@@ -12,9 +12,6 @@ import 'package:http/http.dart' as http;
 ----------------------------------------------*/
 class EventRepository {
   final _eventReference = FirebaseDatabase.instance.reference().child("Events");
-  final _eventManagerReference = FirebaseDatabase.instance.reference().child("EventManager");
-  //final _userReference = FirebaseDatabase.instance.reference();
-  int eventId;
   final String apiKey = "LE_UaP7Vyjs3wQPa";
 
   //既存イベント変更メソッド
@@ -22,14 +19,16 @@ class EventRepository {
 
   //新規イベント追加メソッド
   Future<void> createEvent(String stationCode, EventDetail event) async {
+    int newId; //採番
+    final _eventManagerReference = FirebaseDatabase.instance.reference().child("EventManager");
     try {
-      String newEventId;
       await _eventManagerReference.once().then((DataSnapshot snapshot) {
-        eventId = int.parse(snapshot.value["eventId"]);
+        newId = snapshot.value["eventId"];
       });
-      newEventId = (eventId + 1).toString().padLeft(7, "0"); // => 0000001;
-      event.eventId = "E" + newEventId;
-      _eventManagerReference.set({"eventId": "${eventId + 1}"});
+      event.eventId = newId.toString() + "E";
+      _eventManagerReference.set({"eventId": newId + 1});
+
+      //駅の所在する都道府県検索
       String prefName = await getPrefName(stationCode);
       event.pref = prefName;
       _eventReference.child(prefName).child(event.station).child(event.eventId).set(event.toJson());

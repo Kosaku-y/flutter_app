@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/Bloc/LocalDataBloc.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/Score.dart';
+import 'package:flutter_app2/Repository/LocalDataRepository.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -24,14 +26,17 @@ class ScoreManageScreen extends StatefulWidget {
 class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProviderStateMixin {
   TabController _tabController;
   final PageParts _parts = new PageParts();
+  CalendarController _calendarController;
   Map<DateTime, List<Score>> _events;
   List _selectedEvents;
-  CalendarController _calendarController;
   Map<DateTime, dynamic> scoreMap;
+  LocalDataRepository repository;
   var formatter = DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY);
   final LocalDataBloc bloc = LocalDataBloc();
-  final _selectedDay =
-      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 21).toUtc();
+  int _max = 0;
+  int grid = 50;
+//  final _selectedDay =
+//      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 21).toUtc();
 
   bool showAvg = false;
   List<Color> gradientColors = [
@@ -51,16 +56,27 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
   @override
   void initState() {
     super.initState();
+    repository = LocalDataRepository();
+    _calendarController = CalendarController();
+    _events = {};
+    _selectedEvents = [];
+    refleshEventList();
     initializeDateFormatting('ja_JP');
     _tabController = TabController(length: tabs.length, vsync: this);
-    bloc.callMapSink.add(null);
+  }
+
+  void refleshEventList() async {
+    var map = await repository.getScoreMap();
+    setState(() {
+      _events = map;
+    });
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
+        appBar: GradientAppBar(
           elevation: 2.0,
-          backgroundColor: _parts.baseColor,
+          gradient: LinearGradient(colors: [_parts.startGradient, _parts.endGradient]),
           title: Text('スコア管理', style: TextStyle(color: _parts.pointColor)),
           bottom: TabBar(
             //isScrollable: true,
@@ -94,36 +110,14 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
   Widget _byPeriod() {
     return Container(
       padding: const EdgeInsets.all(20.0),
-      child: StreamBuilder<Map<String, dynamic>>(
-        stream: bloc.scoreMapStream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return _parts.indicator();
-          } else {
-//            if (snapshot.data.isEmpty) {
-//              return Expanded(
-//                child: Center(
-//                  child: Text("まだ登録されていません", style: TextStyle(color: set.pointColor)),
-//                ),
-//              );
-//            }
-            _events = {};
-            snapshot.data.forEach((k, v) {
-              _events[DateTime.parse(k)] = v;
-            });
-            _selectedEvents = _events[_selectedDay] ?? [];
-            _calendarController = CalendarController();
-            return Column(
-              children: <Widget>[
-                _calendar(),
-                const SizedBox(height: 8.0),
-                Expanded(
-                  child: _buildEventList(),
-                ),
-              ],
-            );
-          }
-        },
+      child: Column(
+        children: <Widget>[
+          _calendar(),
+          const SizedBox(height: 8.0),
+          Expanded(
+            child: _buildEventList(),
+          ),
+        ],
       ),
     );
   }
@@ -140,7 +134,9 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
             markersColor: _parts.fontColor,
           ),
           onDaySelected: (date, events) {
-            _onDaySelected(date, events);
+            setState(() {
+              _selectedEvents = events;
+            });
           },
           builders: CalendarBuilders(
             markersBuilder: (context, date, events, holidays) {
@@ -150,7 +146,7 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
                   Positioned(
                     right: 1,
                     bottom: 1,
-                    child: _buildEventsMarker(date, events),
+                    child: _buildEventsMarker(date, events, _calendarController),
                   ),
                 );
               }
@@ -160,12 +156,6 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
         ),
       ),
     );
-  }
-
-  void _onDaySelected(DateTime day, List<dynamic> events) {
-    setState(() {
-      _selectedEvents = events;
-    });
   }
 
   Widget _buildEventList() {
@@ -180,7 +170,7 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
               ),
               margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               child: ListTile(
-                title: Text(event.date),
+                title: Text("${event.date} total:${event.total} balance:${event.balance}"),
                 onTap: () => print('$event tapped!'),
               ),
             ),
@@ -189,14 +179,12 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
     );
   }
 
-  Widget _buildEventsMarker(DateTime date, List events) {
+  Widget _buildEventsMarker(DateTime date, List events, CalendarController controller) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
-        color: _calendarController.isSelected(date)
-            ? Colors.brown[500]
-            : _calendarController.isToday(date) ? Colors.brown[300] : Colors.blue[400],
+        color: Colors.brown[500],
       ),
       width: 16.0,
       height: 16.0,
@@ -215,83 +203,81 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
   Widget _bySynthesis() {
     return Container(
       padding: const EdgeInsets.all(20.0),
-      child: StreamBuilder<Map<String, List<Score>>>(
-        stream: bloc.scoreMapStream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return _parts.indicator();
-          } else {
-            return Stack(
-              children: <Widget>[
-                AspectRatio(
-                  aspectRatio: 1.70,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(18),
-                        ),
-                        color: const Color(0xff232d37)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 18.0, left: 12.0, top: 24, bottom: 12),
-                      child: LineChart(
-                        //showAvg ? avgData() : mainData(),
-                        mainData(),
-                      ),
-                    ),
+      child: Stack(
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.70,
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(18),
                   ),
+                  color: const Color(0xff232d37)),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 18.0, left: 12.0, top: 24, bottom: 12),
+                child: LineChart(
+                  //showAvg ? avgData() : mainData(),
+                  mainData(),
                 ),
-                SizedBox(
-                  width: 60,
-                  height: 34,
-                  child: FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        //showAvg = !showAvg;
-                      });
-                    },
-                    child: Text(
-                      'avg',
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
-        },
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 60,
+            height: 34,
+            child: FlatButton(
+              onPressed: () {
+                setState(() {
+                  //showAvg = !showAvg;
+                });
+              },
+              child: Text(
+                'avg',
+                style: TextStyle(
+                    fontSize: 12, color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  void dataCleansing() {}
+  List<FlSpot> dataCleansing() {
+    List<FlSpot> _lineData = [];
+    int i = 0;
+    int sum = 0;
+    _events.forEach((key, value) {
+      value.forEach((element) {
+        sum += element.total;
+      });
+      _max = sum > _max ? sum : _max;
+      _lineData.add(FlSpot(i.toDouble(), sum.toDouble()));
+      i++;
+    });
+    grid = _max ~/ 5;
+    return _lineData;
+  }
+
   LineChartData mainData() {
     //データクレンジング
     /*
     * Map<DateTime,List<Score>>からMap<DateTime,Score>の変換
     * */
+    var lineData = dataCleansing();
     return LineChartData(
       gridData: FlGridData(
         show: true,
         drawVerticalLine: true,
-        getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingVerticalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
+        drawHorizontalLine: false,
+        checkToShowHorizontalLine: (value) {
+          return value % grid == 0;
         },
       ),
       titlesData: FlTitlesData(
-        show: true,
+        show: false,
         bottomTitles: SideTitles(
-          showTitles: true,
+          showTitles: false,
           reservedSize: 22,
           textStyle:
               TextStyle(color: const Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
@@ -316,13 +302,10 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
             fontSize: 15,
           ),
           getTitles: (value) {
-            switch (value.toInt()) {
-              case 1:
-                return '10k';
-              case 3:
-                return '30k';
-              case 5:
-                return '50k';
+            if (value.toInt() == 0) {
+              return '0';
+            } else if (value % grid == 0) {
+              return '${value.toInt()}';
             }
             return '';
           },
@@ -332,21 +315,10 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
       ),
       borderData:
           FlBorderData(show: true, border: Border.all(color: const Color(0xff37434d), width: 1)),
-//      minX: 0,
-//      maxX: 11,
-//      minY: 0,
-//      maxY: 6,
+      maxY: _max.toDouble() + grid,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-          ],
+          spots: lineData,
           //isCurved: true,
           colors: gradientColors,
           barWidth: 5,
