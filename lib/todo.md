@@ -21,6 +21,7 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 ~~・Home画面の遷移後の snackBar~~
 ->無理そう
 ~~・piechart stateless化~~
+-駅すぱあとapiコール時差問題
 
 
 ・NewHomeの改善

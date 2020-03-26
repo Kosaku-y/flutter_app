@@ -1,5 +1,4 @@
 import 'package:flutter_app2/Entity/Score.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -101,9 +100,9 @@ class LocalDataRepository {
     await prefs.setString(key, json.encode(value));
   }
 
-  Future<void> resetScore(String key) async {
+  Future<void> resetScore() async {
     _prefs = await SharedPreferences.getInstance();
     scoreMap = {};
-    await _prefs.setString(key, null);
+    await _prefs.setString(scoreKey, null);
   }
 }

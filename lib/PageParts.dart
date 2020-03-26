@@ -12,7 +12,7 @@ class PageParts {
   var backGroundColor = Color(0xff00152d);
   var fontColor = Color(0xff00A968);
   var pointColor = Colors.white;
-  var startGradient = Color(0xff4a148c);
+  var startGradient = Color(0xff8e24aa);
   var endGradient = Color(0xff311b92);
 
   ThemeData defaultTheme = ThemeData(
@@ -113,13 +113,13 @@ class PageParts {
       itemExtent: 40.0,
       height: 200.0,
       backgroundColor: baseColor,
-      textStyle: TextStyle(color: pointColor),
-      headercolor: Colors.white,
+      headerDecoration: BoxDecoration(color: baseColor),
       //changeToFirst: false,
       cancelText: "戻る",
       confirmText: "確定",
-      cancelTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
-      confirmTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
+      textStyle: TextStyle(color: pointColor, fontSize: 18.0),
+      cancelTextStyle: TextStyle(color: pointColor, fontSize: 15.0),
+      confirmTextStyle: TextStyle(color: pointColor, fontSize: 15.0),
       adapter: adapter,
       selecteds: [selected],
       onConfirm: onConfirm,
@@ -131,20 +131,21 @@ class PageParts {
     return Picker(
       itemExtent: 40.0,
       height: 200.0,
-      backgroundColor: Colors.white,
-      headercolor: Colors.white,
+      headerDecoration: BoxDecoration(color: baseColor),
+      backgroundColor: baseColor,
       cancelText: "戻る",
       confirmText: "確定",
-      cancelTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
-      confirmTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
+      textStyle: TextStyle(color: pointColor, fontSize: 18.0),
+      cancelTextStyle: TextStyle(color: pointColor, fontSize: 15.0),
+      confirmTextStyle: TextStyle(color: pointColor, fontSize: 15.0),
       delimiter: [
         PickerDelimiter(
             column: 4,
             child: Container(
-              width: 10.0,
+              width: 5.0,
               alignment: Alignment.center,
-              child: Text(':', style: TextStyle(fontWeight: FontWeight.bold)),
-              color: Colors.white,
+              child: Text(':', style: TextStyle(color: pointColor, fontWeight: FontWeight.bold)),
+              color: baseColor,
             ))
       ],
       adapter: adapter,

@@ -55,23 +55,25 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
     return Scaffold(
       appBar: _parts.appBar(title: "スコア入力"),
       backgroundColor: _parts.backGroundColor,
-      body: Container(
-        padding: const EdgeInsets.all(40.0),
-        child: Column(
-          children: <Widget>[
-            dateField(),
-            rankingField(),
-            chipField(),
-            totalField(),
-            rateField(),
-            balanceField(),
-            _parts.iconButton(
-                message: "記録する",
-                icon: Icons.send,
-                onPressed: () {
-                  submit();
-                }),
-          ],
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            children: <Widget>[
+              dateField(),
+              rankingField(),
+              chipField(),
+              totalField(),
+              rateField(),
+              balanceField(),
+              _parts.iconButton(
+                  message: "記録する",
+                  icon: Icons.send,
+                  onPressed: () {
+                    submit();
+                  }),
+            ],
+          ),
         ),
       ),
     );
@@ -94,12 +96,13 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         Picker(
           itemExtent: 40.0,
           height: 200.0,
-          backgroundColor: Colors.white,
-          headercolor: Colors.white,
+          headerDecoration: BoxDecoration(color: _parts.baseColor),
+          backgroundColor: _parts.baseColor,
           cancelText: "戻る",
           confirmText: "確定",
-          cancelTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
-          confirmTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
+          textStyle: TextStyle(color: _parts.pointColor, fontSize: 18.0),
+          cancelTextStyle: TextStyle(color: _parts.pointColor, fontSize: 15.0),
+          confirmTextStyle: TextStyle(color: _parts.pointColor, fontSize: 15.0),
           adapter: DateTimePickerAdapter(
             type: PickerDateTimeType.kYMD,
             isNumberMonth: true,
@@ -140,26 +143,44 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
   }
 
   Widget rankingField() {
-    return TextFormField(
-      style: TextStyle(color: _parts.pointColor),
-      enableInteractiveSelection: false,
-      controller: rankingController,
-      decoration: InputDecoration(
-        icon: Icon(
-          Icons.people,
-          color: _parts.fontColor,
-        ),
-        enabledBorder: UnderlineInputBorder(
-            borderRadius: BorderRadius.circular(1.0),
-            borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
-        hintText: 'Choose a number of recruiting member',
-        hintStyle: TextStyle(color: _parts.fontColor),
-        labelText: '*着順',
-        labelStyle: TextStyle(color: _parts.fontColor),
-      ),
-      validator: (String value) {
-        return value.isEmpty ? '必須項目です' : null;
+    return new InkWell(
+      onTap: () {
+        _parts
+            .picker(
+                adapter: NumberPickerAdapter(data: [NumberPickerColumn(begin: 1, end: 4)]),
+                selected: 0, //初期値
+                onConfirm: (Picker picker, List value) {
+                  if (value.toString() != "") {
+                    setState(() {
+                      rankingController.text = picker.getSelectedValues()[0].toString();
+                    });
+                  }
+                })
+            .showModal(this.context);
       },
+      child: AbsorbPointer(
+        child: TextFormField(
+          style: TextStyle(color: _parts.pointColor),
+          enableInteractiveSelection: false,
+          controller: rankingController,
+          decoration: InputDecoration(
+            icon: Icon(
+              Icons.people,
+              color: _parts.fontColor,
+            ),
+            enabledBorder: UnderlineInputBorder(
+                borderRadius: BorderRadius.circular(1.0),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
+            hintText: 'Choose a number of recruiting member',
+            hintStyle: TextStyle(color: _parts.fontColor),
+            labelText: '*着順',
+            labelStyle: TextStyle(color: _parts.fontColor),
+          ),
+          validator: (String value) {
+            return value.isEmpty ? '必須項目です' : null;
+          },
+        ),
+      ),
     );
   }
 
@@ -167,6 +188,8 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
     return TextFormField(
       style: TextStyle(color: _parts.pointColor),
       enableInteractiveSelection: false,
+      keyboardType: TextInputType.number,
+      textInputAction: TextInputAction.done,
       controller: chipController,
       decoration: InputDecoration(
         icon: Icon(
@@ -192,6 +215,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
       style: TextStyle(color: _parts.pointColor),
       enableInteractiveSelection: false,
       controller: totalController,
+      keyboardType: TextInputType.number,
       decoration: InputDecoration(
         icon: Icon(
           Icons.people,
@@ -214,7 +238,8 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
   Widget rateField() {
     return TextFormField(
       style: TextStyle(color: _parts.pointColor),
-      enableInteractiveSelection: false,
+      enableInteractiveSelection: true,
+      keyboardType: TextInputType.number,
       controller: rateController,
       decoration: InputDecoration(
         icon: Icon(
@@ -238,8 +263,9 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
   Widget balanceField() {
     return TextFormField(
       style: TextStyle(color: _parts.pointColor),
-      enableInteractiveSelection: false,
+      enableInteractiveSelection: true,
       controller: balanceController,
+      keyboardType: TextInputType.number,
       decoration: InputDecoration(
         icon: Icon(
           Icons.people,

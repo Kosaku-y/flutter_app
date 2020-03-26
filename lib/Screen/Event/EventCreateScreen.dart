@@ -189,20 +189,18 @@ class EventCreateScreenState extends State<EventCreateScreen> {
   Widget _recruitMemberPicker() {
     return new InkWell(
       onTap: () {
-        DataPicker.showDatePicker(
-          context,
-          showTitleActions: true,
-          locale: 'en',
-          datas: _numberOfRecruit,
-          title: '募集人数',
-          onConfirm: (value) {
-            if (value != "") {
-              setState(() {
-                _memberController.text = value;
-              });
-            }
-          },
-        );
+        _parts
+            .picker(
+                adapter: NumberPickerAdapter(data: [NumberPickerColumn(begin: 1, end: 4)]),
+                selected: 0, //初期値
+                onConfirm: (Picker picker, List value) {
+                  if (value.toString() != "") {
+                    setState(() {
+                      _memberController.text = picker.getSelectedValues()[0].toString();
+                    });
+                  }
+                })
+            .showModal(this.context);
       },
       child: AbsorbPointer(
         child: new TextFormField(
@@ -217,8 +215,6 @@ class EventCreateScreenState extends State<EventCreateScreen> {
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
-            hintText: 'Choose a number of recruiting member',
-            hintStyle: TextStyle(color: _parts.fontColor),
             labelText: '*募集人数',
             labelStyle: TextStyle(color: _parts.fontColor),
           ),
@@ -260,7 +256,6 @@ class EventCreateScreenState extends State<EventCreateScreen> {
               Icons.place,
               color: _parts.fontColor,
             ),
-            hintText: 'Choose a prefecture',
             labelText: '都道府県',
             labelStyle: TextStyle(color: _parts.fontColor),
             enabledBorder: UnderlineInputBorder(
@@ -297,25 +292,23 @@ class EventCreateScreenState extends State<EventCreateScreen> {
               _lineData = _lineMap.keys.toList();
               return new InkWell(
                 onTap: () {
-                  DataPicker.showDatePicker(
-                    context,
-                    showTitleActions: true,
-                    locale: 'en',
-                    datas: _lineData,
-                    title: '路線',
-                    onConfirm: (value) {
-                      if (_lineController.text != value) {
-                        setState(() {
-                          _lineController.text = value;
-                          _line.code = _lineMap[value];
-                          if (value != " ") {
-                            _bloc.stationApiSink.add(_lineMap[value]);
-                            _lineChange();
-                          }
-                        });
-                      }
-                    },
-                  );
+                  _parts
+                      .picker(
+                          adapter: PickerDataAdapter<String>(pickerdata: _lineData),
+                          selected: 0, //初期値
+                          onConfirm: (Picker picker, List value) {
+                            var newData = picker.getSelectedValues()[0].toString();
+                            if (_lineController.text != newData) {
+                              setState(() {
+                                _lineController.text = newData;
+                                if (newData != " ") {
+                                  _bloc.stationApiSink.add(_lineMap[newData]);
+                                  _lineChange();
+                                }
+                              });
+                            }
+                          })
+                      .showModal(this.context);
                 },
                 child: AbsorbPointer(
                   child: _lineTextFormField(),
@@ -336,7 +329,6 @@ class EventCreateScreenState extends State<EventCreateScreen> {
           Icons.train,
           color: _parts.fontColor,
         ),
-        hintText: 'Choose a line',
         labelText: '路線',
         labelStyle: TextStyle(color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
@@ -358,46 +350,46 @@ class EventCreateScreenState extends State<EventCreateScreen> {
   Widget _stationPicker() {
     List _stationData = [""];
     return StreamBuilder<Map<String, String>>(
-        stream: _bloc.stationMapStream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return _stationTextFormField();
-          } else if (snapshot.hasError) {
-            return Text("エラーが発生しました。");
+      stream: _bloc.stationMapStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return _stationTextFormField();
+        } else if (snapshot.hasError) {
+          return Text("エラーが発生しました。");
+        } else {
+          if (snapshot.data == null || snapshot.data.isEmpty) {
+            return Text("データが空です。");
           } else {
-            if (snapshot.data == null || snapshot.data.isEmpty) {
-              return Text("データが空です。");
-            } else {
-              _stationMap = snapshot.data;
-              _stationData = _stationMap.keys.toList();
-              return InkWell(
-                onTap: () {
-                  DataPicker.showDatePicker(
-                    context,
-                    showTitleActions: true,
-                    locale: 'en',
-                    datas: _stationData,
-                    title: '駅',
-                    onConfirm: (value) {
-                      if (value != " ") {
-                        if (_stationController.text != value) {
-                          setState(() {
-                            _stationController.text = value;
-                            _station.code = _stationMap[value];
-                            changeStation = 1;
-                          });
-                        }
-                      }
-                    },
-                  );
-                },
-                child: AbsorbPointer(
-                  child: _stationTextFormField(),
-                ),
-              );
-            }
+            _stationMap = snapshot.data;
+            _stationData = _stationMap.keys.toList();
+            return InkWell(
+              onTap: () {
+                _parts
+                    .picker(
+                        adapter: PickerDataAdapter<String>(pickerdata: _stationData),
+                        selected: 0, //初期値
+                        onConfirm: (Picker picker, List value) {
+                          var newData = picker.getSelectedValues()[0].toString();
+                          if (_stationController.text != newData) {
+                            if (newData != " ") {
+                              setState(() {
+                                _stationController.text = newData;
+                                _station.code = _stationMap[newData];
+                                changeStation = 1;
+                              });
+                            }
+                          }
+                        })
+                    .showModal(this.context);
+              },
+              child: AbsorbPointer(
+                child: _stationTextFormField(),
+              ),
+            );
           }
-        });
+        }
+      },
+    );
   }
 
   Widget _stationTextFormField() {
@@ -410,7 +402,6 @@ class EventCreateScreenState extends State<EventCreateScreen> {
           Icons.subway,
           color: _parts.fontColor,
         ),
-        hintText: 'Choose a station',
         labelText: '駅名',
         labelStyle: TextStyle(color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
@@ -460,7 +451,6 @@ class EventCreateScreenState extends State<EventCreateScreen> {
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
-            hintText: 'Choose a starting Time',
             labelText: '*開始日時',
             labelStyle: TextStyle(color: _parts.fontColor),
           ),
@@ -505,7 +495,6 @@ class EventCreateScreenState extends State<EventCreateScreen> {
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
-            hintText: 'Choose a station',
             labelText: '*終了日時',
             labelStyle: TextStyle(color: _parts.fontColor),
           ),
@@ -535,11 +524,11 @@ class EventCreateScreenState extends State<EventCreateScreen> {
               borderRadius: BorderRadius.circular(1.0),
               borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
             ),
-            hintText: 'add comment',
-            labelText: '備考',
+            hintText: 'ルール,レート,etc...',
+            hintStyle: TextStyle(color: _parts.pointColor),
+            labelText: 'コメント',
             labelStyle: TextStyle(color: _parts.fontColor),
           ),
-          keyboardType: TextInputType.multiline,
           textInputAction: TextInputAction.newline,
           maxLength: 100,
           maxLines: 5,

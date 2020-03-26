@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/Bloc/LocalDataBloc.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/Score.dart';
 import 'package:flutter_app2/Repository/LocalDataRepository.dart';
@@ -28,13 +27,14 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
   final PageParts _parts = new PageParts();
   CalendarController _calendarController;
   Map<DateTime, List<Score>> _events;
-  List _selectedEvents;
+  List<Score> _selectedEvents;
   Map<DateTime, dynamic> scoreMap;
   LocalDataRepository repository;
   var formatter = DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY);
-  final LocalDataBloc bloc = LocalDataBloc();
   int _max = 0;
+  int _min = 0;
   int grid = 50;
+  List<FlSpot> _lineData;
 //  final _selectedDay =
 //      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 21).toUtc();
 
@@ -59,16 +59,18 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
     repository = LocalDataRepository();
     _calendarController = CalendarController();
     _events = {};
-    _selectedEvents = [];
+    _lineData = [];
     refleshEventList();
+    _selectedEvents = _events[DateTime.now()] ?? [];
     initializeDateFormatting('ja_JP');
     _tabController = TabController(length: tabs.length, vsync: this);
   }
 
   void refleshEventList() async {
-    var map = await repository.getScoreMap();
+    Map<DateTime, List<Score>> map = await repository.getScoreMap();
     setState(() {
       _events = map;
+      dataCleansing();
     });
   }
 
@@ -117,6 +119,13 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
           Expanded(
             child: _buildEventList(),
           ),
+          _parts.iconButton(
+            message: "全削除する",
+            icon: Icons.delete,
+            onPressed: () {
+              _showModalBottomSheet();
+            },
+          )
         ],
       ),
     );
@@ -200,145 +209,176 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
     );
   }
 
+  /*---------総合成績---------*/
   Widget _bySynthesis() {
     return Container(
       padding: const EdgeInsets.all(20.0),
-      child: Stack(
+      child: Column(
         children: <Widget>[
-          AspectRatio(
-            aspectRatio: 1.70,
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(18),
-                  ),
-                  color: const Color(0xff232d37)),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 18.0, left: 12.0, top: 24, bottom: 12),
-                child: LineChart(
-                  //showAvg ? avgData() : mainData(),
-                  mainData(),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 60,
-            height: 34,
-            child: FlatButton(
-              onPressed: () {
-                setState(() {
-                  //showAvg = !showAvg;
-                });
-              },
-              child: Text(
-                'avg',
-                style: TextStyle(
-                    fontSize: 12, color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
-              ),
-            ),
-          ),
+          _events.length == 0 ? Text("No Data") : totalLineGraph(),
         ],
       ),
     );
   }
 
   List<FlSpot> dataCleansing() {
-    List<FlSpot> _lineData = [];
-    int i = 0;
+    _lineData = [];
+    int i = 1;
     int sum = 0;
     _events.forEach((key, value) {
       value.forEach((element) {
         sum += element.total;
       });
       _max = sum > _max ? sum : _max;
+      _min = sum < _min ? sum : _min;
       _lineData.add(FlSpot(i.toDouble(), sum.toDouble()));
       i++;
     });
-    grid = _max ~/ 5;
+    grid = (_max - _min) ~/ 5;
+
     return _lineData;
   }
 
-  LineChartData mainData() {
+  Widget totalLineGraph() {
     //データクレンジング
     /*
     * Map<DateTime,List<Score>>からMap<DateTime,Score>の変換
     * */
-    var lineData = dataCleansing();
-    return LineChartData(
-      gridData: FlGridData(
-        show: true,
-        drawVerticalLine: true,
-        drawHorizontalLine: false,
-        checkToShowHorizontalLine: (value) {
-          return value % grid == 0;
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: false,
-        bottomTitles: SideTitles(
-          showTitles: false,
-          reservedSize: 22,
-          textStyle:
-              TextStyle(color: const Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 2:
-                return 'MAR';
-              case 5:
-                return 'JUN';
-              case 8:
-                return 'SEP';
-            }
-            return '';
-          },
-          margin: 8,
-        ),
-        leftTitles: SideTitles(
-          showTitles: true,
-          textStyle: TextStyle(
-            color: const Color(0xff67727d),
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
+    return Stack(
+      children: <Widget>[
+        AspectRatio(
+          aspectRatio: 1.70,
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(18),
+                ),
+                color: const Color(0xff232d37)),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 18.0, left: 12.0, top: 24, bottom: 12),
+              child: LineChart(
+                //showAvg ? avgData() : mainData(),
+                LineChartData(
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    drawHorizontalLine: true,
+                    checkToShowHorizontalLine: (value) {
+                      return value == 0;
+                    },
+                  ),
+                  titlesData: FlTitlesData(
+                    show: false,
+                    bottomTitles: SideTitles(
+                      showTitles: false,
+                      reservedSize: 22,
+                      textStyle: TextStyle(
+                          color: const Color(0xff68737d),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
+                      getTitles: (value) {
+                        switch (value.toInt()) {
+                          case 2:
+                            return 'MAR';
+                          case 5:
+                            return 'JUN';
+                          case 8:
+                            return 'SEP';
+                        }
+                        return '';
+                      },
+                      margin: 8,
+                    ),
+                    leftTitles: SideTitles(
+                      showTitles: true,
+                      textStyle: TextStyle(
+                        color: const Color(0xff67727d),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                      getTitles: (value) {
+                        if (value.toInt() == 0) {
+                          return '0';
+                        } else if (value % grid == 0) {
+                          return '${value.toInt()}';
+                        }
+                        return '';
+                      },
+                      reservedSize: 28,
+                      margin: 12,
+                    ),
+                  ),
+                  borderData: FlBorderData(
+                      show: true, border: Border.all(color: const Color(0xff37434d), width: 1)),
+                  maxY: _max.toDouble() + grid,
+                  minY: _min.toDouble() - grid,
+                  minX: 0,
+                  maxX: (_lineData.length + 1).toDouble(),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: _lineData,
+                      //isCurved: true,
+                      colors: gradientColors,
+                      barWidth: 5,
+                      isStrokeCapRound: true,
+                      dotData: const FlDotData(
+                        show: true,
+                      ),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        colors: gradientColors.map((color) => color.withOpacity(0.3)).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-          getTitles: (value) {
-            if (value.toInt() == 0) {
-              return '0';
-            } else if (value % grid == 0) {
-              return '${value.toInt()}';
-            }
-            return '';
-          },
-          reservedSize: 28,
-          margin: 12,
         ),
-      ),
-      borderData:
-          FlBorderData(show: true, border: Border.all(color: const Color(0xff37434d), width: 1)),
-      maxY: _max.toDouble() + grid,
-      lineBarsData: [
-        LineChartBarData(
-          spots: lineData,
-          //isCurved: true,
-          colors: gradientColors,
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: true,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            colors: gradientColors.map((color) => color.withOpacity(0.3)).toList(),
+        SizedBox(
+          width: 60,
+          height: 34,
+          child: FlatButton(
+            onPressed: () {
+              setState(() {
+                //showAvg = !showAvg;
+              });
+            },
+            child: Text(
+              'avg',
+              style: TextStyle(
+                  fontSize: 12, color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
+            ),
           ),
         ),
       ],
     );
   }
 
+  void _showModalBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.delete_forever),
+              title: Text('削除'),
+              onTap: () {
+                repository.resetScore();
+                refleshEventList();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     super.dispose();
-    bloc.dispose();
     if (_calendarController != null) _calendarController.dispose();
   }
 }

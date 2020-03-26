@@ -137,7 +137,7 @@ class EventSearchResultScreen extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 2.0),
                         child: Text(
-                          "EventID :" + eventList[index].eventId.toString(),
+                          "募集人数 :" + eventList[index].recruitMember,
                           style: TextStyle(
                             fontSize: 16.0,
                             color: _parts.fontColor,

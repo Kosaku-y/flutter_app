@@ -31,7 +31,7 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
     super.initState();
   }
 
-  ///ToDo validate
+  ///@ToDo validate
 
   void submit(String userId) async {
     User user = widget.user;
@@ -130,8 +130,6 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
                 adapter: NumberPickerAdapter(data: [NumberPickerColumn(begin: 18, end: 99)]),
                 selected: 0, //初期値
                 onConfirm: (Picker picker, List value) {
-                  print(value.toString());
-                  print(picker.getSelectedValues());
                   if (value.toString() != "") {
                     setState(() {
                       _ageInputController.text = picker.getSelectedValues()[0].toString();
