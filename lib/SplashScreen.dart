@@ -6,12 +6,17 @@ import 'Screen/Login/AccountRegisterScreen.dart';
 import 'Screen/Login/LoginScreen.dart';
 import 'main.dart';
 
-class Splash extends StatefulWidget {
+/*----------------------------------------------
+
+SplashScreenクラス
+
+----------------------------------------------*/
+class SplashScreen extends StatefulWidget {
   @override
-  _SplashState createState() => new _SplashState();
+  _SplashScreenState createState() => new _SplashScreenState();
 }
 
-class _SplashState extends State<Splash> {
+class _SplashScreenState extends State<SplashScreen> {
   final int mode = 0;
   /*
   * 実機 0

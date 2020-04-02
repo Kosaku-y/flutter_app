@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Bloc/TalkBloc.dart';
@@ -19,18 +18,16 @@ import '../ProfileScreen.dart';
 class TalkScreen extends StatefulWidget {
   final User user;
   final TalkRoom room;
-  final String opponentUserId;
-  final String opponentUserName;
+  final String toUserId;
+  final String toUserName;
 
-  TalkScreen({Key key, this.user, @required this.room, this.opponentUserId, this.opponentUserName})
-      : super(key: key);
+  TalkScreen({Key key, this.user, this.room, this.toUserId, this.toUserName}) : super(key: key);
   @override
   TalkScreenState createState() => new TalkScreenState();
 }
 
 class TalkScreenState extends State<TalkScreen> {
   final PageParts _parts = PageParts();
-  final _mainReference = FirebaseDatabase.instance.reference().child("User");
   final _textEditController = TextEditingController();
 //  ScrollController _scrollController;
   var formatter = new DateFormat('yyyy/M/d/ HH:mm');
@@ -38,6 +35,7 @@ class TalkScreenState extends State<TalkScreen> {
   String opponentUserName;
   List<Talk> talkList = new List();
   TalkBloc bloc;
+  TalkBloc blocForNew;
 
   @override
   initState() {
@@ -46,11 +44,13 @@ class TalkScreenState extends State<TalkScreen> {
     if (widget.room != null) {
       roomId = widget.room.roomId;
       opponentUserName = widget.room.userName;
-    } else {
-      opponentUserName = widget.opponentUserName;
+      bloc = new TalkBloc(roomId);
     }
-    //
-    bloc = new TalkBloc(roomId);
+    //トーク履歴からの遷移
+    else {
+      blocForNew = TalkBloc.newRoom(widget.user, widget.toUserId, widget.toUserName);
+      opponentUserName = widget.toUserName;
+    }
 
     ///@Todo
 //    _scrollController = ScrollController();
@@ -83,39 +83,43 @@ class TalkScreenState extends State<TalkScreen> {
     return Scaffold(
       appBar: _parts.appBar(title: opponentUserName),
       backgroundColor: _parts.backGroundColor,
-      body: StreamBuilder<List<Talk>>(
-        stream: bloc.eventListStream,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return _parts.indicator();
-          if (snapshot.hasError) {
-            return Text("エラーが発生しました：" + snapshot.error.toString());
-          }
-          talkList = snapshot.data;
-          return Container(
-            child: new Column(
-              children: <Widget>[
-                Expanded(
-                  child: ListView.builder(
-                    //controller: _scrollController,
-                    reverse: true,
-                    padding: const EdgeInsets.all(16.0),
-                    itemBuilder: (BuildContext context, int index) {
-                      return _buildRow(talkList.length - 1 - index);
-                    },
-                    itemCount: talkList.length,
-                  ),
+      body: messageArea(),
+    );
+  }
+
+  Widget messageArea() {
+    return StreamBuilder<List<Talk>>(
+      stream: bloc.messageListStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return _parts.indicator();
+        if (snapshot.hasError) {
+          return Text("エラーが発生しました：" + snapshot.error.toString());
+        }
+        talkList = snapshot.data;
+        return Container(
+          child: new Column(
+            children: <Widget>[
+              Expanded(
+                child: ListView.builder(
+                  //controller: _scrollController,
+                  reverse: true,
+                  padding: const EdgeInsets.all(16.0),
+                  itemBuilder: (BuildContext context, int index) {
+                    return _buildRow(talkList.length - 1 - index);
+                  },
+                  itemCount: talkList.length,
                 ),
-                Divider(
-                  height: 4.0,
-                ),
-                Container(
-                    decoration: BoxDecoration(color: Theme.of(context).cardColor),
-                    child: _buildInputArea())
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              Divider(
+                height: 4.0,
+              ),
+              Container(
+                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
+                  child: _buildInputArea())
+            ],
+          ),
+        );
+      },
     );
   }
 

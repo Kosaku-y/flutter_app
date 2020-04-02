@@ -48,11 +48,7 @@ class PieChartScreen extends StatelessWidget {
             ),
             Expanded(
               child: element.rankGauge(
-                  size: const Size(300.0, 300.0),
-                  labelSize: 60.0,
-                  rank: int.parse(rank),
-                  max: _max,
-                  color: _rankColor),
+                  size: 300, line: 10.0, rank: int.parse(rank), max: _max, color: _rankColor),
             ),
             Text('ランクアップまであと $remain', style: TextStyle(color: _parts.fontColor, fontSize: 20.0)),
             _parts.backButton(

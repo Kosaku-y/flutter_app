@@ -1,40 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_circular_chart/flutter_circular_chart.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+
+/*----------------------------------------------
+
+ホームElementクラス(Stateless)
+
+----------------------------------------------*/
 
 class HomeScreenElement {
   HomeScreenElement();
 
-  Widget rankGauge({Size size, double labelSize, int rank, int max, Color color}) {
-    double rankPercentage = rank * 100 / max;
-    return AnimatedCircularChart(
-      key: GlobalKey<AnimatedCircularChartState>(),
-      size: size,
-      duration: Duration(milliseconds: 1500),
-      //holeRadius: 40.0,
-      initialChartData: <CircularStackEntry>[
-        new CircularStackEntry(
-          <CircularSegmentEntry>[
-            new CircularSegmentEntry(
-              rankPercentage,
-              color,
-              rankKey: 'completed',
-            ),
-            new CircularSegmentEntry(
-              100 - rankPercentage,
-              Colors.blueGrey[600],
-              rankKey: 'remaining',
-            ),
-          ],
+  Widget rankGauge({double size, double line, int rank, int max, Color color}) {
+    double rankPercentage = rank.toDouble() / max;
+    return CircularPercentIndicator(
+      animation: true,
+      animationDuration: 1500,
+      radius: size,
+      lineWidth: line,
+      percent: rankPercentage,
+      center: new Text(
+        "$rank",
+        style: TextStyle(
+          color: color,
+          fontSize: size * 0.2,
         ),
-      ],
-      chartType: CircularChartType.Radial,
-      percentageValues: true,
-      edgeStyle: SegmentEdgeStyle.round,
-      holeLabel: '$rank',
-      labelStyle: new TextStyle(
-        color: color,
-        fontSize: labelSize,
       ),
+      circularStrokeCap: CircularStrokeCap.round,
+      progressColor: color,
     );
   }
 }

@@ -13,7 +13,7 @@ import 'EventSerchResultScreen.dart';
 
 /*----------------------------------------------
 
-イベント検索フォームページクラス
+イベント検索フォームScreenクラス
 
 ----------------------------------------------*/
 class EventManageScreen extends StatefulWidget {

@@ -1,8 +1,3 @@
-/*
-* テスト段階でrealtime databaseでchat機能を実装する
-*
-* @auther KosakuYamauchi
-* */
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Bloc/TalkRoomBloc.dart';
@@ -14,7 +9,7 @@ import 'TalkScreen.dart';
 
 /*----------------------------------------------
 
-　ルームページクラス
+トークルームクラス
 
 ----------------------------------------------*/
 class TalkRoomScreen extends StatelessWidget {
@@ -33,7 +28,7 @@ class TalkRoomScreen extends StatelessWidget {
         body: Container(
           padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 0.0),
           child: StreamBuilder<List<TalkRoom>>(
-              stream: bloc.eventListStream,
+              stream: bloc.talkRoomListStream,
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(

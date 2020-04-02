@@ -2,6 +2,12 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app2/Entity/User.dart';
 
+/*----------------------------------------------
+
+ユーザーローカルデータRepositoryクラス
+
+----------------------------------------------*/
+
 class UserDataRepository {
   final _userReference = FirebaseDatabase.instance.reference().child("User");
 

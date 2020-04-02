@@ -7,6 +7,11 @@ import 'package:firebase_database/firebase_database.dart';
 //import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:flutter_app2/Entity/AuthStatus.dart';
 
+/*----------------------------------------------
+
+ログインRepositoryクラス
+
+----------------------------------------------*/
 class LoginRepository {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;

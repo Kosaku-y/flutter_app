@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 
+/*----------------------------------------------
+
+共通データScreenクラス(Stateless)
+
+----------------------------------------------*/
+
 class CommonData {
   Map<int, String> rankMap = {
-    5: "青",
-    10: "黄",
-    20: "緑",
-    40: "紫",
-    80: "赤",
-    160: "銅",
-    320: "銀",
-    480: "金"
+    5: "Blue",
+    10: "Yellow",
+    20: "Green",
+    40: "Purple",
+    80: "Red",
+    160: "Bronze",
+    320: "Silver",
+    480: "Gold"
   };
 
   Map<String, Color> colorMap = {
-    "青": Colors.blue,
-    "黄": Colors.yellow,
-    "緑": Colors.green,
-    "紫": Colors.purple,
-    "赤": Colors.red,
-    "銅": Color(0xffb87333),
-    "銀": Color(0xffa0a0a0),
-    "金": Color(0xffffd700),
+    "Blue": Colors.blue,
+    "Yellow": Colors.yellow,
+    "Green": Colors.green,
+    "Purple": Colors.purple,
+    "Red": Colors.red,
+    "Bronze": Color(0xffb87333),
+    "Silver": Color(0xffa0a0a0),
+    "Gold": Color(0xffffd700),
   };
 }

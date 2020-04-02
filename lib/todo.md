@@ -2,39 +2,66 @@
 
 
 #最優先バグ事項
-未登録ユーザーがログインしようとすると落ちる
+-未登録ユーザーがログインしようとすると落ちる
 ->ログインプロセスの見直し
 LoginBloc
 var user = await repository.checkFireBaseLogin(fireBaseUser);
+-トーク処理
 
 
 #To do
 *文言日本語化
-*変数整理
+*変数整理(final const)
+*ワーニング除去
 *非同期処理(Indicator)
 *db処理 try-catch
 *theme
 *profile画面の作成
+*フォームフォーカス
+*キーボードタイプ
 
-~~・DateTimePickerの受け取り型と渡し型~~
-~~・flutter_datetime_pickerのパッケージビルドエラー~~
-~~・Home画面の遷移後の snackBar~~
+
+~~-DateTimePickerの受け取り型と渡し型~~
+~~-flutter_datetime_pickerのパッケージビルドエラー~~
+~~-Home画面の遷移後の snackBar~~
 ->無理そう
-~~・piechart stateless化~~
+~~-piechart stateless化~~
+~~-カレンダーの当日イベントが表示されない~~
+~~api変更~~
 -駅すぱあとapiコール時差問題
-
-
-・NewHomeの改善
-・自身のイベント管理
-・themeでレイアウト色管理
-・google admob
-・イベント作成ページの画面遷移
-・路線検索ができない
+-NewHomeの改善
+-自身のイベント管理
+-themeでレイアウト色管理
+-google admob
+-イベント作成ページの画面遷移
+-路線検索ができない
 	→路線検索：駅の路線APIを使えば、なんとかなりそう
-・別の認証間で同じIDは？
-・戦績管理(Preferenceshared)
-・DBルール制約
-・
+-別の認証間で同じIDは？(.->[dot]はエスケープ処理いらないかもしれないからそのままでいいかも)
+-戦績管理(Preferenceshared)
+-DBルール制約
+-プッシュ通知
+-firebase 複数クエリのトランザクション、ロールバック
+-bottomnavigation バッジ
+
+
+-Talk　　
+・User/room/userId 検索 -> roomId
+        -リンクから
+            -新規
+            ・TalkRoomManagerから取得
+            ・User/userID/roomに採番したroomIdをadd
+            ・トーク相手のUser/userID/roomに採番したroomIdをadd
+            ・Room/roomIdにmembersをadd
+            -既存
+            ・roomIdからroom表示
+        -トーク履歴から
+            -既存
+            ・roomIdからroom表示
+            
+              
+
+
+
 
 [Preferenceshared](https://medium.com/better-programming/flutter-how-to-save-objects-in-sharedpreferences-b7880d0ee2e4)
 
@@ -43,8 +70,8 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 --変数の変化(状態の変化)によってwidgetが変わる場合setState呼んで値を変える
 ->bloc を使ったり、providerやInheritedWidgetを使うことによって回避できる
 
-[StreamBuilder] 非同期処理の更新する変数が変化する度にウィジェットをbuildし直すBuilder
-[FutureBuilder] 指定した非同期処理の完了を待つBuilder
+-StreamBuilder 非同期処理の更新する変数が変化する度にウィジェットをbuildし直すBuilder
+-FutureBuilder 指定した非同期処理の完了を待つBuilder
 finalやconstはなるべく使う
 https://oar.st40.xyz/article/265
 
@@ -61,411 +88,78 @@ http://api.ekispert.jp/v1/json/operationLine?prefectureCode=13&offset=1&limit=10
 http://api.ekispert.jp/v1/json/station?operationLineCode=98&offset=1&limit=100&direction=up&gcs=tokyo&key=key=LE_UaP7Vyjs3wQPa
 
 
-```dart
-import 'package:flutter/material.dart';
-import 'package:flutter_app2/Bloc/LocalDataBloc.dart';
-import 'package:flutter_app2/Entity/Score.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:fl_chart/fl_chart.dart';
 
-import '../../PageParts.dart';
-import 'ScoreInputScreen.dart';
-
-/*----------------------------------------------
-
-スコア管理ページクラス
-
-----------------------------------------------*/
-
-class ScoreManageScreen3 extends StatefulWidget {
-  ScoreManageScreen3({Key key}) : super(key: key);
-
-  State<StatefulWidget> createState() {
-    return new ScoreManageScreen3State();
+```txt
+{
+  "users": {
+    "shiroyama": { "name": "Fumihiko Shiroyama", "room":["R0":{UserName:"",userID:"",nonRead:""},"Room":"R2"]},
+    "tanaka": { ... },
+    "sato": { ... }
+  },
+  "TalkRoomManager":"3"
+  "rooms": {
+    "R0":{
+        "title": "チャットルーム0",
+        "members": {
+          "userId":userName,
+        "timestamp":373333333
+    }
+    "R1": {
+      "title": "チャットルーム1",
+      "members": {
+        "member01": "shiroyama",
+        "member02": "tanaka"
+      }
+    },
+    "R2": { ... }
+  },
+  "messages": {
+    "room01": {
+      "キー01": {
+        "sender": "shiroyama",
+        "message": "こんにちは。誰かいますか？"
+      },
+      "キー02": {
+        "sender": "tanaka",
+        "message": "はい，いますよ。"
+      },
+      "message03": { ... }
+    },
+    "room02": { ... }
   }
 }
-
-class ScoreManageScreen3State extends State<ScoreManageScreen3> with TickerProviderStateMixin {
-  TabController _tabController;
-  PageParts set = new PageParts();
-  Map<DateTime, List<Score>> _events;
-  List _selectedEvents;
-  Map<DateTime, dynamic> scoreMap;
-  DateTime selectedDay;
-  var formatter = DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY);
-  final LocalDataBloc bloc = LocalDataBloc();
-  int _max = 0;
-  int grid = 50;
-  ScoreAnalyze analyze;
-  CalendarController _calendarController;
-
-  bool showAvg = false;
-  List<Color> gradientColors = [
-    const Color(0xff23b6e6),
-    const Color(0xff02d39a),
-  ];
-
-  List<Tab> tabs = <Tab>[
-    Tab(
-      text: '月別',
-    ),
-    Tab(
-      text: "総合",
-    ),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    Intl.defaultLocale = 'ja_JP';
-    initializeDateFormatting('ja_JP');
-    var today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    selectedDay = today;
-    _tabController = TabController(length: tabs.length, vsync: this);
-    _calendarController = CalendarController();
-    //bloc.callMapSink.add(null);
-    Score s1 = Score(today.toString(), 1, 20, 135, 5, 2506);
-    Score s2 = Score((today.add(Duration(days: 1))).toString(), 2, -14, -100, 5, -500);
-    Score s3 = Score((today.add(Duration(days: 2))).toString(), 3, 10, 200, 5, 1000);
-    Score s4 = Score((today.add(Duration(days: 2))).toString(), 4, 19, -240, 5, -1200);
-    _events = {
-      today: [s1],
-      today.add(Duration(days: 1)): [s2],
-      today.add(Duration(days: 2)): [s3, s4],
-      today.add(Duration(days: 3)): [s3, s4],
-      today.add(Duration(days: 8)): [s1, s3, s4],
-    };
-    _selectedEvents = _events[selectedDay] ?? [];
-  }
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text('スコア管理', style: TextStyle(color: set.pointColor)),
-        bottom: TabBar(
-          //isScrollable: true,
-          tabs: tabs,
-          controller: _tabController,
-          unselectedLabelColor: Colors.grey,
-          labelColor: set.pointColor,
-        ),
-      ),
-      backgroundColor: set.backGroundColor,
-      body: TabBarView(controller: _tabController, children: <Widget>[
-        _byPeriod(),
-        _bySynthesis(),
-      ]),
-      floatingActionButton: set.floatButton(
-        icon: Icons.add,
-        onPressed: () {
-          Navigator.of(
-            context,
-            rootNavigator: true,
-          ).push(
-            MaterialPageRoute(
-              settings: const RouteSettings(name: "/ScoreInput"),
-              builder: (context) => ScoreInputScreen(),
-              fullscreenDialog: true,
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _byPeriod() {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        children: <Widget>[
-          _calendar(),
-          const SizedBox(height: 8.0),
-          Expanded(
-            child: _buildEventList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _calendar() {
-    return Container(
-      child: Card(
-        color: set.pointColor,
-        child: TableCalendar(
-          locale: 'ja_JP',
-          events: _events,
-          calendarController: _calendarController,
-          calendarStyle: CalendarStyle(
-            markersColor: set.fontColor,
-          ),
-          onDaySelected: (date, events) {
-            _onDaySelected(date, events);
-          },
-          builders: CalendarBuilders(
-            markersBuilder: (context, date, events, holidays) {
-              final children = <Widget>[];
-              if (events.isNotEmpty) {
-                children.add(
-                  Positioned(
-                    right: 1,
-                    bottom: 1,
-                    child: _buildEventsMarker(date, events, _calendarController),
-                  ),
-                );
-              }
-              return children;
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEventsMarker(DateTime date, List events, CalendarController controller) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: controller.isSelected(date)
-            ? Colors.brown[500]
-            : controller.isToday(date) ? Colors.brown[300] : Colors.blue[400],
-      ),
-      width: 16.0,
-      height: 16.0,
-      child: Center(
-        child: Text(
-          '${events.length}',
-          style: TextStyle().copyWith(
-            color: Colors.white,
-            fontSize: 12.0,
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _onDaySelected(DateTime day, List<dynamic> events) {
-    setState(() {
-      selectedDay = DateTime(day.year, day.month, day.day);
-      _selectedEvents = _events[selectedDay] ?? [];
-    });
-  }
-
-  Widget _buildEventList() {
-    return ListView(
-      children: _selectedEvents
-          .map(
-            (event) => Container(
-              decoration: BoxDecoration(
-                border: Border.all(width: 0.8),
-                borderRadius: BorderRadius.circular(12.0),
-                color: set.pointColor,
-              ),
-              margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: ListTile(
-                title: Text(event.date),
-                onTap: () => print('$event tapped!'),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _bySynthesis() {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      child: Stack(
-        children: <Widget>[
-          AspectRatio(
-            aspectRatio: 1.70,
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(18),
-                  ),
-                  color: const Color(0xff232d37)),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 18.0, left: 12.0, top: 24, bottom: 12),
-                child: LineChart(
-                  //showAvg ? avgData() : mainData(),
-                  mainData(),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 60,
-            height: 34,
-            child: FlatButton(
-              onPressed: () {
-                setState(() {
-                  //showAvg = !showAvg;
-                });
-              },
-              child: Text(
-                'avg',
-                style: TextStyle(
-                    fontSize: 12, color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<FlSpot> dataCleansing() {
-    List<FlSpot> _lineData = [];
-    int i = 0;
-    int sum = 0;
-    _events.forEach((key, value) {
-      value.forEach((element) {
-        sum += element.total;
-      });
-      _max = sum > _max ? sum : _max;
-      _lineData.add(FlSpot(i.toDouble(), sum.toDouble()));
-      i++;
-    });
-    grid = _max ~/ 5;
-    return _lineData;
-  }
-
-  LineChartData mainData() {
-    //データクレンジング
-    /*
-    * Map<DateTime,List<Score>>からMap<DateTime,Score>の変換
-    * */
-    var lineData = dataCleansing();
-    return LineChartData(
-      gridData: FlGridData(
-          show: true,
-          drawVerticalLine: true,
-          drawHorizontalLine: true,
-          checkToShowHorizontalLine: (value) {
-            return value % grid == 0;
-          }
-//        getDrawingHorizontalLine: (value) {
-//                return const FlLine(
-//              color: Color(0xff37434d),
-//              strokeWidth: 50,
-//            );
-//        ),
-//        getDrawingVerticalLine: (value) {
-//          if (value == 0) {
-//            return const FlLine(
-//              color: Color(0xff37434d),
-//              strokeWidth: 50,
-//            );
-//          }
-//          return null;
-//        },
-          ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: SideTitles(
-          showTitles: false,
-          reservedSize: 22,
-          textStyle:
-              TextStyle(color: const Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 2:
-                return 'MAR';
-              case 5:
-                return 'JUN';
-              case 8:
-                return 'SEP';
-            }
-            return '';
-          },
-          margin: 8,
-        ),
-        leftTitles: SideTitles(
-          showTitles: true,
-          textStyle: TextStyle(
-            color: const Color(0xff67727d),
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
-          getTitles: (value) {
-            if (value.toInt() == 0) {
-              return '0';
-            } else if (value % grid == 0) {
-              return '${value.toInt()}';
-            }
-            return '';
-          },
-          reservedSize: 28,
-          margin: 12,
-        ),
-      ),
-      borderData:
-          FlBorderData(show: true, border: Border.all(color: const Color(0xff37434d), width: 1)),
-      maxY: _max.toDouble() + grid,
-      lineBarsData: [
-        LineChartBarData(
-          spots: lineData,
-          //isCurved: true,
-          colors: gradientColors,
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: true,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            colors: gradientColors.map((color) => color.withOpacity(0.3)).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    bloc.dispose();
-  }
-}
-
 ```
 
-
 ```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Bloc/LocalDataBloc.dart';
-import 'package:flutter_app2/Entity/PageParts.dart';
+import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/Score.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'ScoreInputPage.dart';
-import 'package:fl_chart/fl_chart.dart';
 
-/*----------------------------------------------
+class ProviderPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Provider<LocalDataBloc>(
+      create: (_) => LocalDataBloc(),
+      dispose: (_, bloc) => bloc.dispose(),
+      child: _container(),
+    );
+  }
 
-スコア管理ページクラス
-
-----------------------------------------------*/
-
-class ScoreManagePage extends StatefulWidget {
-  ScoreManagePage({Key key}) : super(key: key);
-
-  State<StatefulWidget> createState() {
-    return new ScoreManagePageState();
+  Widget _container() {
+    return Consumer<LocalDataBloc>(
+      builder: (_, bloc, __) {
+        bloc.callMapSink.add(null);
+        return ScoreManagePage2();
+      },
+    );
   }
 }
 
-class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderStateMixin {
-  TabController _tabController;
+class ScoreManagePage2 extends StatelessWidget {
   PageParts set = new PageParts();
   Map<DateTime, List<Score>> _events;
   List _selectedEvents;
@@ -473,94 +167,33 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
   Map<DateTime, dynamic> scoreMap;
   DateTime selectedDay;
   var formatter = DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY);
-  final LocalDataBloc bloc = LocalDataBloc();
-
-  bool showAvg = false;
-  List<Color> gradientColors = [
-    const Color(0xff23b6e6),
-    const Color(0xff02d39a),
-  ];
-
-  List<Tab> tabs = <Tab>[
-    Tab(
-      text: '月別',
-    ),
-    Tab(
-      text: "総合",
-    ),
-  ];
 
   @override
-  void initState() {
-    super.initState();
-    Intl.defaultLocale = 'ja_JP';
-    initializeDateFormatting('ja_JP');
-    var today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    selectedDay = today;
-    _tabController = TabController(length: tabs.length, vsync: this);
-    //bloc.callMapSink.add(null);
-    Score s1 = Score(today.toString(), 1, 1, 1, 1, 1);
-    Score s2 = Score((today.add(Duration(days: 1))).toString(), 2, 2, 2, 2, 2);
-    Score s3 = Score((today.add(Duration(days: 2))).toString(), 3, 3, 3, 3, 3);
-    Score s4 = Score((today.add(Duration(days: 2))).toString(), 4, 4, 4, 4, 4);
-    _events = {
-      today: [s1],
-      today.add(Duration(days: 1)): [s2],
-      today.add(Duration(days: 2)): [s3, s4],
-    };
-    _selectedEvents = _events[selectedDay] ?? [];
-    _calendarController = CalendarController();
-  }
-
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        backgroundColor: set.baseColor,
-        title: Text('スコア管理', style: TextStyle(color: set.pointColor)),
-        bottom: TabBar(
-          //isScrollable: true,
-          tabs: tabs,
-          controller: _tabController,
-          unselectedLabelColor: Colors.grey,
-          labelColor: set.pointColor,
-        ),
-      ),
-      backgroundColor: set.backGroundColor,
-      body: TabBarView(controller: _tabController, children: <Widget>[
-        _byPeriod(),
-        _bySynthesis(),
-      ]),
-      floatingActionButton: set.floatButton(
-        icon: Icons.add,
-        onPressed: () {
-          Navigator.of(
-            context,
-            rootNavigator: true,
-          ).push(
-            MaterialPageRoute(
-              settings: const RouteSettings(name: "/ScoreInput"),
-              builder: (context) => ScoreInputPage(),
-              fullscreenDialog: true,
-            ),
+    final bloc = Provider.of<LocalDataBloc>(context);
+    return StreamBuilder<Map<String, List<Score>>>(
+      stream: bloc.scoreMapStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return set.indicator();
+        } else {
+          _events = {};
+          snapshot.data.forEach((k, v) {
+            _events[formatter.parse(k)] = v;
+          });
+          _selectedEvents = _events[selectedDay] ?? [];
+          _calendarController = CalendarController();
+          return Column(
+            children: <Widget>[
+              _calendar(),
+              const SizedBox(height: 8.0),
+              Expanded(
+                child: _buildEventList(),
+              ),
+            ],
           );
-        },
-      ),
-    );
-  }
-
-  Widget _byPeriod() {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        children: <Widget>[
-          _calendar(),
-          const SizedBox(height: 8.0),
-          Expanded(
-            child: _buildEventList(),
-          ),
-        ],
-      ),
+        }
+      },
     );
   }
 
@@ -584,10 +217,9 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
   }
 
   void _onDaySelected(DateTime day, List<dynamic> events) {
-    setState(() {
-      selectedDay = DateTime(day.year, day.month, day.day);
-      _selectedEvents = _events[selectedDay] ?? [];
-    });
+    //_calendarController.setSelectedDay(DateTime(day.year, day.month, day.day));
+    selectedDay = DateTime(day.year, day.month, day.day);
+    _selectedEvents = _events[selectedDay] ?? [];
   }
 
   Widget _buildEventList() {
@@ -610,192 +242,6 @@ class ScoreManagePageState extends State<ScoreManagePage> with TickerProviderSta
           .toList(),
     );
   }
-
-  Widget _bySynthesis() {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      child: Stack(
-        children: <Widget>[
-          AspectRatio(
-            aspectRatio: 1.70,
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(18),
-                  ),
-                  color: const Color(0xff232d37)),
-              child: Padding(
-                padding: const EdgeInsets.only(right: 18.0, left: 12.0, top: 24, bottom: 12),
-                child: LineChart(
-                  //showAvg ? avgData() : mainData(),
-                  mainData(),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: 60,
-            height: 34,
-            child: FlatButton(
-              onPressed: () {
-                setState(() {
-                  //showAvg = !showAvg;
-                });
-              },
-              child: Text(
-                'avg',
-                style: TextStyle(
-                    fontSize: 12, color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void dataCleansing() {}
-  LineChartData mainData() {
-    //データクレンジング
-    /*
-    * Map<DateTime,List<Score>>からMap<DateTime,Score>の変換
-    * */
-    return LineChartData(
-      gridData: FlGridData(
-        show: true,
-        drawVerticalLine: true,
-        getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingVerticalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 22,
-          textStyle:
-              TextStyle(color: const Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 2:
-                return 'MAR';
-              case 5:
-                return 'JUN';
-              case 8:
-                return 'SEP';
-            }
-            return '';
-          },
-          margin: 8,
-        ),
-        leftTitles: SideTitles(
-          showTitles: true,
-          textStyle: TextStyle(
-            color: const Color(0xff67727d),
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 1:
-                return '10k';
-              case 3:
-                return '30k';
-              case 5:
-                return '50k';
-            }
-            return '';
-          },
-          reservedSize: 28,
-          margin: 12,
-        ),
-      ),
-      borderData:
-          FlBorderData(show: true, border: Border.all(color: const Color(0xff37434d), width: 1)),
-//      minX: 0,
-//      maxX: 11,
-//      minY: 0,
-//      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: const [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-          ],
-          //isCurved: true,
-          colors: gradientColors,
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: true,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            colors: gradientColors.map((color) => color.withOpacity(0.3)).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    bloc.dispose();
-    _calendarController.dispose();
-  }
 }
 
 ```
--------------データnoload------------
-
----------
-        new Picker(
-          itemExtent: 40.0,
-          height: 200.0,
-          backgroundColor: Colors.white,
-          headercolor: Colors.white,
-          cancelText: "戻る",
-          confirmText: "確定",
-          cancelTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
-          confirmTextStyle: TextStyle(color: Colors.black, fontSize: 15.0),
-          delimiter: [
-            PickerDelimiter(
-                column: 4,
-                child: Container(
-                  width: 16.0,
-                  alignment: Alignment.center,
-                  child: Text(':', style: TextStyle(fontWeight: FontWeight.bold)),
-                  color: Colors.white,
-                ))
-          ],
-          adapter: new DateTimePickerAdapter(
-            type: PickerDateTimeType.kYMDHM,
-            isNumberMonth: true,
-            yearSuffix: "年",
-            monthSuffix: "月",
-            daySuffix: "日",
-            minValue: DateTime.now(),
-            minuteInterval: 30,
-            // twoDigitYear: true,
-          ),
-          onConfirm: (Picker picker, List value) {
-            print(picker.adapter.toString());
-            _date = DateTime.parse(picker.adapter.toString());
-            dateController.text = formatter.format(_date);
-          },
-        ).showModal(this.context);

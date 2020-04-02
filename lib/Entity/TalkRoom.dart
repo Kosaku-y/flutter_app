@@ -7,20 +7,23 @@ import 'package:firebase_database/firebase_database.dart';
 ----------------------------------------------*/
 class TalkRoom {
   String _roomId;
-  String _userId;
+  Map<String, String> _members;
   String _userName;
   int _noRead = 0;
 
   TalkRoom.fromSnapShot(DataSnapshot snapshot)
       : _roomId = snapshot.value["roomId"],
-        _userId = snapshot.value["userId"],
         _userName = snapshot.value["userName"],
-        _noRead = snapshot.value["fromUserName"];
+        _noRead = snapshot.value["fromUserName"] {
+    snapshot.value["member"].forEach((key, value) {
+      _members[key] = value;
+    });
+  }
 
   toJson() {
     return {
       "roomId": _roomId,
-      "userId": _userId,
+      "userId": _members,
       "userName": _userName,
       "noRead": _noRead,
     };
@@ -32,5 +35,5 @@ class TalkRoom {
 
   String get roomId => _roomId;
 
-  String get userId => _userId;
+  Map<String, String> get members => _members;
 }

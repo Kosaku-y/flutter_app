@@ -1,7 +1,8 @@
 /*----------------------------------------------
-scoreエンティティ
-----------------------------------------------*/
 
+スコアEntityクラス
+
+----------------------------------------------*/
 class Score {
   String date; //日付,primaryKey
   int ranking; //順位
@@ -29,6 +30,11 @@ class Score {
       };
 }
 
+/*----------------------------------------------
+
+スコア分析Entityクラス
+
+----------------------------------------------*/
 class ScoreAnalyze {
   double games = 0; //試合数
   double totalChip = 0; //トータルのチップ
@@ -38,7 +44,7 @@ class ScoreAnalyze {
   double avoidFourthRate = 0.0; //4着回避率
   List<double> rankingList = [0, 0, 0, 0]; //順位回数rankingList[0] -> 1着回数
 
-  ScoreAnalyze.fromList(Map<String, List<Score>> map) {
+  ScoreAnalyze.fromMap(Map<DateTime, List<Score>> map) {
     map.forEach((key, value) {
       value.forEach((element) {
         games++;
@@ -51,11 +57,11 @@ class ScoreAnalyze {
     associationRate = (rankingList[0] + rankingList[1]) / games;
     avoidFourthRate = 1 - (rankingList[3] / games);
     print("${this.games}"
-        "¥n${this.totalChip}"
-        "¥n${this.totalPoint}"
-        "¥n${this.totalBalance}"
-        "¥n${this.associationRate}"
-        "¥n${this.avoidFourthRate}"
-        "¥n${this.rankingList}");
+        "\n${this.totalChip}"
+        "\n${this.totalPoint}"
+        "\n${this.totalBalance}"
+        "\n${this.associationRate}"
+        "\n${this.avoidFourthRate}"
+        "\sn${this.rankingList}");
   }
 }

@@ -8,18 +8,10 @@ import 'package:intl/intl.dart';
 
 /*----------------------------------------------
 
-スコア入力ページクラス
+スコア入力Screenクラス
 
 ----------------------------------------------*/
 
-/*
-* String date; //日付,primaryKey
-  int ranking; //順位
-  int chip; //チップ
-  int total; //最終得点
-  int rate; //レート
-  int balance; //収入
-* */
 class ScoreInputScreen extends StatefulWidget {
   ScoreInputScreen({Key key}) : super(key: key);
   State<StatefulWidget> createState() {
@@ -53,7 +45,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _parts.appBar(title: "スコア入力"),
+      //appBar: _parts.appBar(title: "スコア入力"),
       backgroundColor: _parts.backGroundColor,
       body: SingleChildScrollView(
         child: Container(

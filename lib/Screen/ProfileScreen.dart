@@ -5,6 +5,12 @@ import 'package:flutter_app2/Entity/User.dart';
 
 import 'Talk/TalkScreen.dart';
 
+/*----------------------------------------------
+
+プロフィールScreenクラス(Stateless)
+
+----------------------------------------------*/
+
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({Key key, @required this.user, this.userId}) : super(key: key);
 

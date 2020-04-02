@@ -5,7 +5,7 @@ import 'package:flutter_app2/Entity/User.dart';
 
 /*----------------------------------------------
 
-トークルーム用レポジトリクラス
+トークルーム用Repositoryクラス
 
 ----------------------------------------------*/
 class TalkRoomRepository {
@@ -31,6 +31,7 @@ class TalkRoomRepository {
     }
   }
 
+  //トークルーム一覧を取得
   List<TalkRoom> getRoomList(DataSnapshot snapshot) {
     List<TalkRoom> roomList = [];
     snapshot.value.forEach((k, v) {

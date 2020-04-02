@@ -13,17 +13,19 @@ class TalkRoomBloc {
   User user;
   TalkRoomRepository repository;
 
-  final _eventListController = BehaviorSubject<List<TalkRoom>>.seeded([]);
-  Stream<List<TalkRoom>> get eventListStream => _eventListController.stream;
+  //トークルーム画面にリストを流すStream
+  final _talkRoomListController = BehaviorSubject<List<TalkRoom>>.seeded([]);
+  Stream<List<TalkRoom>> get talkRoomListStream => _talkRoomListController.stream;
 
+  //トーク画面に対して新しいroomIdを取得するStream
   TalkRoomBloc(this.user) {
     this.repository = TalkRoomRepository(user);
     repository.eventStream.listen((roomList) {
-      _eventListController.add(roomList);
+      _talkRoomListController.add(roomList);
     });
   }
 
   void dispose() {
-    _eventListController.close();
+    _talkRoomListController.close();
   }
 }

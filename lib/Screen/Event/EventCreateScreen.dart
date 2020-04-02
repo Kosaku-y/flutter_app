@@ -7,13 +7,11 @@ import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_cupertino_data_picker/flutter_cupertino_data_picker.dart';
-
 import 'EventCreateConfirmScreen.dart';
 
 /*----------------------------------------------
 
-イベント作成・編集フォームページクラス
+イベント作成・編集フォームScreenクラス
 
 ----------------------------------------------*/
 class EventCreateScreen extends StatefulWidget {
@@ -58,7 +56,6 @@ class EventCreateScreenState extends State<EventCreateScreen> {
   DateTime _end;
 
   final _formKey = GlobalKey<FormState>();
-  final List<String> _numberOfRecruit = <String>['1', '2', '3'];
 
   @override
   void initState() {

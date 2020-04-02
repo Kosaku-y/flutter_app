@@ -10,7 +10,7 @@ import 'package:flutter/gestures.dart';
 
 /*----------------------------------------------
 
-イベントの詳細ページ出力クラス(Stateless)
+イベントの詳細Screenクラス(Stateless)
 
 ----------------------------------------------*/
 
@@ -117,9 +117,7 @@ class EventDetailScreen extends StatelessWidget {
                 Navigator.of(context).push<Widget>(MaterialPageRoute(
                     settings: const RouteSettings(name: "/Talk"),
                     builder: (context) => new TalkScreen(
-                        user: user,
-                        opponentUserId: event.userId,
-                        opponentUserName: event.userName)));
+                        user: user, toUserId: event.userId, toUserName: event.userName)));
               }),
         ),
       );

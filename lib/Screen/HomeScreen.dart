@@ -8,6 +8,12 @@ import 'PieChartScreen.dart';
 import 'MahjongHandScreen.dart';
 import 'Score/ScoreManagePage.dart';
 
+/*----------------------------------------------
+
+ホームScreenクラス(Stateless)
+
+----------------------------------------------*/
+
 class HomeScreen extends StatefulWidget {
   final User user;
   HomeScreen({Key key, this.user}) : super(key: key);
@@ -169,8 +175,8 @@ class HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     element.rankGauge(
-                      size: const Size(150, 150),
-                      labelSize: 40.0,
+                      size: 140.0,
+                      line: 8.0,
                       rank: int.parse(widget.user.rank),
                       max: _max,
                       color: _data.colorMap[_rankColor],

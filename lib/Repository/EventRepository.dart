@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 /*----------------------------------------------
 
-イベント用レポジトリクラス
+イベント用Repositoryクラス
 
 ----------------------------------------------*/
 class EventRepository {

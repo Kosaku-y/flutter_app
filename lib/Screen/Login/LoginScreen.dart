@@ -8,7 +8,9 @@ import '../../main.dart';
 import 'AccountRegisterScreen.dart';
 
 /*----------------------------------------------
-ログインページ
+
+ログインScreenクラス
+
 ----------------------------------------------*/
 
 class LoginScreen extends StatefulWidget {
@@ -73,48 +75,47 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _parts.appBar(title: "ログイン"),
-        backgroundColor: _parts.backGroundColor,
-        body: Padding(
-          padding: const EdgeInsets.all(80),
-          child: StreamBuilder<User>(
-              stream: loginBloc.currentTempUserStream,
-              builder: (context, snapshot) {
-                print("loginBloc.currentStatusStream");
-                if (snapshot.hasData) {
-                  return Center(
-                    child: const CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError)
-                  return Text("エラーが発生しました" + snapshot.error.toString());
-                else {
-                  //if (snapshot.data.status == AuthStatus.notSignedIn) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      SignInButton(
-                        Buttons.Google,
-                        text: "Login with Google",
-                        onPressed: () => loginBloc.googleLoginSink.add(null),
-                      ),
-                      SignInButton(
-                        Buttons.Twitter,
-                        text: "Login with Twitter",
-                        onPressed: () => null,
-                      ),
-                      SignInButton(
-                        Buttons.Apple,
-                        text: "Login with Apple",
-                        onPressed: () => null,
-                      ),
-                    ],
-                  );
-                }
-//                  } else {
-//                    return set.indicator();
-//                  }
-              }),
-        ));
+      appBar: _parts.appBar(title: "ログイン"),
+      backgroundColor: _parts.backGroundColor,
+      body: Padding(
+        padding: const EdgeInsets.all(80),
+        child: StreamBuilder<User>(
+          stream: loginBloc.currentTempUserStream,
+          builder: (context, snapshot) {
+            print("loginBloc.currentStatusStream");
+            if (snapshot.hasData) {
+              return Center(
+                child: const CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError)
+              return Text("エラーが発生しました" + snapshot.error.toString());
+            else {
+              //if (snapshot.data.status == AuthStatus.notSignedIn) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  SignInButton(
+                    Buttons.Google,
+                    text: "Login with Google",
+                    onPressed: () => loginBloc.googleLoginSink.add(null),
+                  ),
+                  SignInButton(
+                    Buttons.Twitter,
+                    text: "Login with Twitter",
+                    onPressed: () => null,
+                  ),
+                  SignInButton(
+                    Buttons.Apple,
+                    text: "Login with Apple",
+                    onPressed: () => null,
+                  ),
+                ],
+              );
+            }
+          },
+        ),
+      ),
+    );
   }
 
   @override

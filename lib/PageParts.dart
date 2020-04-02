@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 /*----------------------------------------------
-部品クラス
+
+共通部品クラス
+
 ----------------------------------------------*/
 class PageParts {
   //案1
@@ -150,6 +153,23 @@ class PageParts {
       ],
       adapter: adapter,
       onConfirm: onConfirm,
+    );
+  }
+
+  AwesomeDialog dialog(BuildContext context) {
+    return AwesomeDialog(
+      context: context,
+      animType: AnimType.SCALE,
+      dialogType: DialogType.INFO,
+      body: Center(
+        child: Text(
+          'If the body is specified, then title and description will be ignored, this allows to further customize the dialogue.',
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
+      ),
+      tittle: 'This is Ignored',
+      desc: 'This is also Ignored',
+      btnOkOnPress: () {},
     );
   }
 }

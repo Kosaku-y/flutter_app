@@ -7,6 +7,12 @@ import 'package:flutter_app2/Repository/EventRepository.dart';
 
 import '../ReturnTopScreen.dart';
 
+/*----------------------------------------------
+
+イベント作成・確認 Screenクラス
+
+----------------------------------------------*/
+
 class EventCreateConfirmScreen extends StatelessWidget {
   final User user;
   final Line line;

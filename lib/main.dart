@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_app2/Splash.dart';
+import 'package:flutter_app2/SplashScreen.dart';
 import 'PageParts.dart';
 import 'Entity/User.dart';
 import 'Screen/Event/EventSearchScreen.dart';
@@ -15,7 +15,7 @@ void main() {
   return runApp(
     new MaterialApp(
       title: "Home",
-      home: new Splash(),
+      home: new SplashScreen(),
       //theme: parts.defaultTheme,
     ),
   );

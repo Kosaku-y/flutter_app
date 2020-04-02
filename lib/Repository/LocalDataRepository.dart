@@ -4,30 +4,10 @@ import 'dart:convert';
 
 /*----------------------------------------------
 
-ローカルデータリポジトリクラス
+ローカルデータリRepositoryクラス
 
 ----------------------------------------------*/
-/*
-* Map<String dateKey,List<Score>>
--scoreKey:{
--”2019/11/07”:{
-            [{'ranking':1,
-            'chip':23,
-            'total':201,
-            'rate':5,
-            'balance':12400}]}
--”2019/11/09”:{
-            {{'ranking':1,
-            'chip':23,
-            total':201,
-            'rate':5,
-            'balance':12400},
-            {'ranking':1,
-            'chip':23,
-            total':201,
-            'rate':5,
-            'balance':12400}}
-* */
+
 class LocalDataRepository {
   final String scoreKey = "scoreKey";
   SharedPreferences _prefs;
@@ -53,7 +33,6 @@ class LocalDataRepository {
         scoreMap[key].add(Score.fromJson(i));
       });
     });
-    print("get:$scoreMap");
   }
 
   //Map取得
@@ -66,7 +45,7 @@ class LocalDataRepository {
     scoreMap.forEach((key, value) {
       returnMap[DateTime.parse(key)] = value;
     });
-    print("get$scoreMap");
+    print("get:$scoreMap");
     return returnMap;
   }
 

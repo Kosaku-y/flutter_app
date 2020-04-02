@@ -10,6 +10,12 @@ import 'package:flutter_picker/flutter_picker.dart';
 import '../../main.dart';
 import 'LoginScreen.dart';
 
+/*----------------------------------------------
+
+初回登録Screenクラス
+
+----------------------------------------------*/
+
 class AccountRegisterScreen extends StatefulWidget {
   final User user;
   AccountRegisterScreen({Key key, @required this.user}) : super(key: key);

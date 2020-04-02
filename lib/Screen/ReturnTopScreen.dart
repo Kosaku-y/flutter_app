@@ -2,6 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/PageParts.dart';
 
+/*----------------------------------------------
+
+トップに戻るScreenクラス(Stateless)
+
+----------------------------------------------*/
+
 class ReturnTopScreen extends StatelessWidget {
   final PageParts _parts = PageParts();
   final String message;

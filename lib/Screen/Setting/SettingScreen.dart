@@ -103,7 +103,7 @@ class SettingScreen extends StatelessWidget {
             trailing: Icon(Icons.arrow_forward, color: _parts.pointColor),
             onTap: onTap),
         Divider(
-          color: _parts.fontColor,
+          color: _parts.pointColor,
           height: 4.0,
         ),
       ],

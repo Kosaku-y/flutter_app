@@ -13,7 +13,7 @@ import '../Talk/TalkScreen.dart';
 
 /*----------------------------------------------
 
-イベント検索　結果表示ページ出力（リスト表示）クラス
+イベント検索　結果表示Screenクラス
 
 ----------------------------------------------*/
 class EventSearchResultScreen extends StatelessWidget {
@@ -195,7 +195,7 @@ class EventSearchResultScreen extends StatelessWidget {
             Navigator.of(context).push<Widget>(MaterialPageRoute(
                 settings: const RouteSettings(name: "/Talk"),
                 builder: (context) => new TalkScreen(
-                    user: user, opponentUserId: event.userId, opponentUserName: event.userName)));
+                    user: user, toUserId: event.userId, toUserName: event.userName)));
           },
           child: Container(
             padding: const EdgeInsets.all(8.0),
