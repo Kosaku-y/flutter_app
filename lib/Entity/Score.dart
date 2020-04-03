@@ -56,12 +56,14 @@ class ScoreAnalyze {
     });
     associationRate = (rankingList[0] + rankingList[1]) / games;
     avoidFourthRate = 1 - (rankingList[3] / games);
-    print("${this.games}"
-        "\n${this.totalChip}"
-        "\n${this.totalPoint}"
-        "\n${this.totalBalance}"
-        "\n${this.associationRate}"
-        "\n${this.avoidFourthRate}"
-        "\sn${this.rankingList}");
+  }
+
+  void printScore() {
+    print("\n試合数　　　：${this.games}"
+        "\n合計チップ　：${this.totalChip}枚"
+        "\n合計ポイント：${this.totalPoint}pt"
+        "\n合計収支　　：${this.totalBalance}円"
+        "\n連対率　　　：${this.associationRate}%"
+        "\n４着回避率　：${this.avoidFourthRate}");
   }
 }

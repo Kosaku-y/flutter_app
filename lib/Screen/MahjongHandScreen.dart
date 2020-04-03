@@ -132,7 +132,6 @@ class MahjongHandScreen extends StatelessWidget {
     map["hands"].forEach((value) {
       list.add(MahjongHand.fromMap(value));
     });
-    print(list);
     return list;
   }
 }
