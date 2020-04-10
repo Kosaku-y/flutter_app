@@ -29,13 +29,13 @@ class TalkScreen extends StatefulWidget {
 class TalkScreenState extends State<TalkScreen> {
   final PageParts _parts = PageParts();
   final _textEditController = TextEditingController();
-//  ScrollController _scrollController;
   var formatter = new DateFormat('yyyy/M/d/ HH:mm');
   String roomId;
   String opponentUserName;
   List<Talk> talkList = new List();
   TalkBloc bloc;
   TalkBloc blocForNew;
+  TextStyle messageStyle = TextStyle(fontSize: 15.0, color: Colors.white);
 
   @override
   initState() {
@@ -49,10 +49,12 @@ class TalkScreenState extends State<TalkScreen> {
     //トーク履歴からの遷移
     else {
       blocForNew = TalkBloc.newRoom(widget.user, widget.toUserId, widget.toUserName);
+      blocForNew.prepareRoom.add(null);
       opponentUserName = widget.toUserName;
     }
 
     ///@Todo
+//  ScrollController _scrollController;
 //    _scrollController = ScrollController();
 //    _scrollController.addListener(() {
 //      final maxScrollExtent = _scrollController.position.maxScrollExtent;
@@ -83,7 +85,21 @@ class TalkScreenState extends State<TalkScreen> {
     return Scaffold(
       appBar: _parts.appBar(title: opponentUserName),
       backgroundColor: _parts.backGroundColor,
-      body: messageArea(),
+      body: widget.room != null
+          ? messageArea()
+          : StreamBuilder<String>(
+              stream: blocForNew.roomIdStream,
+              builder: (context, snapshot) {
+                print(snapshot.data);
+                if (!snapshot.hasData || snapshot.data == null) return _parts.indicator();
+                if (snapshot.hasError) {
+                  return Text("エラーが発生しました：" + snapshot.error.toString());
+                }
+                bloc = new TalkBloc(snapshot.data);
+                blocForNew.dispose();
+                return messageArea();
+              },
+            ),
     );
   }
 
@@ -91,6 +107,7 @@ class TalkScreenState extends State<TalkScreen> {
     return StreamBuilder<List<Talk>>(
       stream: bloc.messageListStream,
       builder: (context, snapshot) {
+        print("talkList:$talkList");
         if (!snapshot.hasData) return _parts.indicator();
         if (snapshot.hasError) {
           return Text("エラーが発生しました：" + snapshot.error.toString());
@@ -127,10 +144,19 @@ class TalkScreenState extends State<TalkScreen> {
   Widget _buildRow(int index) {
     Talk talk = talkList[index];
     return Container(
-        margin: EdgeInsets.only(top: 8.0),
-        child: talk.fromUserId == widget.user.userId
-            ? _otherUserCommentRow(talk)
-            : _currentUserCommentRow(talk));
+      margin: EdgeInsets.only(top: 8.0),
+      child: Builder(
+        builder: (_) {
+          if (talk.fromUserId == widget.user.userId) {
+            return _otherUserCommentRow(talk);
+          } else if (talk.fromUserId == "system") {
+            return _systemCommentRow(talk);
+          } else {
+            return _currentUserCommentRow(talk);
+          }
+        },
+      ),
+    );
   }
 
   Widget _currentUserCommentRow(Talk talk) {
@@ -153,13 +179,26 @@ class TalkScreenState extends State<TalkScreen> {
     ]);
   }
 
+  Widget _systemCommentRow(Talk talk) {
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Text(
+            talk.message,
+            style: messageStyle,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _messageLayout(Talk talk, CrossAxisAlignment alignment) {
     return Column(
       crossAxisAlignment: alignment,
       children: <Widget>[
-        Text(talk.fromUserId + " ${formatter.format(talk.dateTime)}",
+        Text("${formatter.format(talk.dateTime)} ${talk.fromUserName}",
             style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-        Text(talk.message, style: TextStyle(fontSize: 10.0, color: _parts.pointColor)),
+        Text(talk.message, style: messageStyle),
       ],
     );
   }
@@ -209,6 +248,6 @@ class TalkScreenState extends State<TalkScreen> {
   @override
   void dispose() {
     super.dispose();
-    bloc.dispose();
+    bloc?.dispose();
   }
 }

@@ -31,7 +31,10 @@ class EventRepository {
       //駅の所在する都道府県検索
       String prefName = await getPrefName(stationCode);
       event.pref = prefName;
-      _eventReference.child(prefName).child(event.station).child(event.eventId).set(event.toJson());
+      _eventReference
+          .child(prefName)
+          .child("${event.station}/${event.eventId}")
+          .set(event.toJson());
     } catch (e, stackTrace) {
       print(e);
       print(stackTrace);

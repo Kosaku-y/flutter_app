@@ -17,8 +17,8 @@ class TalkRepository {
   String toUserId, toUserName;
 
   // fireBaseから取得をしたデータのストリームを外部に公開するための Stream
-  final StreamController<List<Talk>> _eventRealTimeStream = StreamController();
-  Stream<List<Talk>> get eventStream => _eventRealTimeStream.stream;
+  final StreamController<List<Talk>> _realTimeMessageController = StreamController();
+  Stream<List<Talk>> get realtimeMessageStream => _realTimeMessageController.stream;
 
   final _messagesReference = FirebaseDatabase.instance.reference().child("Message");
   final _userReference = FirebaseDatabase.instance.reference().child("User");
@@ -28,10 +28,8 @@ class TalkRepository {
   TalkRepository(this.roomId) {
     try {
       _messagesReference.child("${this.roomId}").onChildAdded.listen((e) {
-        e.snapshot.value.forEach((key, value) {
-          talkList.add(Talk.fromSnapShot(value));
-        });
-        _eventRealTimeStream.add(talkList);
+        talkList.add(Talk.fromSnapShot(e.snapshot));
+        _realTimeMessageController.add(talkList);
       });
     } catch (e, stackTrace) {
       print(e);
@@ -43,7 +41,19 @@ class TalkRepository {
   void sendMessage(String roomId, Talk talk) async {
     try {
       var json = talk.toJson();
-      await _messagesReference.child("Message/$roomId").push().set(json);
+      await _messagesReference.child(roomId).push().set(json);
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
+    }
+  }
+
+  //メッセージ送信
+  void sendSystemMessage(String roomId, String message) async {
+    try {
+      var talk = Talk("system", "system", message);
+      var json = talk.toJson();
+      await _messagesReference.child(roomId).push().set(json);
     } catch (e, stackTrace) {
       print(e);
       print(stackTrace);
@@ -53,26 +63,28 @@ class TalkRepository {
   //新規room用コンストラクタ
   TalkRepository.forNewRoom(this.user, this.toUserId, this.toUserName);
 
-  //新規room作成
-  getNewRoomId() async {
-    String newRoomId = await makeNewRoomId(); //roomID生成
+  /*
+  * ルームIDが存在するかどうか検索
+  * ->ない場合はgetNewRoomId
+  * */
+  prepareRoomId() async {
+    final userReference = FirebaseDatabase.instance.reference().child("User/${user.userId}/room");
+    String newRoomId;
     try {
-      //ユーザー情報に追加
-      _userReference.child(user.userId).child("room").set({
-        newRoomId: {"userName": toUserName, "userID": toUserId, "nonRead": 1}
-      }).then((value) {
-        _userReference.child(toUserId).child("room").set({
-          newRoomId: {"userName": user.name, "userID": user.userId, "nonRead": 1}
-        });
-        //ルーム開設
-        _roomReference.set({
-          newRoomId: {
-            "member": {toUserId: toUserName, user.userId: user.name},
-            "timestamp": ServerValue.timestamp
-          }
-        });
+      await userReference
+          .orderByChild('userId')
+          .limitToFirst(1)
+          .equalTo(toUserId)
+          .once()
+          .then((DataSnapshot result) {
+        if (result.value != null) {
+          result.value.forEach((k, v) {
+            newRoomId = k;
+          });
+        }
       });
-      ;
+      if (newRoomId != null) return newRoomId;
+      newRoomId = await getNewRoomId();
       return newRoomId;
     } catch (e, stackTrace) {
       print(e);
@@ -80,22 +92,33 @@ class TalkRepository {
     }
   }
 
-  /*
-  * ルームIDが存在するかどうか検索
-  * ->ない場合はgetNewRoomId
-  * */
-  prepareRoomId() async {
-    final userReference = FirebaseDatabase.instance.reference().child("User");
+  //新規room作成
+  getNewRoomId() async {
+    String newRoomId = await makeNewRoomId(); //roomID生成
     try {
-      await userReference
-          .orderByChild('room')
-          .startAt(toUserId)
-          .endAt(toUserId)
-          .once()
-          .then((DataSnapshot result) {
-        if (result.value != null) return result.value["roomId"];
-        return getNewRoomId();
+      //ユーザー情報に追加(送信者)
+      _userReference.child(user.userId).child("room/$newRoomId").set({
+        "userName": toUserName,
+        "userId": toUserId,
+        "nonRead": 1,
+        "timestamp": ServerValue.timestamp
+      }).then((_) {
+        //ユーザー情報に追加(受信者)
+        _userReference.child(toUserId).child("room/$newRoomId").set({
+          "userName": user.name,
+          "userId": user.userId,
+          "nonRead": 1,
+          "timestamp": ServerValue.timestamp
+        }).then((_) {
+          //ルーム開設
+          _roomReference.child(newRoomId).set({
+            "member": {toUserId: toUserName, user.userId: user.name},
+            "timestamp": ServerValue.timestamp
+          });
+          sendSystemMessage(newRoomId, "ルームが作成されました");
+        });
       });
+      return newRoomId;
     } catch (e, stackTrace) {
       print(e);
       print(stackTrace);
@@ -112,7 +135,8 @@ class TalkRepository {
         newId = snapshot.value["roomId"];
       });
       newRoomId = "R" + newId.toString();
-      talkRoomManager.set({"roomId": "${newId + 1}"});
+      newId++;
+      await talkRoomManager.set({"roomId": newId});
       return newRoomId;
     } catch (e, stackTrace) {
       print(e);

@@ -11,16 +11,17 @@ import 'package:flutter_app2/Entity/User.dart';
 class TalkRoomRepository {
   User user;
   // fireBaseから取得をしたデータのストリームを外部に公開するための Stream
-  final StreamController<List<TalkRoom>> _eventRealTimeStream = StreamController();
+  final StreamController<List<TalkRoom>> _eventRealTimeStream = StreamController.broadcast();
   Stream<List<TalkRoom>> get eventStream => _eventRealTimeStream.stream;
 
   final _userReference = FirebaseDatabase.instance.reference().child("User");
-
+  List<TalkRoom> talkRoomList = [];
   TalkRoomRepository(this.user) {
     try {
-      _userReference.child("${user.userId}/room/").onChildAdded.listen((e) {
+      _userReference.child("${user.userId}/room").onChildAdded.listen((e) {
         if (e.snapshot != null) {
-          _eventRealTimeStream.add(getRoomList(e.snapshot));
+          talkRoomList.add(TalkRoom.fromSnapShot(e.snapshot));
+          _eventRealTimeStream.add(talkRoomList);
         } else {
           _eventRealTimeStream.add([]);
         }
@@ -29,14 +30,5 @@ class TalkRoomRepository {
       print(e);
       print(stackTrace);
     }
-  }
-
-  //トークルーム一覧を取得
-  List<TalkRoom> getRoomList(DataSnapshot snapshot) {
-    List<TalkRoom> roomList = [];
-    snapshot.value.forEach((k, v) {
-      roomList.add(TalkRoom.fromSnapShot(v));
-    });
-    return roomList;
   }
 }

@@ -67,6 +67,15 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 
 
 覚え書き
+
+-a ??= b 
+--aがnullならb代入
+
+-b = a ?? b
+--aがnullでなければa nullであればbを代入
+
+
+ 
 --変数の変化(状態の変化)によってwidgetが変わる場合setState呼んで値を変える
 ->bloc を使ったり、providerやInheritedWidgetを使うことによって回避できる
 
@@ -92,7 +101,7 @@ http://api.ekispert.jp/v1/json/station?operationLineCode=98&offset=1&limit=100&d
 ```txt
 {
   "users": {
-    "shiroyama": { "name": "Fumihiko Shiroyama", "room":["R0":{UserName:"",userID:"",nonRead:""},"Room":"R2"]},
+    "shiroyama": { "name": "Fumihiko Shiroyama", "room":["R0":{UserName:"",userID:"",nonRead:"",timestamp:""},"Room":"R2"]},
     "tanaka": { ... },
     "sato": { ... }
   },
