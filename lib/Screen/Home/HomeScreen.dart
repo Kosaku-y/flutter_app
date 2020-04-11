@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/CommonData.dart';
-import 'package:flutter_app2/Screen/HomeScreenElement.dart';
+import 'package:flutter_app2/Screen/Home/HomeScreenElement.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'PieChartScreen.dart';
-import 'MahjongHandScreen.dart';
-import 'Score/ScoreManagePage.dart';
+import '../PieChartScreen.dart';
+import '../MahjongHandScreen.dart';
+import '../Score/ScoreManagePage.dart';
 
 /*----------------------------------------------
 

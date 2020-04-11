@@ -9,7 +9,6 @@ import 'package:flutter_app2/Repository/LoginRepository.dart';
 
 ----------------------------------------------*/
 class LoginBloc {
-  //final _currentTempUserController = PublishSubject<TempUser>();
   final _currentTempUserController = BehaviorSubject<User>.seeded(null);
   //loginPage側で現在のTmpUserを流す用のStream
   final _googleLoginController = StreamController();

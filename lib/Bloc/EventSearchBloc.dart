@@ -13,6 +13,7 @@ class EventSearchBloc {
   //イベント検索ページから要素を受け取るStream
   final StreamController _eventSearchController = StreamController<EventSearch>();
   Sink get eventSearchSink => _eventSearchController.sink;
+
   //イベント検索ページに要素を流すStream
   final _searchResultController = BehaviorSubject<List<EventDetail>>.seeded(null);
   Stream<List<EventDetail>> get searchResultStream => _searchResultController.stream;

@@ -22,6 +22,7 @@ class EventDetailScreen extends StatelessWidget {
   final formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
 
   Widget build(BuildContext context) {
+    TextStyle _style = TextStyle(color: _parts.pointColor, fontSize: 18);
     return Scaffold(
       appBar: _parts.appBar(title: "イベント詳細"),
       backgroundColor: _parts.backGroundColor,
@@ -32,33 +33,29 @@ class EventDetailScreen extends StatelessWidget {
             //イベント詳細
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text("募集人数：${event.recruitMember}",
-                      style: TextStyle(color: _parts.pointColor, fontSize: 18)),
-                  Text("駅　　　：${event.station}",
-                      style: TextStyle(color: _parts.pointColor, fontSize: 18)),
-                  Text("開始時間：${event.startingTime}",
-                      style: TextStyle(color: _parts.pointColor, fontSize: 17)),
-                  Text("終了時間：${event.endingTime}",
-                      style: TextStyle(color: _parts.pointColor, fontSize: 17)),
+                  Text("募集人数：${event.recruitMember}", style: _style),
+                  Text("駅　　　：${event.station}", style: _style),
+                  Text("開始時間：${event.startingTime}", style: _style),
+                  Text("終了時間：${event.endingTime}", style: _style),
                   RichText(
                     text: TextSpan(children: [
+                      TextSpan(text: "主催者：", style: _style),
                       TextSpan(
-                          text: "主催者：", style: TextStyle(color: _parts.pointColor, fontSize: 18)),
-                      TextSpan(
-                          text: event.userName,
-                          style: TextStyle(color: _parts.fontColor, fontSize: 17),
-                          recognizer: new TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.of(context).push<Widget>(
-                                MaterialPageRoute(
-                                  settings: const RouteSettings(name: "/Profile"),
-                                  builder: (context) =>
-                                      new ProfileScreen(user: user, userId: event.userId),
-                                ),
-                              );
-                            }),
+                        text: event.userName,
+                        style: _style,
+                        recognizer: new TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.of(context).push<Widget>(
+                              MaterialPageRoute(
+                                settings: const RouteSettings(name: "/Profile"),
+                                builder: (context) =>
+                                    new ProfileScreen(user: user, userId: event.userId),
+                              ),
+                            );
+                          },
+                      ),
                     ]),
                   ),
                   Text("コメント：${event.comment}",
@@ -111,14 +108,15 @@ class EventDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Center(
           child: _parts.iconButton(
-              message: "メッセージを送る",
-              icon: Icons.mail,
-              onPressed: () {
-                Navigator.of(context).push<Widget>(MaterialPageRoute(
-                    settings: const RouteSettings(name: "/Talk"),
-                    builder: (context) => new TalkScreen(
-                        user: user, toUserId: event.userId, toUserName: event.userName)));
-              }),
+            message: "メッセージを送る",
+            icon: Icons.mail,
+            onPressed: () {
+              Navigator.of(context).push<Widget>(MaterialPageRoute(
+                  settings: const RouteSettings(name: "/Talk"),
+                  builder: (context) => new TalkScreen(
+                      user: user, toUserId: event.userId, toUserName: event.userName)));
+            },
+          ),
         ),
       );
     }

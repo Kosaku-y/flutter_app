@@ -43,11 +43,11 @@ class TalkBloc {
   //履歴からの遷移
   TalkBloc(this.roomId) {
     this.repository = TalkRepository(roomId);
-
+    //メッセージリアルタイム更新
     repository.realtimeMessageStream.listen((message) {
-      //messageList.add(Talk.fromSnapShot(message.data));
       _messageListController.add(message);
     });
+
     //メッセージ送信
     _sendMessageController.stream.listen((talk) async {
       print("repository:sended");

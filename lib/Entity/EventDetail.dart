@@ -1,26 +1,19 @@
 /*----------------------------------------------
+
 イベントのEntityクラス
-  eventId         イベントID
-  userId          ユーザーID
-  recruitMember   募集人数
-  pref            都道府県
-  line            路線
-  station         最寄駅
-  startingTime    開始時間
-  endingTime      終了時間
-  comment         コメント
+
 ----------------------------------------------*/
 class EventDetail {
-  String eventId;
-  String recruitMember;
-  String pref;
-  String line;
-  String station;
-  String startingTime;
-  String endingTime;
-  String comment;
-  String userId;
-  String userName;
+  String eventId; //イベントID
+  String recruitMember; //募集人数
+  String pref; //都道府県
+  String line; //路線名
+  String station; //駅名
+  String startingTime; //開始時間
+  String endingTime; //終了時間
+  String comment; //コメント
+  String userId; //ユーザーID
+  String userName; //ユーザー名
 
   EventDetail(this.recruitMember, this.line, this.station, this.startingTime, this.endingTime,
       this.comment, this.userId, this.userName);

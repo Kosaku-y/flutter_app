@@ -10,6 +10,7 @@ class EventManageBloc {
   //イベント作成ページからpicker作成のためのprefCodeを受け取るStream
   final StreamController _lineApiController = StreamController<String>();
   Sink get lineApiSink => _lineApiController.sink;
+
   //イベント作成ページへ路線Map<name,code>を返すStream
   final StreamController _lineMapController = StreamController<Map<String, String>>();
   Stream<Map<String, String>> get lineMapStream => _lineMapController.stream;

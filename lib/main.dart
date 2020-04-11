@@ -4,7 +4,7 @@ import 'package:flutter_app2/SplashScreen.dart';
 import 'PageParts.dart';
 import 'Entity/User.dart';
 import 'Screen/Event/EventSearchScreen.dart';
-import 'Screen/HomeScreen.dart';
+import 'Screen/Home/HomeScreen.dart';
 import 'Screen/Setting/SettingScreen.dart';
 import 'Screen/Talk/TalkRoomScreen.dart';
 import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.dart';

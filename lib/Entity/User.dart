@@ -6,13 +6,12 @@ import 'AuthStatus.dart';
 
 ----------------------------------------------*/
 class User {
-  String _userId = "";
-  String _name = "";
-  String _age = "";
-  String _sex = "";
-  String _rank = "1";
-  List<String> _event = [];
-  AuthStatus _status;
+  String _userId = ""; //ユーザーID
+  String _name = ""; //ユーザー名前
+  String _age = ""; //年齢
+  String _sex = ""; //性別
+  String _rank = "1"; //ユーザーランク
+  AuthStatus _status; //ログインステータス
 
   User();
   User.tmpUser(this._status, this._userId);

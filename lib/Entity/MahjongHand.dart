@@ -2,6 +2,11 @@
 
 麻雀役Entityクラス
 
+  name 役名
+  kana カナ
+  yaku 飜数
+  description
+  restriction
 ----------------------------------------------*/
 
 class MahjongHand {

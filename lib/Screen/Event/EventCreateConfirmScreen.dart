@@ -4,7 +4,6 @@ import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
-
 import '../ReturnTopScreen.dart';
 
 /*----------------------------------------------

@@ -15,6 +15,7 @@ pubspec.lock
 android
 .gradle
 ios
+todo.md
 
 # IntelliJ related
 *.iml
