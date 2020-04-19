@@ -4,9 +4,10 @@ import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/CommonData.dart';
 import 'package:flutter_app2/Screen/Home/HomeScreenElement.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import '../PieChartScreen.dart';
+import '../RankPieChartScreen.dart';
 import '../MahjongHandScreen.dart';
 import '../Score/ScoreManagePage.dart';
+import 'NoticeScreen.dart';
 
 /*----------------------------------------------
 
@@ -30,10 +31,10 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    for (int r in _data.rankMap.keys) {
+    for (int r in CommonData.rankMap.keys) {
       if (int.parse(widget.user.rank) < r) {
         _max = r;
-        _rankColor = _data.rankMap[r];
+        _rankColor = CommonData.rankMap[r];
         break;
       }
     }
@@ -61,35 +62,42 @@ class HomeScreenState extends State<HomeScreen> {
                       color: _parts.fontColor, fontWeight: FontWeight.w700, fontSize: 20.0)),
             ),
             _buildTile(
-              //お知らせ
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text('お知らせ', style: titleStyle),
-                          Text('新着$totalInfo件', style: explainStyle),
-                          //                          Text('$totalInfo件', style: TextStyle(color: Colors.blueAccent)),
-                        ],
-                      ),
-                      Material(
-                        color: _parts.fontColor,
-                        borderRadius: BorderRadius.circular(24.0),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Icon(Icons.info, color: Colors.white, size: 30.0),
-                          ),
+                //お知らせ
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('お知らせ', style: titleStyle),
+                            Text('新着$totalInfo件', style: explainStyle),
+                            //                          Text('$totalInfo件', style: TextStyle(color: Colors.blueAccent)),
+                          ],
                         ),
-                      )
-                    ]),
-              ),
-            ),
+                        Material(
+                          color: _parts.fontColor,
+                          borderRadius: BorderRadius.circular(24.0),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Icon(Icons.info, color: Colors.white, size: 30.0),
+                            ),
+                          ),
+                        )
+                      ]),
+                ), onTap: () {
+              Navigator.push(
+                this.context,
+                MaterialPageRoute(
+                  settings: const RouteSettings(name: "/Notice"),
+                  builder: (context) => NoticeScreen(),
+                ),
+              );
+            }),
             _buildTile(
               //戦績管理
               Padding(
@@ -170,7 +178,8 @@ class HomeScreenState extends State<HomeScreen> {
                           TextSpan(text: '現在のランクカラー:', style: explainStyle),
                           TextSpan(
                               text: '$_rankColor',
-                              style: TextStyle(color: _data.colorMap[_rankColor], fontSize: 12.0)),
+                              style: TextStyle(
+                                  color: CommonData.colorMap[_rankColor], fontSize: 12.0)),
                         ],
                       ),
                     ),
@@ -179,7 +188,7 @@ class HomeScreenState extends State<HomeScreen> {
                       line: 8.0,
                       rank: int.parse(widget.user.rank),
                       max: _max,
-                      color: _data.colorMap[_rankColor],
+                      color: CommonData.colorMap[_rankColor],
                     ),
                   ],
                 ),
@@ -188,7 +197,7 @@ class HomeScreenState extends State<HomeScreen> {
                 this.context,
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/PieChart"),
-                  builder: (context) => new PieChartScreen(rank: widget.user.rank),
+                  builder: (context) => new RankPieChartScreen(rank: widget.user.rank),
                 ),
               ),
             ),

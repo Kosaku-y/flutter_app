@@ -12,11 +12,11 @@ import 'dart:async';
 ----------------------------------------------*/
 class MahjongHandScreen extends StatelessWidget {
   final PageParts _parts = PageParts();
-  List<MahjongHand> _handList = [];
 
   //画面全体のビルド
   @override
   Widget build(BuildContext context) {
+    List<MahjongHand> handList;
     int i = 0;
     int _currentYaku = 0;
     return Scaffold(
@@ -30,7 +30,7 @@ class MahjongHandScreen extends StatelessWidget {
             return _parts.indicator();
             // 非同期処理が未完了の場合にインジケータを表示する
           } else {
-            _handList = snapshot.data;
+            handList = snapshot.data;
             return Container(
               margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 40.0),
               child: new Column(
@@ -38,8 +38,8 @@ class MahjongHandScreen extends StatelessWidget {
                   Expanded(
                     child: ListView.builder(
                       itemBuilder: (BuildContext context, int index) {
-                        if (_handList[index - i].yaku != _currentYaku) {
-                          _currentYaku = _handList[index - i].yaku;
+                        if (handList[index - i].yaku != _currentYaku) {
+                          _currentYaku = handList[index - i].yaku;
                           i++;
                           return Card(
                             color: _parts.endGradient,
@@ -51,9 +51,9 @@ class MahjongHandScreen extends StatelessWidget {
                             ),
                           );
                         }
-                        return _buildRow(index - i);
+                        return _buildRow(handList[index - i]);
                       },
-                      itemCount: _handList.length + 5,
+                      itemCount: handList.length + 5,
                     ),
                   ),
                   Divider(
@@ -70,9 +70,9 @@ class MahjongHandScreen extends StatelessWidget {
   }
 
   //リスト要素生成
-  Widget _buildRow(int index) {
+  Widget _buildRow(MahjongHand element) {
     //リストの要素一つづつにonTapを付加して、詳細ページに飛ばす
-    return new GestureDetector(
+    return InkWell(
       onTap: () {
 //        Navigator.push(
 //            this.context,
@@ -103,7 +103,7 @@ class MahjongHandScreen extends StatelessWidget {
                       // 3.1.1行目
                       margin: const EdgeInsets.only(bottom: 4.0),
                       child: Text(
-                        "${_handList[index].name}(${_handList[index].kana})",
+                        "${element.name}(${element.kana})",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16.0, color: _parts.pointColor),
                       ),
@@ -111,7 +111,7 @@ class MahjongHandScreen extends StatelessWidget {
                     Container(
                       // 3.1.2行目
                       child: Text(
-                        _handList[index].description,
+                        element.description,
                         style: TextStyle(fontSize: 12.0, color: _parts.fontColor),
                       ),
                     ),

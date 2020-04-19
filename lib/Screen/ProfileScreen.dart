@@ -3,8 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 
-import 'Talk/TalkScreen.dart';
-
 /*----------------------------------------------
 
 プロフィールScreenクラス(Stateless)
@@ -12,10 +10,11 @@ import 'Talk/TalkScreen.dart';
 ----------------------------------------------*/
 
 class ProfileScreen extends StatelessWidget {
-  ProfileScreen({Key key, @required this.user, this.userId}) : super(key: key);
+  ProfileScreen({Key key, @required this.user, this.userId, this.userName}) : super(key: key);
 
   final User user;
   final String userId;
+  final String userName;
   final PageParts _parts = PageParts();
 
   @override
@@ -26,81 +25,55 @@ class ProfileScreen extends StatelessWidget {
       body: Container(
         child: new Column(
           children: <Widget>[
-            Card(
-              elevation: 4.0,
-              margin: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  //Image.asset('assets/neko1_600x400.jpg'),
-                  _titleArea(context),
-                ],
-              ),
-            ),
-            RaisedButton.icon(
-              label: Text("戻る"),
-              icon: Icon(
-                Icons.arrow_back_ios,
-                color: _parts.fontColor,
-              ),
+            Center(child: _avatarLayout()),
+            //_titleArea(context),
+            Divider(color: _parts.pointColor),
+            _listElement("名前", userName),
+            _parts.backButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-            ),
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget _titleArea(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.all(16.0),
-        child: Row(
-          // 1行目
-          children: <Widget>[
-            Expanded(
-              // 2.1列目
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    // 3.1.1行目
-                    margin: const EdgeInsets.only(bottom: 4.0),
-                    child: Text(
-                      "${user.name}",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-                    ),
-                  ),
-                  Container(
-                    // 3.1.2行目
-                    child: Text(
-                      "${user.age}",
-                      style: TextStyle(fontSize: 12.0, color: _parts.fontColor),
-                    ),
-                  ),
-                  Container(
-                      child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push<Widget>(
-                        MaterialPageRoute(
-                          settings: const RouteSettings(name: "/Talk"),
-                          builder: (context) => new TalkScreen(user: user),
-                        ),
-                      );
-                    },
-                    child: Icon(Icons.mail),
-                  )),
-                ],
-              ),
-            ),
-            Icon(
-              // 2.2列目
-              Icons.star,
-              color: _parts.pointColor,
-            ),
-            Text('${user.rank}'), // 2.3列目
-          ],
-        ));
+  Widget _listElement(String title, content) {
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: Text(
+            title,
+            style: TextStyle(color: Colors.grey, fontSize: 18.0),
+          ),
+          trailing: Text(
+            content,
+            style: TextStyle(color: _parts.pointColor, fontSize: 18.0),
+          ),
+        ),
+        Divider(
+          color: _parts.pointColor,
+          height: 4.0,
+        ),
+      ],
+    );
+  }
+
+  Widget _avatarLayout() {
+    return InkWell(
+      child: CircleAvatar(
+        radius: 50.0,
+        //backgroundImage: NetworkImage(entry.userImageUrl),
+        child: Text(
+          userName[0],
+          style: TextStyle(fontSize: 30),
+        ),
+      ),
+      onTap: () {
+        return null;
+      },
+    );
   }
 }

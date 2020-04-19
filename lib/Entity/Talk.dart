@@ -6,11 +6,11 @@ import 'package:firebase_database/firebase_database.dart';
 
 ----------------------------------------------*/
 class Talk {
-  String key; //キー(時系列情報含む)
-  DateTime _dateTime; //送信時刻
-  String _message; //メッセージ
-  String _fromUserId; //ユーザーID
-  String _fromUserName; //ユーザー名
+  String key; // キー(時系列情報含む)
+  DateTime _dateTime; // 送信時刻
+  String _message; // メッセージ
+  String _fromUserId; // ユーザーID
+  String _fromUserName; // ユーザー名
 
   Talk(this._fromUserId, this._fromUserName, this._message) : _dateTime = DateTime.now();
 

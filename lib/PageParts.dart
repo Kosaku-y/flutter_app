@@ -160,7 +160,7 @@ class PageParts {
     return AwesomeDialog(
       context: context,
       animType: AnimType.SCALE,
-      dialogType: DialogType.INFO,
+      dialogType: DialogType.ERROR,
       body: Center(
         child: Text(
           'If the body is specified, then title and description will be ignored, this allows to further customize the dialogue.',
@@ -169,7 +169,9 @@ class PageParts {
       ),
       tittle: 'This is Ignored',
       desc: 'This is also Ignored',
-      btnOkOnPress: () {},
+      btnOkOnPress: () {
+        Navigator.pop(context);
+      },
     );
   }
 }

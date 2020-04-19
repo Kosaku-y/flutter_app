@@ -58,12 +58,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
               totalField(),
               rateField(),
               balanceField(),
-              _parts.iconButton(
-                  message: "記録する",
-                  icon: Icons.send,
-                  onPressed: () {
-                    submit();
-                  }),
+              _parts.iconButton(message: "記録する", icon: Icons.send, onPressed: () => submit())
             ],
           ),
         ),
@@ -115,10 +110,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
           enableInteractiveSelection: false,
           controller: dateController,
           decoration: InputDecoration(
-            icon: Icon(
-              Icons.calendar_today,
-              color: _parts.fontColor,
-            ),
+            icon: Icon(Icons.calendar_today, color: _parts.fontColor),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
@@ -139,15 +131,16 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
       onTap: () {
         _parts
             .picker(
-                adapter: NumberPickerAdapter(data: [NumberPickerColumn(begin: 1, end: 4)]),
-                selected: 0, //初期値
-                onConfirm: (Picker picker, List value) {
-                  if (value.toString() != "") {
-                    setState(() {
-                      rankingController.text = picker.getSelectedValues()[0].toString();
-                    });
-                  }
-                })
+              adapter: NumberPickerAdapter(data: [NumberPickerColumn(begin: 1, end: 4)]),
+              selected: 0, //初期値
+              onConfirm: (Picker picker, List value) {
+                if (value.toString() != "") {
+                  setState(() {
+                    rankingController.text = picker.getSelectedValues()[0].toString();
+                  });
+                }
+              },
+            )
             .showModal(this.context);
       },
       child: AbsorbPointer(

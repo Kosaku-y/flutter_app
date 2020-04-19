@@ -23,10 +23,7 @@ class ReturnTopScreen extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: Center(
-                child: Text("$message", style: TextStyle(color: _parts.pointColor)),
-              ),
-            ),
+                child: Center(child: Text("$message", style: TextStyle(color: _parts.pointColor)))),
             Container(
               padding: const EdgeInsets.all(50.0),
               child: _parts.iconButton(

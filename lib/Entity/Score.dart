@@ -4,12 +4,12 @@
 
 ----------------------------------------------*/
 class Score {
-  String date; //日付,primaryKey
-  int ranking; //順位
-  int chip; //チップ
-  int total; //最終得点
-  int rate; //レート
-  int balance; //収入
+  String date; // 日付,primaryKey
+  int ranking; // 順位
+  int chip; // チップ
+  int total; // 最終得点
+  int rate; // レート
+  int balance; // 収入
 
   Score(this.date, this.ranking, this.chip, this.total, this.rate, this.balance);
   Score.fromJson(Map<String, dynamic> json)
@@ -39,6 +39,8 @@ class ScoreAnalyze {
   double games = 0; //試合数
   double totalChip = 0; //トータルのチップ
   double totalPoint = 0.0; //総合得点
+  double maxPoint = -1000.0; //累計最高得点
+  double minPoint = 10000.0; //累計最低得点
   double totalBalance = 0; //トータル収支
   double associationRate = 0.0; //連対率
   double avoidFourthRate = 0.0; //4着回避率
@@ -50,6 +52,8 @@ class ScoreAnalyze {
         games++;
         totalChip += element.chip;
         totalPoint += element.total;
+        maxPoint = totalPoint > maxPoint ? totalPoint : maxPoint;
+        minPoint = totalPoint < minPoint ? totalPoint : minPoint;
         totalBalance += element.balance;
         rankingList[element.ranking - 1]++;
       });

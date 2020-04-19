@@ -6,23 +6,21 @@ import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
+import '../../CommonData.dart';
 import 'EventCreateScreen.dart';
 import 'package:flutter_picker/flutter_picker.dart';
-
-import 'EventSerchResultScreen.dart';
+import 'EventSearchResultScreen.dart';
 
 /*----------------------------------------------
 
 イベント検索フォームScreenクラス
 
 ----------------------------------------------*/
+
 class EventManageScreen extends StatefulWidget {
   final User user;
   EventManageScreen({Key key, this.user}) : super(key: key);
-
-  State<StatefulWidget> createState() {
-    return new EventManageScreenState();
-  }
+  State<StatefulWidget> createState() => EventManageScreenState();
 }
 
 class EventManageScreenState extends State<EventManageScreen> {
@@ -58,26 +56,26 @@ class EventManageScreenState extends State<EventManageScreen> {
         child: Container(
           padding: const EdgeInsets.all(30.0),
           child: SingleChildScrollView(
-            child: Column(children: <Widget>[
-              Text("検索条件を入力してください", style: TextStyle(color: _parts.fontColor)),
-              _prefPicker(),
-              _linePicker(),
-              _stationPicker(),
-              Container(
-                padding: EdgeInsets.only(top: 20.0),
-                child: _parts.iconButton(message: "検索", icon: Icons.search, onPressed: _submission),
-              ),
-            ]),
+            child: Column(
+              children: <Widget>[
+                Text("検索条件を入力してください", style: TextStyle(color: _parts.fontColor)),
+                _prefPicker(),
+                _linePicker(),
+                _stationPicker(),
+                Container(
+                  padding: EdgeInsets.only(top: 20.0),
+                  child:
+                      _parts.iconButton(message: "検索", icon: Icons.search, onPressed: _submission),
+                ),
+              ],
+            ),
           ),
         ),
       ),
       floatingActionButton: _parts.floatButton(
           icon: Icons.person_add,
           onPressed: () {
-            Navigator.of(
-              context,
-              rootNavigator: true,
-            ).push<Widget>(
+            Navigator.of(context, rootNavigator: true).push<Widget>(
               MaterialPageRoute(
                 settings: const RouteSettings(name: "/EventCreate"),
                 builder: (context) => EventCreateScreen(user: widget.user, mode: 0),
@@ -96,15 +94,13 @@ class EventManageScreenState extends State<EventManageScreen> {
         Navigator.push(
           this.context,
           MaterialPageRoute(
-            // パラメータを渡す
             settings: const RouteSettings(name: "/EventSearchResult"),
             builder: (context) => new EventSearchResultScreen(
-              user: widget.user,
-              eventSearch: EventSearch(
-                  pref: _prefController.text == " " ? null : _prefController.text,
-                  line: _lineController.text == " " ? null : _lineController.text,
-                  station: _stationController.text == " " ? null : _stationController.text),
-            ),
+                user: widget.user,
+                eventSearch: EventSearch(
+                    pref: _prefController.text == " " ? null : _prefController.text,
+                    line: _lineController.text == " " ? null : _lineController.text,
+                    station: _stationController.text == " " ? null : _stationController.text)),
           ),
         );
       }
@@ -117,7 +113,7 @@ class EventManageScreenState extends State<EventManageScreen> {
       onTap: () {
         _parts
             .picker(
-              adapter: PickerDataAdapter<String>(pickerdata: Pref.pref.keys.toList()),
+              adapter: PickerDataAdapter<String>(pickerdata: CommonData.pref.keys.toList()),
               selected: _selectedPref, //初期値
               onConfirm: (Picker picker, List value) {
                 var newData = picker.getSelectedValues()[0].toString();
@@ -125,7 +121,7 @@ class EventManageScreenState extends State<EventManageScreen> {
                   setState(() {
                     _selectedPref = picker.selecteds[0];
                     _prefController.text = newData;
-                    if (newData != " ") _bloc.lineApiSink.add(Pref.pref[newData]);
+                    if (newData != " ") _bloc.callLineApi(CommonData.pref[newData]);
                     _prefChange();
                   });
                 }
@@ -190,7 +186,7 @@ class EventManageScreenState extends State<EventManageScreen> {
                             setState(() {
                               _selectedLine = picker.selecteds[0];
                               _lineController.text = newData;
-                              if (newData != " ") _bloc.stationApiSink.add(_lineMap[newData]);
+                              if (newData != " ") _bloc.callStationApi(_lineMap[newData]);
                               _lineChange();
                             });
                           }

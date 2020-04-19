@@ -28,7 +28,8 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 ~~-piechart stateless化~~
 ~~-カレンダーの当日イベントが表示されない~~
 ~~api変更~~
--駅すぱあとapiコール時差問題
+-Picker 都道府県->路線->都道府県 エラー(validate)
+~~-駅すぱあとapiコール時差問題~~
 -NewHomeの改善
 -自身のイベント管理
 -themeでレイアウト色管理
@@ -75,12 +76,122 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 --aがnullでなければa nullであればbを代入
 
 
+
  
 --変数の変化(状態の変化)によってwidgetが変わる場合setState呼んで値を変える
 ->bloc を使ったり、providerやInheritedWidgetを使うことによって回避できる
 
 -StreamBuilder 非同期処理の更新する変数が変化する度にウィジェットをbuildし直すBuilder
 -FutureBuilder 指定した非同期処理の完了を待つBuilder
+Future
+非同期処理
+値を取得すると処理が終了
+Stream
+非同期処理
+ストリームが開いている間、ずっと値が流れてくる
+--
+```dart
+child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: Center(
+                      child: Text("指定の条件では見つかりませんでした。", style: guideStyle),
+                    ),
+                  ),
+                  _parts.backButton(onPressed: () {
+                    Navigator.pop(context);
+                  }),
+                ],
+              ),
+  Future<String> _getFutureValue() async {
+    // 擬似的に通信中を表現するために１秒遅らせる
+    await Future.delayed(
+      Duration(seconds: 1),
+    );
+
+    try {
+      // 必ずエラーを発生させる
+        throw Exception("データの取得に失敗しました");
+    } catch (error) {
+      return Future.error(error);
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('FutureBuilder Demo'),
+      ),
+      body: Center(
+        child: FutureBuilder(
+          future: _getFutureValue(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            // エラー発生時はエラーメッセージを表示
+            if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            // 通信中はスピナーを表示
+            if (snapshot.connectionState != ConnectionState.active) {
+            }
+
+
+
+            // データがnullでないかチェック
+            if (snapshot.hasData) {
+              return Text(snapshot.data);
+            } else {
+              return Text("データが存在しません");
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+/*
+import 'package:firebase_admob/firebase_admob.dart';
+
+// 広告ターゲット
+  String bannerId = "ca-app-pub-3866258831627989/4610309915";
+  BannerAd myBanner = BannerAd(
+    // テスト用のIDを使用
+    // リリース時にはIDを置き換える必要あり
+    adUnitId: "ca-app-pub-3866258831627989/4610309915",
+    size: AdSize.smartBanner,
+    targetingInfo: MobileAdTargetingInfo(
+      keywords: <String>['flutterio', 'beautiful apps'],
+      //contentUrl: 'https://flutter.io',
+      childDirected: false,
+      testDevices: <String>[], // Android emulators are considered test devices
+    ),
+    listener: (MobileAdEvent event) {
+      // 広告の読み込みが完了
+      print("BannerAd event is $event");
+    },
+  );
+    @override
+      void initState() {
+        super.initState();
+        // インスタンスを初期化
+        FirebaseAdMob.instance.initialize(appId: bannerId);
+    
+        // バナー広告を表示する
+        myBanner
+          ..load()
+          ..show(
+            // ボトムからのオフセットで表示位置を決定
+            anchorOffset: 50.0,
+            anchorType: AnchorType.bottom,
+          );
+      }
+      @override
+      void dispose() {
+        super.dispose();
+        myBanner.dispose();
+        }
+*/
+  ```
 finalやconstはなるべく使う
 https://oar.st40.xyz/article/265
 

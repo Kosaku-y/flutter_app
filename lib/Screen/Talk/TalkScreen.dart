@@ -34,7 +34,7 @@ class TalkScreenState extends State<TalkScreen> {
   String opponentUserName;
   List<Talk> talkList = new List();
   TalkBloc bloc;
-  TalkBloc blocForNew;
+  TalkBloc newRoomBloc;
   TextStyle messageStyle = TextStyle(fontSize: 15.0, color: Colors.white);
 
   @override
@@ -48,8 +48,8 @@ class TalkScreenState extends State<TalkScreen> {
     }
     //トーク履歴からの遷移
     else {
-      blocForNew = TalkBloc.newRoom(widget.user, widget.toUserId, widget.toUserName);
-      blocForNew.prepareRoom.add(null);
+      newRoomBloc = TalkBloc.newRoom(widget.user, widget.toUserId, widget.toUserName);
+      newRoomBloc.callPrepareRoom();
       opponentUserName = widget.toUserName;
     }
 
@@ -88,16 +88,18 @@ class TalkScreenState extends State<TalkScreen> {
       body: widget.room != null
           ? messageArea()
           : StreamBuilder<String>(
-              stream: blocForNew.roomIdStream,
+              stream: newRoomBloc.roomIdStream,
               builder: (context, snapshot) {
                 print(snapshot.data);
-                if (!snapshot.hasData || snapshot.data == null) return _parts.indicator();
-                if (snapshot.hasError) {
+                if (snapshot.hasError) return Text("エラーが発生しました：" + snapshot.error.toString());
+                if (snapshot.connectionState == ConnectionState.waiting) return _parts.indicator();
+                if (snapshot.hasData) {
                   return Text("エラーが発生しました：" + snapshot.error.toString());
+                } else {
+                  bloc = new TalkBloc(snapshot.data);
+                  newRoomBloc.dispose();
+                  return messageArea();
                 }
-                bloc = new TalkBloc(snapshot.data);
-                blocForNew.dispose();
-                return messageArea();
               },
             ),
     );
@@ -107,53 +109,53 @@ class TalkScreenState extends State<TalkScreen> {
     return StreamBuilder<List<Talk>>(
       stream: bloc.messageListStream,
       builder: (context, snapshot) {
-        print("talkList:$talkList");
-        if (!snapshot.hasData) return _parts.indicator();
-        if (snapshot.hasError) {
+        if (snapshot.hasError) return Text("エラーが発生しました：" + snapshot.error.toString());
+        if (snapshot.connectionState == ConnectionState.waiting) return _parts.indicator();
+        if (!snapshot.hasData) {
           return Text("エラーが発生しました：" + snapshot.error.toString());
-        }
-        talkList = snapshot.data;
-        return Container(
-          child: new Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView.builder(
-                  //controller: _scrollController,
-                  reverse: true,
-                  padding: const EdgeInsets.all(16.0),
-                  itemBuilder: (BuildContext context, int index) {
-                    return _buildRow(talkList.length - 1 - index);
-                  },
-                  itemCount: talkList.length,
+        } else {
+          talkList = snapshot.data;
+          print(talkList);
+          return Container(
+            child: new Column(
+              children: <Widget>[
+                Expanded(
+                  child: ListView.builder(
+                    //controller: _scrollController,
+                    reverse: false,
+                    padding: const EdgeInsets.all(16.0),
+                    itemBuilder: (BuildContext context, int index) {
+                      return _buildRow(talkList[index]);
+                    },
+                    itemCount: talkList.length,
+                  ),
                 ),
-              ),
-              Divider(
-                height: 4.0,
-              ),
-              Container(
-                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
-                  child: _buildInputArea())
-            ],
-          ),
-        );
+                Divider(
+                  height: 4.0,
+                ),
+                Container(
+                    decoration: BoxDecoration(color: Theme.of(context).cardColor),
+                    child: _buildInputArea())
+              ],
+            ),
+          );
+        }
       },
     );
   }
 
   // 投稿されたメッセージの1行を表示するWidgetを生成
-  Widget _buildRow(int index) {
-    Talk talk = talkList[index];
+  Widget _buildRow(Talk talk) {
     return Container(
       margin: EdgeInsets.only(top: 8.0),
       child: Builder(
         builder: (_) {
-          if (talk.fromUserId == widget.user.userId) {
+          if (talk.fromUserId == widget.user.userId)
             return _otherUserCommentRow(talk);
-          } else if (talk.fromUserId == "system") {
+          else if (talk.fromUserId == "system")
             return _systemCommentRow(talk);
-          } else {
+          else
             return _currentUserCommentRow(talk);
-          }
         },
       ),
     );
@@ -172,9 +174,7 @@ class TalkScreenState extends State<TalkScreen> {
   Widget _otherUserCommentRow(Talk talk) {
     return Row(children: <Widget>[
       new Expanded(child: _messageLayout(talk, CrossAxisAlignment.end)),
-      SizedBox(
-        width: 16.0,
-      ),
+      SizedBox(width: 16.0),
       Container(child: _avatarLayout(talk)),
     ]);
   }
@@ -212,7 +212,11 @@ class TalkScreenState extends State<TalkScreen> {
       onTap: () => Navigator.of(context).push<Widget>(
         MaterialPageRoute(
           settings: const RouteSettings(name: "/Profile"),
-          builder: (context) => new ProfileScreen(user: widget.user, userId: talk.fromUserId),
+          builder: (context) => new ProfileScreen(
+            user: widget.user,
+            userId: talk.fromUserId,
+            userName: talk.fromUserName,
+          ),
         ),
       ),
     );
@@ -222,13 +226,9 @@ class TalkScreenState extends State<TalkScreen> {
   Widget _buildInputArea() {
     return Row(
       children: <Widget>[
-        SizedBox(
-          width: 16.0,
-        ),
+        SizedBox(width: 16.0),
         Expanded(
-          child: TextField(
-            controller: _textEditController,
-          ),
+          child: TextField(controller: _textEditController),
         ),
         CupertinoButton(
           child: Icon(Icons.send, color: _parts.baseColor),
@@ -249,5 +249,6 @@ class TalkScreenState extends State<TalkScreen> {
   void dispose() {
     super.dispose();
     bloc?.dispose();
+    newRoomBloc?.dispose();
   }
 }

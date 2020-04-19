@@ -15,6 +15,12 @@ class LoginBloc {
   //loginRepositoryからGoogleログイン受け取るためのStream
   final _stateController = StreamController();
 
+  Sink get googleLoginSink => _googleLoginController.sink;
+  Sink get stateSink => _stateController.sink;
+
+  ValueObservable<User> get currentTempUserStream => _currentTempUserController.stream;
+  Stream get googleLoginStream => _googleLoginController.stream;
+
   final repository = LoginRepository();
 
   LoginBloc() {
@@ -47,12 +53,6 @@ class LoginBloc {
       } catch (_) {}
     });
   }
-
-  Sink get googleLoginSink => _googleLoginController.sink;
-  Sink get stateSink => _stateController.sink;
-
-  ValueObservable<User> get currentTempUserStream => _currentTempUserController.stream;
-  Stream get googleLoginStream => _googleLoginController.stream;
 
   void dispose() {
     _stateController.close();

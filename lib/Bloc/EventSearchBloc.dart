@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
-import 'package:rxdart/rxdart.dart';
 
 /*----------------------------------------------
 
@@ -10,25 +9,23 @@ import 'package:rxdart/rxdart.dart';
 
 ----------------------------------------------*/
 class EventSearchBloc {
-  //イベント検索ページから要素を受け取るStream
-  final StreamController _eventSearchController = StreamController<EventSearch>();
-  Sink get eventSearchSink => _eventSearchController.sink;
-
   //イベント検索ページに要素を流すStream
-  final _searchResultController = BehaviorSubject<List<EventDetail>>.seeded(null);
+  final _searchResultController = StreamController<List<EventDetail>>();
   Stream<List<EventDetail>> get searchResultStream => _searchResultController.stream;
 
-  final EventRepository repository = EventRepository();
+  EventSearchBloc();
 
-  EventSearchBloc() {
-    _eventSearchController.stream.listen((event) async {
-      List<EventDetail> eventList = await repository.searchEvent(event);
-      _searchResultController.sink.add(eventList);
-    });
+  fetchResult(EventSearch search) async {
+    final EventRepository repository = EventRepository();
+    try {
+      List<EventDetail> result = await repository.searchEvent(search);
+      _searchResultController.sink.add(result);
+    } catch (e) {
+      _searchResultController.sink.addError(e);
+    }
   }
 
   void dispose() {
-    _eventSearchController.close();
     _searchResultController.close();
   }
 }

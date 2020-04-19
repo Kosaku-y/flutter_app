@@ -45,7 +45,7 @@ class LocalDataRepository {
     scoreMap.forEach((key, value) {
       returnMap[DateTime.parse(key)] = value;
     });
-    print("get:$scoreMap");
+    print("get: $scoreMap");
     return returnMap;
   }
 

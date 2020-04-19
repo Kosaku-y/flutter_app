@@ -41,9 +41,9 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
 
   void submit(String userId) async {
     User user = widget.user;
-    user.name = _nameInputController.text;
-    user.age = _ageInputController.text;
-    user.sex = _sexInputController.text;
+    user.setName = _nameInputController.text;
+    user.setAge = _ageInputController.text;
+    user.setSex = _sexInputController.text;
     UserDataRepository repository = UserDataRepository();
     await repository.registerUser(user);
 

@@ -6,7 +6,7 @@ import 'AuthStatus.dart';
 
 ----------------------------------------------*/
 class User {
-  String _userId = ""; //ユーザーID
+  String _id = ""; //ユーザーID
   String _name = ""; //ユーザー名前
   String _age = ""; //年齢
   String _sex = ""; //性別
@@ -14,10 +14,10 @@ class User {
   AuthStatus _status; //ログインステータス
 
   User();
-  User.tmpUser(this._status, this._userId);
+  User.tmpUser(this._status, this._id);
 
   User.fromMap(String userId, Map map)
-      : _userId = userId,
+      : _id = userId,
         _name = map["name"],
         _age = map["age"],
         _sex = map["sex"],
@@ -41,28 +41,28 @@ class User {
     };
   }
 
-  String get userId => _userId;
+  String get userId => _id;
 
   String get name => _name;
-  set name(String value) => _name = value;
+  set setName(String value) => _name = value;
 
   String get rank => _rank;
-  set rank(String value) {
+  set setRank(String value) {
     _rank = value;
   }
 
   String get sex => _sex;
-  set sex(String value) {
+  set setSex(String value) {
     _sex = value;
   }
 
   String get age => _age;
-  set age(String value) {
+  set setAge(String value) {
     _age = value;
   }
 
   AuthStatus get status => _status;
-  set status(AuthStatus value) {
+  set setStatus(AuthStatus value) {
     _status = value;
   }
 }

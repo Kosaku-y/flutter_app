@@ -26,18 +26,9 @@ class TalkBloc {
   final _roomIdController = BehaviorSubject<String>.seeded(null);
   Stream<String> get roomIdStream => _roomIdController.stream;
 
-  //roomIDのget通知を受け取るstream
-  final _prepareRoomController = StreamController<String>();
-  Sink<String> get prepareRoom => _prepareRoomController.sink;
-
   //リンクからの遷移
   TalkBloc.newRoom(User user, String toUserId, String toUserName) {
     this.repository = TalkRepository.forNewRoom(user, toUserId, toUserName);
-    String roomId;
-    _prepareRoomController.stream.listen((event) async {
-      roomId = await repository.prepareRoomId();
-      if (roomId != null) _roomIdController.sink.add(roomId);
-    });
   }
 
   //履歴からの遷移
@@ -55,10 +46,18 @@ class TalkBloc {
     });
   }
 
+  callPrepareRoom() async {
+    try {
+      String roomId = await repository.prepareRoomId();
+      if (roomId != null) _roomIdController.sink.add(roomId);
+    } catch (e) {
+      _roomIdController.sink.addError(e);
+    }
+  }
+
   void dispose() {
     _sendMessageController?.close();
     _messageListController?.close();
     _roomIdController?.close();
-    _prepareRoomController?.close();
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
 
 /*----------------------------------------------
@@ -7,40 +8,54 @@ import 'package:flutter_app2/Repository/EventRepository.dart';
 
 ----------------------------------------------*/
 class EventManageBloc {
-  //イベント作成ページからpicker作成のためのprefCodeを受け取るStream
-  final StreamController _lineApiController = StreamController<String>();
-  Sink get lineApiSink => _lineApiController.sink;
-
   //イベント作成ページへ路線Map<name,code>を返すStream
   final StreamController _lineMapController = StreamController<Map<String, String>>();
   Stream<Map<String, String>> get lineMapStream => _lineMapController.stream;
-
-  //イベント作成ページからpicker作成のためのlineCodeを受け取るStream
-  final StreamController _stationApiController = StreamController<String>();
-  Sink get stationApiSink => _stationApiController.sink;
 
   //イベント作成ページへ駅Map<name,code>を返すStream
   final StreamController _stationMapController = StreamController<Map<String, String>>();
   Stream<Map<String, String>> get stationMapStream => _stationMapController.stream;
 
+  //新規EventDetail作成結果を流すStream
+  final StreamController _newEventController = StreamController<bool>();
+  Stream<bool> get newEventStream => _newEventController.stream;
+
   final EventRepository _repository = EventRepository();
 
-  EventManageBloc() {
-    _lineApiController.stream.listen((prefCode) async {
+  EventManageBloc();
+
+  //県名から路線のMapを取得
+  callLineApi(String prefCode) async {
+    try {
       Map<String, String> lineMap = await _repository.createLineMap(prefCode);
       _lineMapController.add(lineMap);
-    });
+    } catch (e) {
+      _lineMapController.addError(e);
+    }
+  }
 
-    _stationApiController.stream.listen((lineCode) async {
+  //路線コードから駅のMapを取得
+  callStationApi(String lineCode) async {
+    try {
       Map<String, String> stationMap = await _repository.createStationMap(lineCode);
       _stationMapController.add(stationMap);
-    });
+    } catch (e) {
+      _stationMapController.addError(e);
+    }
+  }
+
+  //イベント作成
+  callCreateEvent(String stationCode, EventDetail event) async {
+    try {
+      _newEventController.add(_repository.createEvent(stationCode, event));
+    } catch (e) {
+      _newEventController.addError(e);
+    }
   }
 
   void dispose() {
-    _lineApiController.close();
     _lineMapController.close();
-    _stationApiController.close();
     _stationMapController.close();
+    _newEventController.close();
   }
 }

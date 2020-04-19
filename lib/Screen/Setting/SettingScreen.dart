@@ -18,6 +18,7 @@ class SettingScreen extends StatelessWidget {
   final PageParts _parts = PageParts();
   final User user;
   SettingScreen({Key key, this.user});
+
   // 画面全体のビルド
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,8 @@ class SettingScreen extends StatelessWidget {
               Navigator.of(context).push<Widget>(
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/Profile"),
-                  builder: (context) => new ProfileScreen(user: user),
+                  builder: (context) =>
+                      new ProfileScreen(user: user, userId: user.userId, userName: user.name),
                 ),
               );
             },
@@ -40,7 +42,7 @@ class SettingScreen extends StatelessWidget {
           _listElement(
             title: "ログアウト",
             onTap: () {
-              showDialog<bool>(
+              showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return new AlertDialog(

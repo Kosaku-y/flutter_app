@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final int mode = 0;
+  final int mode = 1;
   /*
   * 実機 0
   * ログインスルー 1
@@ -67,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
         return;
       case 2:
         User user = User.tmpUser(AuthStatus.signedUp, "test");
-        user.name = "テストユーザ";
+        user.setName = "テストユーザ";
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             settings: const RouteSettings(name: "/AccountRegister"),

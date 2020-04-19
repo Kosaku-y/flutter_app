@@ -34,16 +34,12 @@ class TalkRoomScreen extends StatelessWidget {
                   return Center(
                     child: Text(
                       "トークルームはありません",
-                      style: TextStyle(
-                        color: _parts.pointColor,
-                        fontSize: 20,
-                      ),
+                      style: TextStyle(color: _parts.pointColor, fontSize: 20),
                     ),
                   );
                 }
-                if (snapshot.hasError) {
-                  return Text("エラーが発生しました：" + snapshot.error.toString());
-                }
+                if (snapshot.hasError) return Text("エラーが発生しました：" + snapshot.error.toString());
+
                 roomList = snapshot.data;
                 if (snapshot.data.length == 0) {
                   return Center(

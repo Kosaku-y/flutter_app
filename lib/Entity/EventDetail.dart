@@ -21,8 +21,8 @@ class EventDetail {
   EventDetail.fromMap(Map map)
       : eventId = map["eventId"],
         recruitMember = map["recruitMember"],
-        pref = map["prefName"],
-        line = map["lineName"],
+        pref = map["pref"],
+        line = map["line"],
         station = map["station"],
         startingTime = map["startingTime"],
         endingTime = map["endingTime"],
