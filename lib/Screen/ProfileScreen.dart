@@ -29,11 +29,7 @@ class ProfileScreen extends StatelessWidget {
             //_titleArea(context),
             Divider(color: _parts.pointColor),
             _listElement("名前", userName),
-            _parts.backButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )
+            _parts.backButton(context)
           ],
         ),
       ),
@@ -44,19 +40,10 @@ class ProfileScreen extends StatelessWidget {
     return Column(
       children: <Widget>[
         ListTile(
-          title: Text(
-            title,
-            style: TextStyle(color: Colors.grey, fontSize: 18.0),
-          ),
-          trailing: Text(
-            content,
-            style: TextStyle(color: _parts.pointColor, fontSize: 18.0),
-          ),
+          title: Text(title, style: TextStyle(color: Colors.grey, fontSize: 18.0)),
+          trailing: Text(content, style: TextStyle(color: _parts.pointColor, fontSize: 18.0)),
         ),
-        Divider(
-          color: _parts.pointColor,
-          height: 4.0,
-        ),
+        Divider(color: _parts.pointColor, height: 4.0),
       ],
     );
   }
@@ -66,14 +53,9 @@ class ProfileScreen extends StatelessWidget {
       child: CircleAvatar(
         radius: 50.0,
         //backgroundImage: NetworkImage(entry.userImageUrl),
-        child: Text(
-          userName[0],
-          style: TextStyle(fontSize: 30),
-        ),
+        child: Text(userName[0], style: TextStyle(fontSize: 30)),
       ),
-      onTap: () {
-        return null;
-      },
+      onTap: () => null,
     );
   }
 }

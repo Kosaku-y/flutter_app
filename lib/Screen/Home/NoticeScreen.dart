@@ -25,9 +25,7 @@ class NoticeScreen extends StatelessWidget {
       body: Container(
         child: ListView(
           children: <Widget>[
-            _listElement(
-              title: "ver1.0がリリースされました",
-            ),
+            _listElement(title: "ver1.0がリリースされました"),
           ],
         ),
       ),
@@ -38,16 +36,10 @@ class NoticeScreen extends StatelessWidget {
     return Column(
       children: <Widget>[
         ListTile(
-            title: Text(
-              title,
-              style: TextStyle(color: _parts.pointColor),
-            ),
-            trailing: Icon(Icons.arrow_forward, color: _parts.pointColor),
+            title: Text(title, style: TextStyle(color: _parts.pointColor)),
+            //trailing: Icon(Icons.arrow_forward, color: _parts.pointColor),
             onTap: onTap),
-        Divider(
-          color: _parts.pointColor,
-          height: 4.0,
-        ),
+        Divider(color: _parts.pointColor, height: 4.0),
       ],
     );
   }

@@ -48,8 +48,8 @@ class TalkScreenState extends State<TalkScreen> {
     }
     //トーク履歴からの遷移
     else {
-      newRoomBloc = TalkBloc.newRoom(widget.user, widget.toUserId, widget.toUserName);
-      newRoomBloc.callPrepareRoom();
+      newRoomBloc = TalkBloc.newRoom(widget.user, widget.toUserId, widget.toUserName)
+        ..callPrepareRoom();
       opponentUserName = widget.toUserName;
     }
 
@@ -92,10 +92,10 @@ class TalkScreenState extends State<TalkScreen> {
               builder: (context, snapshot) {
                 print(snapshot.data);
                 if (snapshot.hasError) return Text("エラーが発生しました：" + snapshot.error.toString());
-                if (snapshot.connectionState == ConnectionState.waiting) return _parts.indicator();
-                if (snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.waiting) return _parts.indicator;
+                if (!snapshot.hasData)
                   return Text("エラーが発生しました：" + snapshot.error.toString());
-                } else {
+                else {
                   bloc = new TalkBloc(snapshot.data);
                   newRoomBloc.dispose();
                   return messageArea();
@@ -110,10 +110,10 @@ class TalkScreenState extends State<TalkScreen> {
       stream: bloc.messageListStream,
       builder: (context, snapshot) {
         if (snapshot.hasError) return Text("エラーが発生しました：" + snapshot.error.toString());
-        if (snapshot.connectionState == ConnectionState.waiting) return _parts.indicator();
-        if (!snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting) return _parts.indicator;
+        if (!snapshot.hasData)
           return Text("エラーが発生しました：" + snapshot.error.toString());
-        } else {
+        else {
           talkList = snapshot.data;
           print(talkList);
           return Container(
@@ -124,15 +124,11 @@ class TalkScreenState extends State<TalkScreen> {
                     //controller: _scrollController,
                     reverse: false,
                     padding: const EdgeInsets.all(16.0),
-                    itemBuilder: (BuildContext context, int index) {
-                      return _buildRow(talkList[index]);
-                    },
+                    itemBuilder: (BuildContext context, int index) => _buildRow(talkList[index]),
                     itemCount: talkList.length,
                   ),
                 ),
-                Divider(
-                  height: 4.0,
-                ),
+                Divider(height: 4.0),
                 Container(
                     decoration: BoxDecoration(color: Theme.of(context).cardColor),
                     child: _buildInputArea())
@@ -164,9 +160,7 @@ class TalkScreenState extends State<TalkScreen> {
   Widget _currentUserCommentRow(Talk talk) {
     return Row(children: <Widget>[
       Container(child: _avatarLayout(talk)),
-      SizedBox(
-        width: 16.0,
-      ),
+      SizedBox(width: 16.0),
       new Expanded(child: _messageLayout(talk, CrossAxisAlignment.start)),
     ]);
   }
@@ -180,16 +174,7 @@ class TalkScreenState extends State<TalkScreen> {
   }
 
   Widget _systemCommentRow(Talk talk) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Text(
-            talk.message,
-            style: messageStyle,
-          ),
-        ],
-      ),
-    );
+    return Center(child: Text(talk.message, style: messageStyle));
   }
 
   Widget _messageLayout(Talk talk, CrossAxisAlignment alignment) {
@@ -206,9 +191,8 @@ class TalkScreenState extends State<TalkScreen> {
   Widget _avatarLayout(Talk talk) {
     return InkWell(
       child: CircleAvatar(
-        //backgroundImage: NetworkImage(entry.userImageUrl),
-        child: Text(talk.fromUserName[0]),
-      ),
+          //backgroundImage: NetworkImage(entry.userImageUrl),
+          child: Text(talk.fromUserName[0])),
       onTap: () => Navigator.of(context).push<Widget>(
         MaterialPageRoute(
           settings: const RouteSettings(name: "/Profile"),
@@ -227,14 +211,12 @@ class TalkScreenState extends State<TalkScreen> {
     return Row(
       children: <Widget>[
         SizedBox(width: 16.0),
-        Expanded(
-          child: TextField(controller: _textEditController),
-        ),
+        Expanded(child: TextField(controller: _textEditController)),
         CupertinoButton(
           child: Icon(Icons.send, color: _parts.baseColor),
           onPressed: () {
             var talk = Talk(widget.user.userId, widget.user.name, _textEditController.text);
-            bloc.sendMessageSink.add(talk);
+            bloc.callSendMessage(talk);
             print("send message :${_textEditController.text}");
             _textEditController.clear();
             // キーボードを閉じる
@@ -250,5 +232,6 @@ class TalkScreenState extends State<TalkScreen> {
     super.dispose();
     bloc?.dispose();
     newRoomBloc?.dispose();
+    _textEditController.dispose();
   }
 }

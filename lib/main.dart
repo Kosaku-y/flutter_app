@@ -13,11 +13,9 @@ import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.da
 void main() {
   //PageParts parts = PageParts();
   return runApp(
-    new MaterialApp(
-      title: "Home",
-      home: new SplashScreen(),
-      //theme: parts.defaultTheme,
-    ),
+    new MaterialApp(title: "Home", home: new SplashScreen()
+        //theme: parts.defaultTheme,
+        ),
   );
 }
 
@@ -98,22 +96,10 @@ class _MainScreenState extends State<MainScreen> {
         //key: _scaffoldKey,
         body: Stack(
           children: <Widget>[
-            _buildTabItem(
-              TabItem.Home,
-              '/Home',
-            ),
-            _buildTabItem(
-              TabItem.EventManage,
-              '/EventManage',
-            ),
-            _buildTabItem(
-              TabItem.Room,
-              '/Room',
-            ),
-            _buildTabItem(
-              TabItem.Setting,
-              '/Setting',
-            ),
+            _buildTabItem(TabItem.Home, '/Home'),
+            _buildTabItem(TabItem.EventManage, '/EventManage'),
+            _buildTabItem(TabItem.Room, '/Room'),
+            _buildTabItem(TabItem.Setting, '/Setting'),
           ],
         ),
         bottomNavigationBar: BottomNavigation(
@@ -217,11 +203,7 @@ const tabIcon = <TabItem, IconData>{
 };
 
 class BottomNavigation extends StatelessWidget {
-  const BottomNavigation({
-    Key key,
-    this.currentTab,
-    this.onSelect,
-  }) : super(key: key);
+  const BottomNavigation({Key key, this.currentTab, this.onSelect}) : super(key: key);
 
   final TabItem currentTab;
   final ValueChanged<TabItem> onSelect;
@@ -233,47 +215,22 @@ class BottomNavigation extends StatelessWidget {
       backgroundColorStart: set.startGradient,
       backgroundColorEnd: set.endGradient,
       items: <BottomNavigationBarItem>[
-        bottomItem(
-          context,
-          tabItem: TabItem.Home,
-        ),
-        bottomItem(
-          context,
-          tabItem: TabItem.EventManage,
-        ),
-        bottomItem(
-          context,
-          tabItem: TabItem.Room,
-        ),
-        bottomItem(
-          context,
-          tabItem: TabItem.Setting,
-        )
+        bottomItem(context, tabItem: TabItem.Home),
+        bottomItem(context, tabItem: TabItem.EventManage),
+        bottomItem(context, tabItem: TabItem.Room),
+        bottomItem(context, tabItem: TabItem.Setting)
       ],
       type: BottomNavigationBarType.fixed,
-      onTap: (index) {
-        onSelect(TabItem.values[index]);
-      },
+      onTap: (index) => onSelect(TabItem.values[index]),
     );
   }
 
-  BottomNavigationBarItem bottomItem(
-    BuildContext context, {
-    TabItem tabItem,
-  }) {
+  BottomNavigationBarItem bottomItem(BuildContext context, {TabItem tabItem}) {
     PageParts set = PageParts();
     final color = currentTab == tabItem ? set.fontColor : Colors.white;
     return BottomNavigationBarItem(
-      icon: Icon(
-        tabIcon[tabItem],
-        color: color,
-      ),
-      title: Text(
-        tabTitle[tabItem],
-        style: TextStyle(
-          color: color,
-        ),
-      ),
+      icon: Icon(tabIcon[tabItem], color: color),
+      title: Text(tabTitle[tabItem], style: TextStyle(color: color)),
     );
   }
 }

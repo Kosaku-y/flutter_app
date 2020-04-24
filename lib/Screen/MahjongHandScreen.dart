@@ -27,7 +27,7 @@ class MahjongHandScreen extends StatelessWidget {
         builder: (context, snapshot) {
           // 非同期処理が完了している場合にWidgetの中身を呼び出す
           if (!snapshot.hasData) {
-            return _parts.indicator();
+            return _parts.indicator;
             // 非同期処理が未完了の場合にインジケータを表示する
           } else {
             handList = snapshot.data;
@@ -42,24 +42,19 @@ class MahjongHandScreen extends StatelessWidget {
                           _currentYaku = handList[index - i].yaku;
                           i++;
                           return Card(
-                            color: _parts.endGradient,
-                            child: ListTile(
-                              title: Text(
-                                "$_currentYaku飜",
-                                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          );
+                              color: _parts.endGradient,
+                              child: ListTile(
+                                  title: Text("$_currentYaku飜",
+                                      style:
+                                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold))));
                         }
                         return _buildRow(handList[index - i]);
                       },
                       itemCount: handList.length + 5,
                     ),
                   ),
-                  Divider(
-                    height: 8.0,
-                  ),
-                  _parts.backButton(onPressed: () => Navigator.pop(context))
+                  Divider(height: 8.0),
+                  _parts.backButton(context)
                 ],
               ),
             );
@@ -78,7 +73,7 @@ class MahjongHandScreen extends StatelessWidget {
 //            this.context,
 //            MaterialPageRoute(
 //              // パラメータを渡す
-//                builder: (context) => new EventDetailPage(handList
+//                builder: (context) => new DetailPage(handList
 //                [index])));
       },
       child: new Card(

@@ -47,7 +47,8 @@ class EventManageBloc {
   //イベント作成
   callCreateEvent(String stationCode, EventDetail event) async {
     try {
-      _newEventController.add(_repository.createEvent(stationCode, event));
+      bool result = await _repository.createEvent(stationCode, event);
+      _newEventController.add(result);
     } catch (e) {
       _newEventController.addError(e);
     }

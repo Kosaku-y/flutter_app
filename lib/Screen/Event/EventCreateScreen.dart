@@ -5,12 +5,11 @@ import 'package:flutter_app2/Bloc/EventManageBloc.dart';
 import 'package:flutter_app2/CommonData.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
-
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:intl/intl.dart';
-import '../ReturnTopScreen.dart';
+import 'AdvertisementScreen.dart';
 
 /*----------------------------------------------
 
@@ -46,12 +45,12 @@ class EventCreateScreenState extends State<EventCreateScreen> {
   static const int changed = 1;
   static const int error = 2;
 
-  int changePref = 0;
-  int changeLine = 0;
-  int changeStation = 0;
+  int changePref = init;
+  int changeLine = init;
+  int changeStation = init;
 
-  Map _lineMap = new Map<String, String>();
-  Map _stationMap = new Map<String, String>();
+  Map _lineMap = Map<String, String>();
+  Map _stationMap = Map<String, String>();
 
   //表示用Controller
   TextEditingController _startingController;
@@ -73,29 +72,31 @@ class EventCreateScreenState extends State<EventCreateScreen> {
   int _selectStationIndex = 0;
 
   final _formKey = GlobalKey<FormState>();
-
   @override
   void initState() {
     super.initState();
     _mode = widget.mode;
     if (_mode == register) {
-      _startingController = new TextEditingController(text: '');
-      _endingController = new TextEditingController(text: '');
-      _memberController = new TextEditingController(text: '');
-      _prefController = new TextEditingController(text: '');
-      _lineController = new TextEditingController(text: '');
-      _stationController = new TextEditingController(text: '');
-      _commentController = new TextEditingController(text: '');
+      _startingController = TextEditingController(text: '');
+      _endingController = TextEditingController(text: '');
+      _memberController = TextEditingController(text: '');
+      _prefController = TextEditingController(text: '');
+      _lineController = TextEditingController(text: '');
+      _stationController = TextEditingController(text: '');
+      _commentController = TextEditingController(text: '');
     } else {
       _bloc.callLineApi(CommonData.pref[widget.event.pref]);
       _selectPrefIndex = (CommonData.pref.keys.toList()).indexOf(widget.event.pref);
-      _startingController = new TextEditingController(text: widget.event.startingTime);
-      _endingController = new TextEditingController(text: widget.event.endingTime);
-      _memberController = new TextEditingController(text: widget.event.recruitMember);
-      _prefController = new TextEditingController(text: widget.event.pref);
-      _lineController = new TextEditingController(text: widget.event.line);
-      _stationController = new TextEditingController(text: widget.event.station);
-      _commentController = new TextEditingController(text: widget.event.comment);
+      changePref = changed;
+      changeLine = changed;
+      changeStation = changed;
+      _startingController = TextEditingController(text: widget.event.startingTime);
+      _endingController = TextEditingController(text: widget.event.endingTime);
+      _memberController = TextEditingController(text: widget.event.recruitMember);
+      _prefController = TextEditingController(text: widget.event.pref);
+      _lineController = TextEditingController(text: widget.event.line);
+      _stationController = TextEditingController(text: widget.event.station);
+      _commentController = TextEditingController(text: widget.event.comment);
     }
   }
 
@@ -109,7 +110,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
           padding: const EdgeInsets.all(40.0),
           child: SingleChildScrollView(
             child: Column(children: <Widget>[
-              Text('募集条件を入力してください', style: TextStyle(color: _parts.fontColor)),
+              Text('募集条件を入力してください', style: _parts.guideWhite),
               _recruitMemberPicker(), //募集人数Picker
               _prefPicker(), //都道府県Picker
               _linePicker(), //路線Picker
@@ -118,12 +119,8 @@ class EventCreateScreenState extends State<EventCreateScreen> {
               _endTimePicker(), //終了日時Picker
               _commentField(), //備考
               _parts.iconButton(
-                  message: "募集する", icon: Icons.event_available, onPressed: () => _submission()),
-              RaisedButton.icon(
-                label: Text("検索ページへ戻る"),
-                icon: Icon(Icons.search, color: _parts.fontColor),
-                onPressed: () => Navigator.pop(context),
-              ),
+                  message: "確認", icon: Icons.event_available, onPressed: () => _confirm()),
+              _parts.backButton(context),
             ]),
           ),
         ),
@@ -131,7 +128,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
     );
   }
 
-  void _submission() {
+  void _confirm() {
     if (this._formKey.currentState.validate()) {
       this._formKey.currentState.save();
       EventDetail event = new EventDetail(
@@ -155,70 +152,58 @@ class EventCreateScreenState extends State<EventCreateScreen> {
                 Text("募集条件を確認して下さい。"),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Text("募集人数：${event.recruitMember}", style: TextStyle(color: Colors.black)),
-                    Text("路線　　：${event.line}", style: TextStyle(color: Colors.black)),
-                    Text("駅　　　：${event.station}", style: TextStyle(color: Colors.black)),
-                    Text("開始時間：${event.startingTime}", style: TextStyle(color: Colors.black)),
-                    Text("終了時間：${event.endingTime}", style: TextStyle(color: Colors.black)),
+                    Text("募集人数：${event.recruitMember}", style: _parts.guideBlack),
+                    Text("路線　　：${event.line}", style: _parts.guideBlack),
+                    Text("駅　　　：${event.station}", style: _parts.guideBlack),
+                    Text("開始時間：${event.startingTime}", style: _parts.guideBlack),
+                    Text("終了時間：${event.endingTime}", style: _parts.guideBlack),
+                    Text("コメント：${event.comment}", style: _parts.guideBlack),
                   ],
                 ),
               ]),
-              btnOkOnPress: () => commit(event),
+              btnOkOnPress: () => _commit(event),
               btnCancelOnPress: () {},
-              btnCancelText: "修正する",
-              btnOkText: "募集する")
+              btnCancelText: "修正",
+              btnOkText: "作成")
           .show();
     }
   }
 
-  commit(event) async {
-    _bloc.callCreateEvent(_station.code, event);
-    var result = await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return StreamBuilder<bool>(
-          stream: _bloc.newEventStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              Navigator.pop(this.context, 0);
-              return Container();
-            }
-            if (snapshot.connectionState != ConnectionState.active)
-              return Container(child: _parts.indicator());
-            if (!snapshot.hasData) {
-              return Container();
-            } else {
-              Navigator.pop(this.context, 1);
-              return Container();
-            }
-          },
-        );
-      },
+  void _commit(EventDetail event) async {
+    var _error = await Navigator.of(context).push(
+      MaterialPageRoute(
+        settings: const RouteSettings(name: "/Advertisement"),
+        builder: (context) => AdvertisementScreen(stationCode: _station.code, event: event),
+        fullscreenDialog: true,
+      ),
     );
-    if (result == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          settings: const RouteSettings(name: "/ReturnTop"),
-          builder: (context) => ReturnTopScreen(message: "登録が完了しました。"),
-        ),
-      );
+    if (_error != null) {
+      _error = null;
+      print(_error);
+      AwesomeDialog(
+              context: context,
+              headerAnimationLoop: false,
+              animType: AnimType.TOPSLIDE,
+              dialogType: DialogType.ERROR,
+              body: Center(child: Text("イベント作成に失敗しました。\n再度やり直してください")),
+              btnOkOnPress: () {},
+              btnOkText: "OK")
+          .show();
     }
   }
 
   //募集人数Picker
   Widget _recruitMemberPicker() {
-    return new InkWell(
+    return InkWell(
       onTap: () {
         _parts
             .picker(
                 adapter: NumberPickerAdapter(data: [NumberPickerColumn(begin: 1, end: 4)]),
                 selected: _selectMemberIndex, //初期値
                 onConfirm: (Picker picker, List value) {
-                  if (value.toString() != "") {
+                  if (value.toString().isNotEmpty) {
                     setState(() {
                       _memberController.text = picker.getSelectedValues()[0].toString();
                     });
@@ -227,7 +212,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
             .showModal(this.context);
       },
       child: AbsorbPointer(
-        child: new TextFormField(
+        child: TextFormField(
           style: TextStyle(color: _parts.pointColor),
           enableInteractiveSelection: false,
           controller: _memberController,
@@ -265,24 +250,19 @@ class EventCreateScreenState extends State<EventCreateScreen> {
                 selected: _selectPrefIndex, //初期値
                 onConfirm: (Picker picker, List value) {
                   var newData = picker.getSelectedValues()[0].toString();
-                  if (_prefController.text != newData) {
-                    setState(() {
-                      if (newData != " ") {
-                        _selectStationIndex = 0;
-                        _bloc.callLineApi(CommonData.pref[newData]);
-                      } else {
-                        _selectPrefIndex = picker.selecteds[0];
-                      }
-                      _prefController.text = newData;
-                      _prefChange();
-                    });
+                  if (newData != _prefController.text && newData != " ") {
+                    _bloc.callLineApi(CommonData.pref[newData]);
+                    _selectPrefIndex = picker.selecteds[0];
+                    _selectLineIndex = 0;
+                    _prefChange();
+                    setState(() => _prefController.text = newData);
                   }
                 })
             .showModal(this.context);
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: _parts.pointColor),
           enableInteractiveSelection: false,
           controller: _prefController,
           decoration: InputDecoration(
@@ -294,13 +274,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
               borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
             ),
           ),
-          validator: (String value) {
-            if (changePref == error) {
-              return '再選択してください';
-            } else {
-              return null;
-            }
-          },
+          validator: (value) => changePref == error ? "再選択してください" : null,
         ),
       ),
     );
@@ -313,17 +287,16 @@ class EventCreateScreenState extends State<EventCreateScreen> {
       //県、路線、駅、組み合わせ矛盾チェック
       switch (changeLine) {
         case init:
-          changeLine = changed;
+          changeLine = changed; // 選択済み
           break;
         case changed:
-          if (changeStation != init) {
-            changeStation = error;
-          }
+          if (changeStation == changed) changeStation = error; // 駅が選択済みなら駅再選択
           break;
         case error:
-          break;
-        default:
-          changeLine = changed;
+          if (changePref == changed) {
+            changeLine = changed; // 県が選択済みなら選択OK
+            if (changeStation == changed) changeStation = error; // 駅が選択済みなら駅再選択
+          }
           break;
       }
     }
@@ -332,7 +305,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
     return StreamBuilder<Map<String, String>>(
       stream: _bloc.lineMapStream,
       builder: (context, snapshot) {
-        if (snapshot.hasError) return Text("エラーが発生しました。"); // エラー @Todo
+        if (snapshot.hasError) return Text("エラーが発生しました。", style: _parts.guideWhite); // エラー @Todo
         if (snapshot.connectionState == ConnectionState.waiting) return Container();
         if (!snapshot.hasData) {
           return Text("Data is Empty"); //データempty
@@ -351,16 +324,12 @@ class EventCreateScreenState extends State<EventCreateScreen> {
                       selected: _selectLineIndex, //初期値
                       onConfirm: (Picker picker, List value) {
                         var newData = _lineData[value[0]];
-                        if (_lineController.text != newData) {
-                          setState(() {
-                            _selectLineIndex = picker.selecteds[0];
-                            _selectStationIndex = 0;
-                            _lineController.text = newData;
-                            if (newData != " ") {
-                              _bloc.callStationApi(_lineMap[newData]);
-                              _lineChange();
-                            }
-                          });
+                        if (newData != _lineController.text && newData != " ") {
+                          _bloc.callStationApi(_lineMap[newData]);
+                          _selectLineIndex = picker.selecteds[0];
+                          _selectStationIndex = 0;
+                          _lineChange();
+                          setState(() => _lineController.text = newData);
                         }
                       })
                   .showModal(this.context);
@@ -374,14 +343,11 @@ class EventCreateScreenState extends State<EventCreateScreen> {
 
   Widget _lineTextFormField() {
     return new TextFormField(
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: _parts.pointColor),
       enableInteractiveSelection: false,
       controller: _lineController,
       decoration: InputDecoration(
-        icon: Icon(
-          Icons.train,
-          color: _parts.fontColor,
-        ),
+        icon: Icon(Icons.train, color: _parts.fontColor),
         labelText: '路線',
         labelStyle: TextStyle(color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
@@ -389,13 +355,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
           borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
         ),
       ),
-      validator: (String value) {
-        if (changeLine == error) {
-          return '再選択してください';
-        } else {
-          return null;
-        }
-      },
+      validator: (value) => changeLine == error ? "再選択してください" : null,
     );
   }
 
@@ -405,15 +365,16 @@ class EventCreateScreenState extends State<EventCreateScreen> {
     return StreamBuilder<Map<String, String>>(
       stream: _bloc.stationMapStream,
       builder: (context, snapshot) {
-        if (snapshot.hasError) return Text("エラーが発生しました。"); // エラー @Todo
+        if (snapshot.hasError) return Text("エラーが発生しました。", style: _parts.guideWhite); // エラー @Todo
         if (snapshot.connectionState == ConnectionState.waiting) return Container();
         if (!snapshot.hasData)
-          return Text("Data is Empty"); //データempty
+          return Text("Data is Empty", style: _parts.guideWhite); //データempty
         else {
           _stationMap = snapshot.data;
           _stationData = _stationMap.keys.toList();
           if (_mode == modify) {
             _mode = loaded;
+            _station.code = _stationMap[widget.event.station];
             _selectStationIndex = _stationData.indexOf(widget.event.station);
           } //ロード完了
           return InkWell(
@@ -424,15 +385,11 @@ class EventCreateScreenState extends State<EventCreateScreen> {
                     selected: _selectStationIndex, //初期値
                     onConfirm: (Picker picker, List value) {
                       var newData = picker.getSelectedValues()[0].toString();
-                      if (_stationController.text != newData) {
+                      if (newData != _stationController.text && newData != " ") {
                         _selectStationIndex = picker.selecteds[0];
-                        if (newData != " ") {
-                          setState(() {
-                            _stationController.text = newData;
-                            _station.code = _stationMap[newData];
-                            changeStation = 1;
-                          });
-                        }
+                        _station.code = _stationMap[newData];
+                        changeStation = 1;
+                        setState(() => _stationController.text = newData);
                       }
                     },
                   )
@@ -447,27 +404,18 @@ class EventCreateScreenState extends State<EventCreateScreen> {
 
   Widget _stationTextFormField() {
     return new TextFormField(
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: _parts.pointColor),
       enableInteractiveSelection: false,
       controller: _stationController,
       decoration: InputDecoration(
-        icon: Icon(
-          Icons.subway,
-          color: _parts.fontColor,
-        ),
+        icon: Icon(Icons.subway, color: _parts.fontColor),
         labelText: '駅名',
         labelStyle: TextStyle(color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
             borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
       ),
-      validator: (String value) {
-        if (changeStation == 2) {
-          return '再選択してください';
-        } else {
-          return null;
-        }
-      },
+      validator: (value) => changeStation == error ? "再選択してください" : null,
     );
   }
 
@@ -477,13 +425,12 @@ class EventCreateScreenState extends State<EventCreateScreen> {
         _parts
             .dateTimePicker(
               adapter: new DateTimePickerAdapter(
-                type: PickerDateTimeType.kYMDHM,
-                isNumberMonth: true,
-                yearSuffix: "年",
-                monthSuffix: "月",
-                daySuffix: "日",
-                value: _start ?? DateTime.now(),
-              ),
+                  type: PickerDateTimeType.kYMDHM,
+                  isNumberMonth: true,
+                  yearSuffix: "年",
+                  monthSuffix: "月",
+                  daySuffix: "日",
+                  value: _start ?? DateTime.now()),
               onConfirm: (picker, _) {
                 _start = DateTime.parse(picker.adapter.toString());
                 _startingController.text = formatter.format(_start);
@@ -497,19 +444,14 @@ class EventCreateScreenState extends State<EventCreateScreen> {
           enableInteractiveSelection: false,
           controller: _startingController,
           decoration: InputDecoration(
-            icon: Icon(
-              Icons.calendar_today,
-              color: _parts.fontColor,
-            ),
+            icon: Icon(Icons.calendar_today, color: _parts.fontColor),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
             labelText: '*開始日時',
             labelStyle: TextStyle(color: _parts.fontColor),
           ),
-          validator: (String value) {
-            return value.isEmpty ? '開始時間が未選択です' : null;
-          },
+          validator: (String value) => value.isEmpty ? '開始時間が未選択です' : null,
         ),
       ),
     );
@@ -521,13 +463,12 @@ class EventCreateScreenState extends State<EventCreateScreen> {
         _parts
             .dateTimePicker(
               adapter: new DateTimePickerAdapter(
-                type: PickerDateTimeType.kYMDHM,
-                isNumberMonth: true,
-                yearSuffix: "年",
-                monthSuffix: "月",
-                daySuffix: "日",
-                value: _start ?? DateTime.now(),
-              ),
+                  type: PickerDateTimeType.kYMDHM,
+                  isNumberMonth: true,
+                  yearSuffix: "年",
+                  monthSuffix: "月",
+                  daySuffix: "日",
+                  value: _start ?? DateTime.now()),
               onConfirm: (picker, _) {
                 _end = DateTime.parse(picker.adapter.toString());
                 _endingController.text = formatter.format(_end);
@@ -541,10 +482,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
           enableInteractiveSelection: false,
           controller: _endingController,
           decoration: InputDecoration(
-            icon: Icon(
-              Icons.calendar_today,
-              color: _parts.fontColor,
-            ),
+            icon: Icon(Icons.calendar_today, color: _parts.fontColor),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
@@ -570,10 +508,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
           controller: _commentController,
           style: TextStyle(color: _parts.pointColor),
           decoration: InputDecoration(
-            icon: Icon(
-              Icons.note,
-              color: _parts.fontColor,
-            ),
+            icon: Icon(Icons.note, color: _parts.fontColor),
             enabledBorder: UnderlineInputBorder(
               borderRadius: BorderRadius.circular(1.0),
               borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
@@ -602,6 +537,6 @@ class EventCreateScreenState extends State<EventCreateScreen> {
     _lineController.dispose();
     _stationController.dispose();
     _commentController.dispose();
-    _bloc.dispose();
+    _bloc?.dispose();
   }
 }

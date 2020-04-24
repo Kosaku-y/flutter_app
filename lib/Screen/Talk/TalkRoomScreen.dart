@@ -31,36 +31,22 @@ class TalkRoomScreen extends StatelessWidget {
               stream: bloc.talkRoomListStream,
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
-                    child: Text(
-                      "トークルームはありません",
-                      style: TextStyle(color: _parts.pointColor, fontSize: 20),
-                    ),
-                  );
+                  ///@Todo stream見直し
+                  return Center(child: Text("トークルームはありません", style: _parts.basicWhite));
                 }
                 if (snapshot.hasError) return Text("エラーが発生しました：" + snapshot.error.toString());
-
                 roomList = snapshot.data;
                 if (snapshot.data.length == 0) {
-                  return Center(
-                    child: Text("トークルームはありません",
-                        style: TextStyle(
-                          color: _parts.pointColor,
-                          fontSize: 20,
-                        )),
-                  );
+                  return Center(child: Text("トークルームはありません", style: _parts.basicWhite));
                 } else {
                   return Container(
-                      child: new Column(
+                      child: Column(
                     children: <Widget>[
                       Expanded(
-                        child: ListView.builder(
-                          itemBuilder: (BuildContext context, int index) {
-                            return _buildRow(context, roomList[index]);
-                          },
-                          itemCount: snapshot.data.length,
-                        ),
-                      ),
+                          child: ListView.builder(
+                        itemBuilder: (context, index) => _buildRow(context, roomList[index]),
+                        itemCount: snapshot.data.length,
+                      )),
                     ],
                   ));
                 }
@@ -80,21 +66,14 @@ class TalkRoomScreen extends StatelessWidget {
           ),
         );
       },
-      child: new Column(children: <Widget>[
+      child: Column(children: <Widget>[
         Container(
           color: _parts.backGroundColor,
           child: ListTile(
             leading: CircleAvatar(
-              //backgroundImage: NetworkImage(entry.userImageUrl),
-              child: Text(room.userName[0]),
-            ),
-            title: Text(
-              room.userName,
-              style: TextStyle(
-                fontSize: 20.0,
-                color: _parts.pointColor,
-              ),
-            ),
+                //backgroundImage: NetworkImage(entry.userImageUrl),
+                child: Text(room.userName[0])),
+            title: Text(room.userName, style: TextStyle(fontSize: 20.0, color: _parts.pointColor)),
           ),
         ),
         Divider(color: _parts.pointColor),

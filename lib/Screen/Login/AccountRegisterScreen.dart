@@ -12,32 +12,29 @@ import 'LoginScreen.dart';
 
 /*----------------------------------------------
 
-初回登録Screenクラス
+アカウント登録Screenクラス
 
 ----------------------------------------------*/
 
 class AccountRegisterScreen extends StatefulWidget {
   final User user;
   AccountRegisterScreen({Key key, @required this.user}) : super(key: key);
-
   @override
   _AccountRegisterScreenState createState() => new _AccountRegisterScreenState();
 }
 
 class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
-  PageParts _parts = PageParts();
+  final PageParts _parts = PageParts();
+  final _formKey = GlobalKey<FormState>();
+
   TextEditingController _nameInputController = new TextEditingController(text: '');
   TextEditingController _ageInputController = new TextEditingController(text: '');
   TextEditingController _sexInputController = new TextEditingController(text: '');
-
-  final _formKey = GlobalKey<FormState>();
 
   @override
   initState() {
     super.initState();
   }
-
-  ///@ToDo validate
 
   void submit(String userId) async {
     User user = widget.user;
@@ -53,7 +50,7 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
         builder: (context) => MainScreen(user: user, message: "登録完了しました"),
       ),
     );
-    print('finish register');
+    print('Register finished');
   }
 
   @override
@@ -72,7 +69,7 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
                 agePicker(),
                 sexPicker(),
                 _parts.iconButton(
-                  message: "登録(ホームへ)",
+                  message: "登録",
                   icon: Icons.check,
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
@@ -81,7 +78,9 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
                     }
                   },
                 ),
-                _parts.backButton(
+                _parts.iconButton(
+                  message: "戻る",
+                  icon: Icons.keyboard_backspace,
                   onPressed: () {
                     LoginRepository repository = LoginRepository();
                     repository.signOut();
@@ -106,10 +105,7 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
       child: new TextFormField(
           style: TextStyle(color: _parts.pointColor),
           decoration: InputDecoration(
-            icon: Icon(
-              Icons.note, //変更必要
-              color: _parts.fontColor,
-            ),
+            icon: Icon(Icons.account_circle, color: _parts.fontColor),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
@@ -117,12 +113,11 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
             labelText: 'ユーザーネーム',
             labelStyle: TextStyle(color: _parts.fontColor),
           ),
-          onSaved: (String value) {
-            _nameInputController.text = value;
-          },
+          onSaved: (String value) => _nameInputController.text = value,
           validator: (String value) {
             if (value.isEmpty) return '必須項目です';
 
+            ///Todo 文字数
             return null;
           }),
     );
@@ -150,10 +145,7 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
           enableInteractiveSelection: false,
           controller: _ageInputController,
           decoration: InputDecoration(
-            icon: Icon(
-              IconData(57959, fontFamily: 'MaterialIcons'),
-              color: _parts.fontColor,
-            ),
+            icon: Icon(IconData(57959, fontFamily: 'MaterialIcons'), color: _parts.fontColor),
             hintText: '年齢を選択してください',
             labelText: '年齢',
             labelStyle: TextStyle(color: _parts.fontColor),
@@ -190,10 +182,7 @@ class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
           enableInteractiveSelection: false,
           controller: _sexInputController,
           decoration: InputDecoration(
-            icon: Icon(
-              Icons.wc,
-              color: _parts.fontColor,
-            ),
+            icon: Icon(Icons.wc, color: _parts.fontColor),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),

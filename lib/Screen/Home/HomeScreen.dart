@@ -15,34 +15,16 @@ import 'NoticeScreen.dart';
 
 ----------------------------------------------*/
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   final User user;
   HomeScreen({Key key, this.user}) : super(key: key);
-  HomeScreenState createState() => HomeScreenState();
-}
-
-class HomeScreenState extends State<HomeScreen> {
   final PageParts _parts = new PageParts();
-  final CommonData _data = CommonData();
-  int _max = 0;
   final HomeScreenElement element = HomeScreenElement();
-  int totalInfo = 0; //お知らせ件数
-  String _rankColor;
-
-  @override
-  void initState() {
-    for (int r in CommonData.rankMap.keys) {
-      if (int.parse(widget.user.rank) < r) {
-        _max = r;
-        _rankColor = CommonData.rankMap[r];
-        break;
-      }
-    }
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
+    int totalInfo = 0; //お知らせ件数
+    element.generateGaugeData(int.parse(user.rank));
     final TextStyle titleStyle =
         TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 20.0);
     final TextStyle explainStyle = TextStyle(color: _parts.fontColor, fontSize: 12.0);
@@ -57,7 +39,7 @@ class HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Container(
               padding: const EdgeInsets.all(2.0),
-              child: Text('ようこそ ${widget.user.name} さん',
+              child: Text('ようこそ ${user.name} さん',
                   style: TextStyle(
                       color: _parts.fontColor, fontWeight: FontWeight.w700, fontSize: 20.0)),
             ),
@@ -83,15 +65,14 @@ class HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(24.0),
                           child: Center(
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Icon(Icons.info, color: Colors.white, size: 30.0),
-                            ),
+                                padding: const EdgeInsets.all(16.0),
+                                child: Icon(Icons.info, color: Colors.white, size: 30.0)),
                           ),
                         )
                       ]),
                 ), onTap: () {
               Navigator.push(
-                this.context,
+                context,
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/Notice"),
                   builder: (context) => NoticeScreen(),
@@ -123,7 +104,7 @@ class HomeScreenState extends State<HomeScreen> {
               ),
               onTap: () {
                 Navigator.push(
-                  this.context,
+                  context,
                   MaterialPageRoute(
                     settings: const RouteSettings(name: "/ScoreManage"),
                     builder: (context) => ScoreManageScreen(),
@@ -144,10 +125,7 @@ class HomeScreenState extends State<HomeScreen> {
                         shape: CircleBorder(),
                         child: Padding(
                           padding: EdgeInsets.all(20.0),
-                          child: Image.asset(
-                            'assets/piece/0m5.png',
-                            scale: 0.75,
-                          ),
+                          child: Image.asset('assets/piece/0m5.png', scale: 0.75),
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(bottom: 30.0)),
@@ -156,7 +134,7 @@ class HomeScreenState extends State<HomeScreen> {
                     ]),
               ),
               onTap: () => Navigator.push(
-                this.context,
+                context,
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/MahjongHand"),
                   builder: (context) => MahjongHandScreen(),
@@ -177,27 +155,22 @@ class HomeScreenState extends State<HomeScreen> {
                         children: <TextSpan>[
                           TextSpan(text: '現在のランクカラー:', style: explainStyle),
                           TextSpan(
-                              text: '$_rankColor',
+                              text: '${element.rankColorStr}',
                               style: TextStyle(
-                                  color: CommonData.colorMap[_rankColor], fontSize: 12.0)),
+                                  color: CommonData.colorMap[element.rankColorStr],
+                                  fontSize: 12.0)),
                         ],
                       ),
                     ),
-                    element.rankGauge(
-                      size: 140.0,
-                      line: 8.0,
-                      rank: int.parse(widget.user.rank),
-                      max: _max,
-                      color: CommonData.colorMap[_rankColor],
-                    ),
+                    element.rankGauge(size: 140.0, lineWidth: 8.0),
                   ],
                 ),
               ),
               onTap: () => Navigator.push(
-                this.context,
+                context,
                 MaterialPageRoute(
                   settings: const RouteSettings(name: "/PieChart"),
-                  builder: (context) => new RankPieChartScreen(rank: widget.user.rank),
+                  builder: (context) => new RankPieChartScreen(rank: user.rank),
                 ),
               ),
             ),
@@ -243,21 +216,10 @@ class HomeScreenState extends State<HomeScreen> {
 
   Widget _buildTile(Widget child, {Function() onTap}) {
     return Material(
-        elevation: 7.0,
-        borderRadius: BorderRadius.circular(12.0),
-        shadowColor: Color(0x802196F3),
-        child: InkWell(
-            // Do onTap() if it isn't null, otherwise do print()
-            onTap: onTap != null
-                ? () => onTap()
-                : () {
-                    print('Not set yet');
-                  },
-            child: child));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+      elevation: 7.0,
+      borderRadius: BorderRadius.circular(12.0),
+      shadowColor: Color(0x802196F3),
+      child: InkWell(onTap: onTap != null ? () => onTap() : () => null, child: child),
+    );
   }
 }

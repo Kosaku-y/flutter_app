@@ -27,24 +27,29 @@ class EventManageScreenState extends State<EventManageScreen> {
   final PageParts _parts = new PageParts();
   final _formKey = GlobalKey<FormState>();
 
+  //validate用
+  static const int init = 0;
+  static const int changed = 1;
+  static const int error = 2;
+
   Pref pref;
   Line line;
   Station station;
   String _eventId;
-  int changePref = 0;
-  int changeLine = 0;
-  int changeStation = 0;
-  Map _lineMap = new Map<String, String>();
-  Map _stationMap = new Map<String, String>();
+  int changePref = init;
+  int changeLine = init;
+  int changeStation = init;
+  Map _lineMap = Map<String, String>();
+  Map _stationMap = Map<String, String>();
   EventManageBloc _bloc = EventManageBloc();
   int _selectedPref = 0;
   int _selectedLine = 0;
   int _selectedStation = 0;
 
-  TextEditingController _prefController = new TextEditingController(text: " ");
-  TextEditingController _lineController = new TextEditingController(text: " ");
-  TextEditingController _stationController = new TextEditingController(text: " ");
-  TextEditingController _eventIdController = new TextEditingController(text: "");
+  TextEditingController _prefController = TextEditingController(text: " ");
+  TextEditingController _lineController = TextEditingController(text: " ");
+  TextEditingController _stationController = TextEditingController(text: " ");
+  TextEditingController _eventIdController = TextEditingController(text: "");
 
   @override
   Widget build(BuildContext context) {
@@ -54,18 +59,17 @@ class EventManageScreenState extends State<EventManageScreen> {
       body: Form(
         key: _formKey,
         child: Container(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(40.0),
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Text("検索条件を入力してください", style: TextStyle(color: _parts.fontColor)),
+                Text("検索条件を入力してください", style: _parts.guideWhite),
                 _prefPicker(),
                 _linePicker(),
                 _stationPicker(),
                 Container(
                   padding: EdgeInsets.only(top: 20.0),
-                  child:
-                      _parts.iconButton(message: "検索", icon: Icons.search, onPressed: _submission),
+                  child: _parts.iconButton(message: "検索", icon: Icons.search, onPressed: _submit),
                 ),
               ],
             ),
@@ -79,7 +83,7 @@ class EventManageScreenState extends State<EventManageScreen> {
               MaterialPageRoute(
                 settings: const RouteSettings(name: "/EventCreate"),
                 builder: (context) => EventCreateScreen(user: widget.user, mode: 0),
-                //fullscreenDialog: true,
+                fullscreenDialog: true,
               ),
             );
           }),
@@ -87,7 +91,7 @@ class EventManageScreenState extends State<EventManageScreen> {
   }
 
   //フォーム送信用メソッド
-  void _submission() {
+  void _submit() {
     if (this._formKey.currentState.validate()) {
       if (_eventId != null) {
       } else {
@@ -135,10 +139,7 @@ class EventManageScreenState extends State<EventManageScreen> {
           enableInteractiveSelection: false,
           controller: _prefController,
           decoration: InputDecoration(
-            icon: Icon(
-              Icons.place,
-              color: _parts.fontColor,
-            ),
+            icon: Icon(Icons.place, color: _parts.fontColor),
             hintText: 'Choose a prefecture',
             labelText: '都道府県',
             labelStyle: TextStyle(color: _parts.fontColor),
@@ -146,13 +147,7 @@ class EventManageScreenState extends State<EventManageScreen> {
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
           ),
-          validator: (String value) {
-            if (changePref == 2) {
-              return '再選択してください';
-            } else {
-              return null;
-            }
-          },
+          validator: (value) => changePref == error ? "再選択してください" : null,
         ),
       ),
     );
@@ -164,10 +159,9 @@ class EventManageScreenState extends State<EventManageScreen> {
     return StreamBuilder<Map<String, String>>(
         stream: _bloc.lineMapStream,
         builder: (context, snapshot) {
+          if (snapshot.hasError) return Text("エラーが発生しました。");
           if (!snapshot.hasData) {
             return _lineTextFormField();
-          } else if (snapshot.hasError) {
-            return Text("エラーが発生しました。");
           } else {
             if (snapshot.data == null || snapshot.data.isEmpty) {
               return Text("データが空です。");
@@ -226,7 +220,7 @@ class EventManageScreenState extends State<EventManageScreen> {
             (value == " " && _stationController.text != " ")) {
           return '再選択してください';
         }
-        if (changeLine == 2) {
+        if (changeLine == error) {
           if (_lineController.text == " ") return null;
           return '再選択してください';
         } else {
@@ -286,10 +280,7 @@ class EventManageScreenState extends State<EventManageScreen> {
       enableInteractiveSelection: false,
       controller: _stationController,
       decoration: InputDecoration(
-        icon: Icon(
-          Icons.subway,
-          color: _parts.fontColor,
-        ),
+        icon: Icon(Icons.subway, color: _parts.fontColor),
         hintText: 'Choose a station',
         labelText: '駅名',
         labelStyle: TextStyle(color: _parts.fontColor),
@@ -302,7 +293,7 @@ class EventManageScreenState extends State<EventManageScreen> {
             (value != " " && _lineController.text == " ")) {
           return '再選択してください';
         }
-        if (changeStation == 2) {
+        if (changeStation == error) {
           if (_stationController.text == " ") return null;
           return '再選択してください';
         } else {
@@ -326,9 +317,9 @@ class EventManageScreenState extends State<EventManageScreen> {
               borderRadius: BorderRadius.circular(1.0),
               borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
         ),
-        validator: (String value) {
-          return null;
-        },
+//        validator: (String value) {
+//          return null;
+//        },
         onSaved: (String value) {
           _eventId = value;
         });
@@ -336,31 +327,31 @@ class EventManageScreenState extends State<EventManageScreen> {
 
   //県Pickerが選択された時の処理メソッド
   void _prefChange() {
-    changePref = 1;
+    changePref = changed;
     //県、路線、駅、組み合わせ矛盾チェック
-    if (changeLine != 0 || changeStation != 0) {
-      changeLine = 2;
-      changeStation = 2;
+    if (changeLine != init || changeStation != init) {
+      changeLine = error;
+      changeStation = error;
     }
   }
 
   //路線チェンジ用
   void _lineChange() {
     //県、路線、駅、組み合わせ矛盾チェック
-    if (changeLine == 0) {
+    if (changeLine == init) {
       changeLine = 1;
-    } else if (changeLine == 1) {
-      if (changeStation != 0) {
-        changeStation = 2;
+    } else if (changeLine == changed) {
+      if (changeStation != init) {
+        changeStation = error;
       }
     } else {
-      changeLine = 1;
+      changeLine = changed;
     }
   }
 
   //路線チェンジ用
   void _stationChange() {
-    changeStation = 1;
+    changeStation = changed;
   }
 
   @override

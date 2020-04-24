@@ -11,14 +11,14 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 ----------------------------------------------*/
 class PageParts {
   //案1
-  var baseColor = Color(0xff160840);
-  var backGroundColor = Color(0xff00152d);
-  var fontColor = Color(0xff00A968);
-  var pointColor = Colors.white;
-  var startGradient = Color(0xff8e24aa);
-  var endGradient = Color(0xff311b92);
+  final Color baseColor = Color(0xff160840);
+  final Color backGroundColor = Color(0xff00152d);
+  final Color fontColor = Color(0xff00A968);
+  final Color pointColor = Colors.white;
+  final Color startGradient = Color(0xff8e24aa);
+  final Color endGradient = Color(0xff311b92);
 
-  ThemeData defaultTheme = ThemeData(
+  final ThemeData defaultTheme = ThemeData(
     backgroundColor: Color(0xff00152d),
     scaffoldBackgroundColor: Color(0xff00152d),
     bottomAppBarColor: Color(0xff160840),
@@ -26,25 +26,21 @@ class PageParts {
     dividerColor: Color(0xff00A968),
   );
 
-  ThemeData light = new ThemeData.light();
+  final ThemeData light = new ThemeData.light();
 
-  ThemeData dark = new ThemeData.dark();
+  final ThemeData dark = new ThemeData.dark();
 
-  Widget indicator() {
-    return SpinKitWave(
-      color: pointColor,
-      size: 50.0,
-    );
-  }
+  Widget indicator = SpinKitWave(color: Colors.white, size: 50.0);
+
+  final TextStyle basicWhite = TextStyle(color: Colors.white, fontSize: 18.0);
+  final TextStyle basicBlack = TextStyle(color: Colors.black, fontSize: 18.0);
+  final TextStyle basicGreen = TextStyle(color: Color(0xff00A968), fontSize: 18.0);
+  final TextStyle guideWhite = TextStyle(color: Colors.white, fontSize: 15.0);
+  final TextStyle guideBlack = TextStyle(color: Colors.black, fontSize: 15.0);
 
   Widget appBar({String title}) {
     return GradientAppBar(
-        title: Text(
-          title,
-          style: TextStyle(
-            color: pointColor,
-          ),
-        ),
+        title: Text(title, style: TextStyle(color: pointColor)),
         gradient: LinearGradient(colors: [startGradient, endGradient]));
   }
 
@@ -52,38 +48,22 @@ class PageParts {
     return AppBar(
       elevation: 2.0,
       backgroundColor: baseColor,
-      title: Text(
-        title,
-        style: TextStyle(
-          color: pointColor,
-        ),
-      ),
+      title: Text(title, style: TextStyle(color: pointColor)),
     );
   }
 
-  Widget backButton({Function() onPressed}) {
+  Widget backButton(BuildContext context) {
     return RaisedButton.icon(
-      label: Text("戻る"),
-      icon: Icon(
-        Icons.keyboard_backspace,
-        color: fontColor,
-      ),
-      onPressed: onPressed != null
-          ? () => onPressed()
-          : () {
-              print('Not set');
-            },
-    );
+        label: Text("戻る"),
+        icon: Icon(Icons.keyboard_backspace, color: fontColor),
+        onPressed: () => Navigator.pop(context));
   }
 
   Widget iconButton({String message, IconData icon, Function() onPressed}) {
     return RaisedButton.icon(
       label: Text(message),
-      icon: Icon(
-        icon,
-        color: fontColor,
-      ),
-      onPressed: onPressed,
+      icon: Icon(icon, color: fontColor),
+      onPressed: onPressed != null ? () => onPressed() : () => print('Not set'),
     );
   }
 
@@ -91,22 +71,11 @@ class PageParts {
     return Ink(
       decoration: ShapeDecoration(
         color: backGroundColor,
-        shape: CircleBorder(
-          side: BorderSide(
-            color: fontColor,
-            width: 1.0,
-            style: BorderStyle.solid,
-          ),
-        ),
+        shape:
+            CircleBorder(side: BorderSide(color: fontColor, width: 1.0, style: BorderStyle.solid)),
       ),
-      child: IconButton(
-        icon: Icon(
-          icon,
-          color: fontColor,
-        ),
-        color: Colors.white,
-        onPressed: onPressed,
-      ),
+      child:
+          IconButton(icon: Icon(icon, color: fontColor), color: Colors.white, onPressed: onPressed),
     );
   }
 

@@ -20,8 +20,9 @@ class EventRepository {
   Future<void> changeEvent(String pref, String line, EventDetail event) async {}
 
   //新規イベント作成メソッド
-  Future<bool> createEvent(String stationCode, EventDetail event) async {
+  createEvent(String stationCode, EventDetail event) async {
     String newId; //採番用
+    String newRoomId;
     final _eventManagerReference = FirebaseDatabase.instance.reference().child("EventManager");
     //新規EventId取得
     await _eventManagerReference.once().then((DataSnapshot snapshot) {
@@ -34,7 +35,7 @@ class EventRepository {
     event.eventId = newId + "E";
 
     //新規IDセット処理＋イベント作成
-    _eventManagerReference.set({"eventId": (int.parse(newId) + 1).toString()}).then((_) =>
+    await _eventManagerReference.set({"eventId": (int.parse(newId) + 1).toString()}).then((_) =>
         _eventReference
             .child(prefName)
             .child("${event.station}/${event.eventId}")
@@ -43,14 +44,14 @@ class EventRepository {
   }
 
   //イベント修正
-  Future<void> modifyEvent(String stationCode, EventDetail event) async {
+  modifyEvent(String stationCode, EventDetail event) async {
     String prefName = await getPrefName(stationCode);
     event.pref = prefName;
     _eventReference.child(prefName).child(event.station).child(event.eventId).set(event.toJson());
   }
 
   //駅の所在都道府県を取得
-  Future<String> getPrefName(String stationCode) async {
+  getPrefName(String stationCode) async {
     var url =
         "http://api.ekispert.jp/v1/json/station/light?code=$stationCode&gcs=tokyo&key=$_apiKey";
     http.Response response = await http.get(url);
@@ -86,7 +87,7 @@ class EventRepository {
   */
 
   //イベント検索メソッド
-  Future<List<EventDetail>> searchEvent(EventSearch e) async {
+  searchEvent(EventSearch e) async {
     List<EventDetail> eventList = List();
     //if (true) throw FirebaseError(); //データ取得エラー処理
     if (e.pref != null && e.line == null && e.station == null) {
@@ -127,7 +128,7 @@ class EventRepository {
   }
 
   //路線Picker作成
-  Future<Map<String, String>> createLineMap(String prefCode) async {
+  createLineMap(String prefCode) async {
     //APIコール
     var url = "http://api.ekispert.jp/v1/json/operationLine?prefectureCode=" +
         "$prefCode&offset=1&limit=100&gcs=tokyo&key=$_apiKey";
@@ -145,7 +146,7 @@ class EventRepository {
   }
 
   //駅Picker作成
-  Future<Map<String, String>> createStationMap(String lineCode) async {
+  createStationMap(String lineCode) async {
     //APIコール
     var url = "http://api.ekispert.jp/v1/json/station?operationLineCode="
         "$lineCode&type=train&offset=1&limit=100&direction=up&gcs=tokyo&key=$_apiKey";

@@ -22,18 +22,20 @@ class EventDetailScreen extends StatelessWidget {
   final formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
 
   Widget build(BuildContext context) {
-    TextStyle _style = TextStyle(color: _parts.pointColor, fontSize: 17);
+    final TextStyle basicWhite = TextStyle(color: Colors.white, fontSize: 17.0);
     return Scaffold(
       appBar: _parts.appBar(title: "イベント詳細"),
       backgroundColor: _parts.backGroundColor,
       body: Container(
-        padding: const EdgeInsets.all(40.0),
+        padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
         child: Column(
           children: <Widget>[
-            //イベント詳細
             Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-              Text("募集条件は以下の通りです。この募集に参加したい場合は主催者にメッセージを送ってください",
-                  style: TextStyle(color: _parts.pointColor, fontSize: 14)),
+              Text(
+                  event.userId == user.userId
+                      ? "イベントの削除、変更ができます。"
+                      : "募集条件は以下の通りです。この募集に参加したい場合は主催者にメッセージを送ってください",
+                  style: _parts.guideWhite),
               Padding(padding: const EdgeInsets.symmetric(vertical: 20.0)),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,10 +43,10 @@ class EventDetailScreen extends StatelessWidget {
                 children: <Widget>[
                   RichText(
                     text: TextSpan(children: [
-                      TextSpan(text: "主催者　：", style: _style),
+                      TextSpan(text: "主催者　：", style: _parts.basicWhite),
                       TextSpan(
                         text: event.userName,
-                        style: TextStyle(color: _parts.fontColor, fontSize: 17),
+                        style: _parts.basicGreen,
                         recognizer: new TapGestureRecognizer()
                           ..onTap = () {
                             Navigator.of(context).push<Widget>(
@@ -58,21 +60,19 @@ class EventDetailScreen extends StatelessWidget {
                       ),
                     ]),
                   ),
-                  Text("コメント：${event.comment}", style: _style),
-                  Text("募集人数：${event.recruitMember}", style: _style),
-                  Text("路線　　：${event.line}", style: _style),
-                  Text("駅　　　：${event.station}", style: _style),
-                  Text("開始時間：${event.startingTime}", style: _style),
-                  Text("終了時間：${event.endingTime}", style: _style),
+                  Text("募集人数：${event.recruitMember}", style: basicWhite),
+                  Text("路線　　：${event.line}", style: basicWhite),
+                  Text("駅　　　：${event.station}", style: basicWhite),
+                  Text("開始時間：${event.startingTime}", style: basicWhite),
+                  Text("終了時間：${event.endingTime}", style: basicWhite),
+                  Text("コメント：${event.comment}", style: basicWhite),
                   _actionWidget(context),
                 ],
               ),
             ]),
 
             //戻るボタン
-            _parts.backButton(
-              onPressed: () => Navigator.pop(context),
-            ),
+            _parts.backButton(context),
           ],
         ),
       ),
@@ -85,25 +85,20 @@ class EventDetailScreen extends StatelessWidget {
         padding: EdgeInsets.only(top: 20.0),
         child: Column(
           children: <Widget>[
+            Center(child: _parts.iconButton(message: "削除", icon: Icons.delete, onPressed: () {})),
             Center(
-              child: _parts.iconButton(message: "削除", icon: Icons.delete, onPressed: () {}),
-            ),
-            Center(
-              child: _parts.iconButton(
-                  message: "修正",
-                  icon: Icons.check,
-                  onPressed: () {
-                    Navigator.of(
-                      context,
-                      rootNavigator: true,
-                    ).push<Widget>(
-                      MaterialPageRoute(
-                        settings: const RouteSettings(name: "/EventCreate"),
-                        builder: (context) => EventCreateScreen(user: user, mode: 1, event: event),
-                      ),
-                    );
-                  }),
-            ),
+                child: _parts.iconButton(
+                    message: "修正",
+                    icon: Icons.check,
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).push<Widget>(
+                        MaterialPageRoute(
+                            settings: const RouteSettings(name: "/EventCreate"),
+                            builder: (context) =>
+                                EventCreateScreen(user: user, mode: 1, event: event),
+                            fullscreenDialog: true),
+                      );
+                    })),
           ],
         ),
       );

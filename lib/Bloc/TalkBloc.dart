@@ -18,10 +18,6 @@ class TalkBloc {
   Stream<List<Talk>> get messageListStream => _messageListController.stream;
   //List<String> messageList = new List();
 
-  //メッセージ送信用Stream
-  final _sendMessageController = StreamController<Talk>();
-  Sink<Talk> get sendMessageSink => _sendMessageController.sink;
-
   //roomIdを流すStream
   final _roomIdController = BehaviorSubject<String>.seeded(null);
   Stream<String> get roomIdStream => _roomIdController.stream;
@@ -35,15 +31,20 @@ class TalkBloc {
   TalkBloc(this.roomId) {
     this.repository = TalkRepository(roomId);
     //メッセージリアルタイム更新
-    repository.realtimeMessageStream.listen((message) {
-      _messageListController.add(message);
-    });
+    try {
+      repository.realtimeMessageStream.listen((message) {
+        _messageListController.add(message);
+      });
+    } catch (e) {
+      _messageListController.addError(e);
+    }
+  }
 
-    //メッセージ送信
-    _sendMessageController.stream.listen((talk) async {
-      print("repository:sended");
+  callSendMessage(Talk talk) {
+    //@Todo error処理
+    try {
       repository.sendMessage(this.roomId, talk);
-    });
+    } catch (e) {}
   }
 
   callPrepareRoom() async {
@@ -56,7 +57,6 @@ class TalkBloc {
   }
 
   void dispose() {
-    _sendMessageController?.close();
     _messageListController?.close();
     _roomIdController?.close();
   }

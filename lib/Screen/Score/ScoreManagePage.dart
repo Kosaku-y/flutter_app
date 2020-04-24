@@ -87,12 +87,7 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
         gradient: LinearGradient(colors: [_parts.startGradient, _parts.endGradient]),
         title: Text('スコア管理', style: TextStyle(color: _parts.pointColor)),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              _showModalBottomSheet();
-            },
-          )
+          IconButton(icon: Icon(Icons.menu), onPressed: () => _showModalBottomSheet())
         ],
         bottom: TabBar(
           //isScrollable: true,
@@ -155,11 +150,7 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
                     border: new Border.all(color: _parts.fontColor),
                     borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  child: Column(
-                    children: <Widget>[
-                      rankPercentage(),
-                    ],
-                  ),
+                  child: Column(children: <Widget>[rankPercentage()]),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -185,10 +176,12 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
             markersColor: _parts.fontColor,
           ),
           onDaySelected: (date, events) {
-            setState(() {
-              _selectedEvents = events;
-              _selectedDay = date;
-            });
+            if (events.isNotEmpty) {
+              setState(() {
+                _selectedEvents = events;
+                _selectedDay = date;
+              });
+            }
           },
           builders: CalendarBuilders(
             markersBuilder: (context, date, events, holidays) {
@@ -236,19 +229,13 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
   Widget _buildEventsMarker(DateTime date, List events, CalendarController controller) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: Color(0xff7e57c2),
-      ),
+      decoration: BoxDecoration(shape: BoxShape.rectangle, color: Color(0xff7e57c2)),
       width: 16.0,
       height: 16.0,
       child: Center(
         child: Text(
           '${events.length}',
-          style: TextStyle().copyWith(
-            color: Colors.white,
-            fontSize: 12.0,
-          ),
+          style: TextStyle().copyWith(color: Colors.white, fontSize: 12.0),
         ),
       ),
     );
@@ -364,9 +351,7 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
   Widget rankPercentage() {
     return PieChart(
       PieChartData(
-          borderData: FlBorderData(
-            show: false,
-          ),
+          borderData: FlBorderData(show: false),
           sectionsSpace: 0,
           centerSpaceRadius: 30,
           startDegreeOffset: -90,

@@ -20,7 +20,7 @@ class ScoreInputScreen extends StatefulWidget {
 }
 
 class ScoreInputScreenState extends State<ScoreInputScreen> {
-  final PageParts _parts = new PageParts();
+  final PageParts _parts = PageParts();
   Score score;
   List<Score> listScore;
   DateTime _date;
@@ -49,7 +49,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
       backgroundColor: _parts.backGroundColor,
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.all(40.0),
+          padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
           child: Column(
             children: <Widget>[
               dateField(),
@@ -149,10 +149,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
           enableInteractiveSelection: false,
           controller: rankingController,
           decoration: InputDecoration(
-            icon: Icon(
-              Icons.people,
-              color: _parts.fontColor,
-            ),
+            icon: Icon(Icons.people, color: _parts.fontColor),
             enabledBorder: UnderlineInputBorder(
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
@@ -161,9 +158,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
             labelText: '*着順',
             labelStyle: TextStyle(color: _parts.fontColor),
           ),
-          validator: (String value) {
-            return value.isEmpty ? '必須項目です' : null;
-          },
+          validator: (String value) => value.isEmpty ? '必須項目です' : null,
         ),
       ),
     );
@@ -177,10 +172,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
       textInputAction: TextInputAction.done,
       controller: chipController,
       decoration: InputDecoration(
-        icon: Icon(
-          Icons.people,
-          color: _parts.fontColor,
-        ),
+        icon: Icon(Icons.people, color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
             borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
@@ -189,9 +181,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         labelText: '*チップ',
         labelStyle: TextStyle(color: _parts.fontColor),
       ),
-      validator: (String value) {
-        return value.isEmpty ? '必須項目です' : null;
-      },
+      validator: (String value) => value.isEmpty ? '必須項目です' : null,
     );
   }
 
@@ -202,10 +192,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
       controller: totalController,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
-        icon: Icon(
-          Icons.people,
-          color: _parts.fontColor,
-        ),
+        icon: Icon(Icons.people, color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
             borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
@@ -214,9 +201,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         labelText: '*トータル',
         labelStyle: TextStyle(color: _parts.fontColor),
       ),
-      validator: (String value) {
-        return value.isEmpty ? '必須項目です' : null;
-      },
+      validator: (String value) => value.isEmpty ? '必須項目です' : null,
     );
   }
 
@@ -227,10 +212,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
       keyboardType: TextInputType.number,
       controller: rateController,
       decoration: InputDecoration(
-        icon: Icon(
-          Icons.people,
-          color: _parts.fontColor,
-        ),
+        icon: Icon(Icons.people, color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
             borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
@@ -239,9 +221,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         labelText: '*レート',
         labelStyle: TextStyle(color: _parts.fontColor),
       ),
-      validator: (String value) {
-        return value.isEmpty ? '必須項目です' : null;
-      },
+      validator: (String value) => value.isEmpty ? '必須項目です' : null,
     );
   }
 
@@ -264,9 +244,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         labelText: '*収支',
         labelStyle: TextStyle(color: _parts.fontColor),
       ),
-      validator: (String value) {
-        return value.isEmpty ? '必須項目です' : null;
-      },
+      validator: (String value) => value.isEmpty ? '必須項目です' : null,
     );
   }
 }

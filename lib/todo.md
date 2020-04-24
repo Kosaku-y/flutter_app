@@ -28,8 +28,10 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 ~~-piechart stateless化~~
 ~~-カレンダーの当日イベントが表示されない~~
 ~~api変更~~
--Picker 都道府県->路線->都道府県 エラー(validate)
+~~-Picker 都道府県->路線->都道府県 エラー(validate)~~
 ~~-駅すぱあとapiコール時差問題~~
+-eventのdateTime型
+-トーク2重コール(初回のみ)
 -NewHomeの改善
 -自身のイベント管理
 -themeでレイアウト色管理
@@ -43,7 +45,7 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 -プッシュ通知
 -firebase 複数クエリのトランザクション、ロールバック
 -bottomnavigation バッジ
-
+-There was an error uploading events:   通信エラー常時
 
 -Talk　　
 ・User/room/userId 検索 -> roomId
@@ -91,7 +93,22 @@ Stream
 ストリームが開いている間、ずっと値が流れてくる
 --
 ```dart
-child: Column(
+Container(
+              padding: const EdgeInsets.all(40.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: Center(
+                      child: Text("指定の条件では見つかりませんでした。", style: _parts.guideStyle),
+                    ),
+                  ),
+                  _parts.backButton(onPressed: () => Navigator.pop(context)),
+                ],
+              ),
+            );
+Widget build(BulidContext){
+return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Expanded(
@@ -103,7 +120,8 @@ child: Column(
                     Navigator.pop(context);
                   }),
                 ],
-              ),
+              );
+}
   Future<String> _getFutureValue() async {
     // 擬似的に通信中を表現するために１秒遅らせる
     await Future.delayed(

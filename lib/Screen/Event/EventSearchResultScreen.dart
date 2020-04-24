@@ -1,4 +1,3 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -29,7 +28,6 @@ class EventSearchResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle guideStyle = TextStyle(color: _parts.pointColor, fontSize: 18.0);
     EventSearchBloc bloc = EventSearchBloc();
     bloc.fetchResult(eventSearch);
     List<EventDetail> eventList = List();
@@ -39,40 +37,33 @@ class EventSearchResultScreen extends StatelessWidget {
       body: StreamBuilder<List<EventDetail>>(
         stream: bloc.searchResultStream,
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text("エラーが発生しました${snapshot.error.toString()}", style: guideStyle));
-          }
+          if (snapshot.hasError)
+            return Center(
+                child: Text("エラーが発生しました${snapshot.error.toString()}", style: _parts.guideWhite));
           if (snapshot.connectionState != ConnectionState.active)
-            return Center(child: _parts.indicator());
-          if (!snapshot.hasData) {
+            return Center(child: _parts.indicator);
+          if (!snapshot.hasData || snapshot.data.isEmpty) {
             return Container(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Expanded(
-                    child: Center(
-                      child: Text("指定の条件では見つかりませんでした。", style: guideStyle),
-                    ),
+                    child: Center(child: Text("指定の条件では見つかりませんでした。", style: _parts.guideWhite)),
                   ),
-                  _parts.backButton(onPressed: () {
-                    Navigator.pop(context);
-                  }),
+                  _parts.backButton(context),
                 ],
               ),
             );
           } else {
             eventList = snapshot.data;
             return Container(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
               child: Column(
                 children: <Widget>[
-                  Text(eventList.length.toString() + '件見つかりました。',
-                      style: TextStyle(
-                          color: _parts.fontColor, backgroundColor: _parts.backGroundColor)),
+                  Text("${eventList.length.toString()}件見つかりました。", style: _parts.guideWhite),
                   Expanded(
                     child: ListView.builder(
-                      //padding: const EdgeInsets.all(16.0),
                       itemBuilder: (BuildContext context, int index) {
                         return _buildRow(context, eventList[index]);
                       },
@@ -80,9 +71,7 @@ class EventSearchResultScreen extends StatelessWidget {
                     ),
                   ),
                   Divider(height: 8.0),
-                  _parts.backButton(onPressed: () {
-                    Navigator.pop(context);
-                  }),
+                  _parts.backButton(context),
                 ],
               ),
             );
@@ -164,9 +153,9 @@ class EventSearchResultScreen extends StatelessWidget {
               onTap: () {
                 Navigator.of(context, rootNavigator: true).push<Widget>(
                   MaterialPageRoute(
-                    settings: const RouteSettings(name: "/EventCreate"),
-                    builder: (context) => EventCreateScreen(user: user, mode: 1, event: event),
-                  ),
+                      settings: const RouteSettings(name: "/EventCreate"),
+                      builder: (context) => EventCreateScreen(user: user, mode: 1, event: event),
+                      fullscreenDialog: true),
                 );
               },
               child: Container(
