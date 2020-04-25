@@ -33,50 +33,6 @@ class LoginRepository {
     await _firebaseAuth.signInWithCredential(credential);
     return _firebaseAuth.currentUser();
   }
-  /* ------Twitterサインイン機能------
-  final TwitterLogin twitterLogin = TwitterLogin(
-    consumerKey: consumerKey,
-    consumerSecret: secretkey,
-  );
-  Future<FirebaseUser> signInWithTwitter() async {
-    // twitter認証の許可画面が出現
-    final TwitterLoginResult result = await twitterLogin.authorize();
-    //Firebaseのユーザー情報にアクセス & 情報の登録 & 取得
-    final AuthCredential credential = TwitterAuthProvider.getCredential(
-      authToken: result.session.token,
-      authTokenSecret: result.session.secret,
-    );
-    //Firebaseのuser id取得
-    final FirebaseUser user = (await _firebaseAuth.signInWithCredential(credential)).user;
-    return _firebaseAuth.currentUser();
-  }*/
-
-  /*------Appleサインイン機能------
-  Future signInWithApple() async {
-    final AuthorizationResult result = await AppleSignIn.performRequests([
-      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
-    ]);
-
-    switch (result.status) {
-      case AuthorizationStatus.authorized:
-        print("success");
-        print(result.credential.user);
-        // ログイン成功
-
-        break;
-
-      case AuthorizationStatus.error:
-        print("Sign in failed: ${result.error.localizedDescription}");
-
-        throw Exception(result.error.localizedDescription);
-        break;
-
-      case AuthorizationStatus.cancelled:
-        print('User cancelled');
-        break;
-    }
-  }
-  * */
 
   //fireBaseサインイン部分
   checkFireBaseLogin(FirebaseUser currentUser) async {
@@ -126,4 +82,48 @@ class LoginRepository {
     String userId = key.replaceAll(RegExp(r'@[A-Za-z]+.[A-Za-z]+'), "");
     return userId.replaceAll(".", "[dot]");
   }
+/* ------Twitterサインイン機能------
+  final TwitterLogin twitterLogin = TwitterLogin(
+    consumerKey: consumerKey,
+    consumerSecret: secretkey,
+  );
+  Future<FirebaseUser> signInWithTwitter() async {
+    // twitter認証の許可画面が出現
+    final TwitterLoginResult result = await twitterLogin.authorize();
+    //Firebaseのユーザー情報にアクセス & 情報の登録 & 取得
+    final AuthCredential credential = TwitterAuthProvider.getCredential(
+      authToken: result.session.token,
+      authTokenSecret: result.session.secret,
+    );
+    //Firebaseのuser id取得
+    final FirebaseUser user = (await _firebaseAuth.signInWithCredential(credential)).user;
+    return _firebaseAuth.currentUser();
+  }*/
+
+/*------Appleサインイン機能------
+  Future signInWithApple() async {
+    final AuthorizationResult result = await AppleSignIn.performRequests([
+      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+    ]);
+
+    switch (result.status) {
+      case AuthorizationStatus.authorized:
+        print("success");
+        print(result.credential.user);
+        // ログイン成功
+
+        break;
+
+      case AuthorizationStatus.error:
+        print("Sign in failed: ${result.error.localizedDescription}");
+
+        throw Exception(result.error.localizedDescription);
+        break;
+
+      case AuthorizationStatus.cancelled:
+        print('User cancelled');
+        break;
+    }
+  }
+  * */
 }

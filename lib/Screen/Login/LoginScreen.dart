@@ -42,6 +42,7 @@ class LoginScreenState extends State<LoginScreen> {
   final PageParts _parts = PageParts();
   final LoginBloc loginBloc = LoginBloc();
 
+  ///@Todo 一部StreamをSplashに移行、snapshotの分岐
   @override
   void initState() {
     super.initState();
@@ -116,7 +117,6 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     super.dispose();
-    loginBloc.dispose();
-    print("dispose login Bloc");
+    loginBloc?.dispose();
   }
 }

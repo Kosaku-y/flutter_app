@@ -106,22 +106,19 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: _parts.pointColor),
-          enableInteractiveSelection: false,
-          controller: dateController,
-          decoration: InputDecoration(
-            icon: Icon(Icons.calendar_today, color: _parts.fontColor),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
-            hintText: 'Choose a starting Time',
-            labelText: '*日時',
-            labelStyle: TextStyle(color: _parts.fontColor),
-          ),
-          validator: (String value) {
-            return value.isEmpty ? '開始時間が未選択です' : null;
-          },
-        ),
+            style: TextStyle(color: _parts.pointColor),
+            enableInteractiveSelection: false,
+            controller: dateController,
+            decoration: InputDecoration(
+              icon: Icon(Icons.calendar_today, color: _parts.fontColor),
+              enabledBorder: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(1.0),
+                  borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
+              hintText: 'Choose a starting Time',
+              labelText: '*日時',
+              labelStyle: TextStyle(color: _parts.fontColor),
+            ),
+            validator: (String value) => value.isEmpty ? '開始時間が未選択です' : null),
       ),
     );
   }

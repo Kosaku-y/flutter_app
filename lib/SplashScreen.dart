@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final int mode = 1;
+  final int mode = 0;
   /*
   * 実機 0
   * ログインスルー 1
@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
           "name": "テストユーザ",
           "age": "25",
           "sex": "男性",
-          "rank": "5",
+          "rank": "1",
         });
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
