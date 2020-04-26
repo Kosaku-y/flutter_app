@@ -17,8 +17,8 @@ class EventManageBloc {
   Stream<Map<String, String>> get stationMapStream => _stationMapController.stream;
 
   //新規EventDetail作成結果を流すStream
-  final StreamController _newEventController = StreamController<bool>();
-  Stream<bool> get newEventStream => _newEventController.stream;
+  final StreamController _eventController = StreamController<bool>();
+  Stream<bool> get eventStream => _eventController.stream;
 
   final EventRepository _repository = EventRepository();
 
@@ -48,15 +48,25 @@ class EventManageBloc {
   callCreateEvent(String stationCode, EventDetail event) async {
     try {
       bool result = await _repository.createEvent(stationCode, event);
-      _newEventController.add(result);
+      _eventController.add(result);
     } catch (e) {
-      _newEventController.addError(e);
+      _eventController.addError(e);
+    }
+  }
+
+  //イベント変更
+  callModifyEvent(String prefName, stationName, stationCode, EventDetail event) async {
+    try {
+      bool result = await _repository.modifyEvent(prefName, stationName, stationCode, event);
+      _eventController.add(result);
+    } catch (e) {
+      _eventController.addError(e);
     }
   }
 
   void dispose() {
     _lineMapController.close();
     _stationMapController.close();
-    _newEventController.close();
+    _eventController.close();
   }
 }

@@ -9,8 +9,8 @@ class EventDetail {
   String pref; //都道府県
   String line; //路線名
   String station; //駅名
-  String startingTime; //開始時間
-  String endingTime; //終了時間
+  DateTime startingTime; //開始時間
+  DateTime endingTime; //終了時間
   String comment; //コメント
   String userId; //ユーザーID
   String userName; //ユーザー名
@@ -24,8 +24,8 @@ class EventDetail {
         pref = map["pref"],
         line = map["line"],
         station = map["station"],
-        startingTime = map["startingTime"],
-        endingTime = map["endingTime"],
+        startingTime = DateTime.fromMillisecondsSinceEpoch(map["startingTime"]),
+        endingTime = DateTime.fromMillisecondsSinceEpoch(map["endingTime"]),
         comment = map["comment"],
         userId = map["userId"],
         userName = map["userName"];
@@ -50,8 +50,8 @@ class EventDetail {
       "pref": pref,
       "line": line,
       "station": station,
-      "startingTime": startingTime,
-      "endingTime": endingTime,
+      "startingTime": startingTime.millisecondsSinceEpoch,
+      "endingTime": endingTime.millisecondsSinceEpoch,
       "comment": comment,
       "userId": userId,
       "userName": userName

@@ -39,13 +39,11 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
   var formatter = DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY);
   int grid = 50;
   List<FlSpot> _lineData;
-//  final _selectedDay =
-//      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 21).toUtc();
 
   bool showAvg = false;
   List<Color> gradientColors;
 
-  List<Tab> tabs = <Tab>[Tab(text: '月別'), Tab(text: "総合")];
+  List<Tab> tabs = <Tab>[Tab(text: '記録'), Tab(text: "分析")];
 
   @override
   void initState() {
@@ -91,8 +89,8 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
       ),
       backgroundColor: _parts.backGroundColor,
       body: TabBarView(controller: _tabController, children: <Widget>[
-        _byPeriod(),
-        _bySynthesis(),
+        _record(),
+        _analyze(),
       ]),
       floatingActionButton: _parts.floatButton(
         icon: Icons.add,
@@ -110,8 +108,8 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
     );
   }
 
-/*---------月別---------*/
-  Widget _byPeriod() {
+  /*---------記録---------*/
+  Widget _record() {
     return Container(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -125,7 +123,7 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
   }
 
   /*---------総合成績---------*/
-  Widget _bySynthesis() {
+  Widget _analyze() {
     TextStyle textStyle = TextStyle(color: _parts.pointColor, fontSize: 20.0);
     return Container(
       padding: const EdgeInsets.all(10.0),
@@ -233,14 +231,14 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
 
   List<FlSpot> dataCleansing() {
     _lineData = [];
-    int i = 1;
+    int yAxis = 1;
     int sum = 0;
     _events.forEach((key, value) {
       value.forEach((element) {
         sum += element.total;
       });
-      _lineData.add(FlSpot(i.toDouble(), sum.toDouble()));
-      i++;
+      _lineData.add(FlSpot(yAxis.toDouble(), sum.toDouble()));
+      yAxis++;
     });
     grid = (analyze.maxPoint - analyze.minPoint) ~/ 5;
 
@@ -323,11 +321,9 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
                 //showAvg = !showAvg;
               });
             },
-            child: Text(
-              'avg',
-              style: TextStyle(
-                  fontSize: 12, color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
-            ),
+            child: Text('avg',
+                style: TextStyle(
+                    fontSize: 12, color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white)),
           ),
         ),
       ],
@@ -387,54 +383,21 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
   }
 
   List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
-      final double fontSize = 16;
-      final double radius = 50;
-      final TextStyle _label =
-          TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: _parts.pointColor);
-      double rate;
+    final double fontSize = 16;
+    final double radius = 50;
+    final TextStyle _label =
+        TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: _parts.pointColor);
+    _element(int ranking) {
+      double rate = analyze.rankingList[ranking] * 100 / analyze.games * 10.roundToDouble() / 10;
+      return PieChartSectionData(
+          color: Color(0xff6200ea),
+          value: rate,
+          title: rate != 0 ? '${ranking + 1}着' : '',
+          radius: radius,
+          titleStyle: _label);
+    }
 
-      switch (i) {
-        case 0:
-          rate = analyze.rankingList[0] * 100 / analyze.games * 10.roundToDouble() / 10;
-          return PieChartSectionData(
-            color: Color(0xff6200ea),
-            value: rate,
-            title: rate != 0 ? '1着' : '',
-            radius: radius,
-            titleStyle: _label,
-          );
-        case 1:
-          rate = analyze.rankingList[1] * 100 / analyze.games * 10.roundToDouble() / 10;
-          return PieChartSectionData(
-            color: Color(0xff651fff),
-            value: rate,
-            title: rate != 0 ? '2着' : '',
-            radius: radius,
-            titleStyle: _label,
-          );
-        case 2:
-          rate = analyze.rankingList[2] * 100 / analyze.games * 10.roundToDouble() / 10;
-          return PieChartSectionData(
-            color: Color(0xff7c4dff),
-            value: rate,
-            title: rate != 0 ? '3着' : '',
-            radius: radius,
-            titleStyle: _label,
-          );
-        case 3:
-          rate = analyze.rankingList[3] * 100 / analyze.games * 10.roundToDouble() / 10;
-          return PieChartSectionData(
-            color: Color(0xffb388ff),
-            value: rate,
-            title: rate != 0 ? '4着' : '',
-            radius: radius,
-            titleStyle: _label,
-          );
-        default:
-          return null;
-      }
-    });
+    return List.generate(4, (i) => _element(i));
   }
 
   void _showModalBottomSheet() {

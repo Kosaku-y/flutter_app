@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-import '../../CommonData.dart';
+import '../../Common/CommonData.dart';
 
 /*----------------------------------------------
 

@@ -15,7 +15,7 @@ class Talk {
   Talk(this._fromUserId, this._fromUserName, this._message) : _dateTime = DateTime.now();
 
   Talk.fromSnapShot(DataSnapshot snapshot)
-      : _dateTime = new DateTime.fromMillisecondsSinceEpoch(snapshot.value["dateTime"]),
+      : _dateTime = DateTime.fromMillisecondsSinceEpoch(snapshot.value["dateTime"]),
         _message = snapshot.value["message"],
         _fromUserId = snapshot.value["fromUserId"],
         _fromUserName = snapshot.value["fromUserName"];

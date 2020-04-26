@@ -19,7 +19,7 @@ class EventDetailScreen extends StatelessWidget {
   final User user;
   EventDetailScreen({Key key, this.user, this.event}) : super(key: key);
   final PageParts _parts = new PageParts();
-  final formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
+  final _formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
 
   Widget build(BuildContext context) {
     final TextStyle basicWhite = TextStyle(color: Colors.white, fontSize: 17.0);
@@ -63,8 +63,8 @@ class EventDetailScreen extends StatelessWidget {
                   Text("募集人数：${event.recruitMember}", style: basicWhite),
                   Text("路線　　：${event.line}", style: basicWhite),
                   Text("駅　　　：${event.station}", style: basicWhite),
-                  Text("開始時間：${event.startingTime}", style: basicWhite),
-                  Text("終了時間：${event.endingTime}", style: basicWhite),
+                  Text("開始時間：${_formatter.format(event.startingTime)}", style: basicWhite),
+                  Text("終了時間：${_formatter.format(event.endingTime)}", style: basicWhite),
                   Text("コメント：${event.comment}", style: basicWhite),
                   _actionWidget(context),
                 ],

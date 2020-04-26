@@ -101,10 +101,7 @@ class LoginScreenState extends State<LoginScreen> {
                     onPressed: () => loginBloc.googleLoginSink.add(null),
                   ),
                   SignInButton(Buttons.Twitter, text: "Login with Twitter", onPressed: () => null),
-                  SignInButton(Buttons.Apple,
-                      text: "Login"
-                          " with Apple",
-                      onPressed: () => null),
+                  SignInButton(Buttons.Apple, text: "Login with Apple", onPressed: () => null),
                 ],
               );
             }

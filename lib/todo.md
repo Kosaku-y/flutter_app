@@ -30,7 +30,9 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 ~~api変更~~
 ~~-Picker 都道府県->路線->都道府県 エラー(validate)~~
 ~~-駅すぱあとapiコール時差問題~~
--eventのdateTime型
+~~-eventのdateTime型~~
+-APIコールしている間のWidget
+-スコア作成画面
 -トーク2重コール(初回のみ)
 -NewHomeの改善
 -自身のイベント管理
@@ -44,30 +46,10 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 -DBルール制約
 -プッシュ通知
 -firebase 複数クエリのトランザクション、ロールバック
--bottomnavigation バッジ
+-bottomNavigation バッジ
 -There was an error uploading events:   通信エラー常時
 
--Talk　　
-・User/room/userId 検索 -> roomId
-        -リンクから
-            -新規
-            ・TalkRoomManagerから取得
-            ・User/userID/roomに採番したroomIdをadd
-            ・トーク相手のUser/userID/roomに採番したroomIdをadd
-            ・Room/roomIdにmembersをadd
-            -既存
-            ・roomIdからroom表示
-        -トーク履歴から
-            -既存
-            ・roomIdからroom表示
-            
-              
-
-
-
-
-[Preferenceshared](https://medium.com/better-programming/flutter-how-to-save-objects-in-sharedpreferences-b7880d0ee2e4)
-
+           
 
 覚え書き
 
@@ -93,7 +75,9 @@ Stream
 ストリームが開いている間、ずっと値が流れてくる
 --
 ```dart
-Container(
+//ベースContainer
+Widget build(BuildContext){
+child:Container(
               padding: const EdgeInsets.all(40.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -103,24 +87,10 @@ Container(
                       child: Text("指定の条件では見つかりませんでした。", style: _parts.guideStyle),
                     ),
                   ),
-                  _parts.backButton(onPressed: () => Navigator.pop(context)),
+                  _parts.backButton(context),
                 ],
               ),
-            );
-Widget build(BulidContext){
-return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Expanded(
-                    child: Center(
-                      child: Text("指定の条件では見つかりませんでした。", style: guideStyle),
-                    ),
-                  ),
-                  _parts.backButton(onPressed: () {
-                    Navigator.pop(context);
-                  }),
-                ],
-              );
+);
 }
   Future<String> _getFutureValue() async {
     // 擬似的に通信中を表現するために１秒遅らせる

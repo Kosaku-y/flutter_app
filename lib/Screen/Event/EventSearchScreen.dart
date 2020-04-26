@@ -6,7 +6,7 @@ import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import '../../CommonData.dart';
+import '../../Common/CommonData.dart';
 import 'EventCreateScreen.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'EventSearchResultScreen.dart';

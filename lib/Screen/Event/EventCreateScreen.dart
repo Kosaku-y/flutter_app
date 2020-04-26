@@ -2,7 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app2/Bloc/EventManageBloc.dart';
-import 'package:flutter_app2/CommonData.dart';
+import 'package:flutter_app2/Common/CommonData.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/PageParts.dart';
@@ -45,9 +45,9 @@ class EventCreateScreenState extends State<EventCreateScreen> {
   static const int changed = 1;
   static const int error = 2;
 
-  int changePref = init;
-  int changeLine = init;
-  int changeStation = init;
+  int _changePref = init;
+  int _changeLine = init;
+  int _changeStation = init;
 
   Map _lineMap = Map<String, String>();
   Map _stationMap = Map<String, String>();
@@ -82,16 +82,21 @@ class EventCreateScreenState extends State<EventCreateScreen> {
       _memberController = TextEditingController(text: '');
       _prefController = TextEditingController(text: '');
       _lineController = TextEditingController(text: '');
+      _startingController = TextEditingController(text: '');
+      _endingController = TextEditingController(text: '');
       _stationController = TextEditingController(text: '');
       _commentController = TextEditingController(text: '');
     } else {
       _bloc.callLineApi(CommonData.pref[widget.event.pref]);
       _selectPrefIndex = (CommonData.pref.keys.toList()).indexOf(widget.event.pref);
-      changePref = changed;
-      changeLine = changed;
-      changeStation = changed;
-      _startingController = TextEditingController(text: widget.event.startingTime);
-      _endingController = TextEditingController(text: widget.event.endingTime);
+      _changePref = changed;
+      _changeLine = changed;
+      _changeStation = changed;
+      _startingController =
+          TextEditingController(text: formatter.format(widget.event.startingTime));
+      _start = widget.event.startingTime;
+      _endingController = TextEditingController(text: formatter.format(widget.event.endingTime));
+      _end = widget.event.endingTime;
       _memberController = TextEditingController(text: widget.event.recruitMember);
       _prefController = TextEditingController(text: widget.event.pref);
       _lineController = TextEditingController(text: widget.event.line);
@@ -132,16 +137,18 @@ class EventCreateScreenState extends State<EventCreateScreen> {
     if (this._formKey.currentState.validate()) {
       this._formKey.currentState.save();
       EventDetail event = new EventDetail(
-          _memberController.text,
-          _lineController.text,
-          _stationController.text,
-          formatter.format(_start),
-          formatter.format(_end),
-          _commentController.text,
-          widget.user.userId,
-          widget.user.name);
+        _memberController.text,
+        _lineController.text,
+        _stationController.text,
+        _start,
+        _end,
+        _commentController.text,
+        widget.user.userId,
+        widget.user.name,
+      );
       _line.name = _lineController.text;
       _station.name = _stationController.text;
+      if (_mode != register) event.eventId = widget.event.eventId;
 
       AwesomeDialog(
               context: context,
@@ -149,7 +156,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
               animType: AnimType.TOPSLIDE,
               dialogType: DialogType.INFO,
               body: Column(children: <Widget>[
-                Text("募集条件を確認して下さい。"),
+                Text(_mode == register ? "募集条件を確認して下さい。" : "変更内容を確認して下さい。"),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
@@ -157,16 +164,16 @@ class EventCreateScreenState extends State<EventCreateScreen> {
                     Text("募集人数：${event.recruitMember}", style: _parts.guideBlack),
                     Text("路線　　：${event.line}", style: _parts.guideBlack),
                     Text("駅　　　：${event.station}", style: _parts.guideBlack),
-                    Text("開始時間：${event.startingTime}", style: _parts.guideBlack),
-                    Text("終了時間：${event.endingTime}", style: _parts.guideBlack),
+                    Text("開始時間：${formatter.format(event.startingTime)}", style: _parts.guideBlack),
+                    Text("終了時間：${formatter.format(event.endingTime)}", style: _parts.guideBlack),
                     Text("コメント：${event.comment}", style: _parts.guideBlack),
                   ],
                 ),
               ]),
               btnOkOnPress: () => _commit(event),
               btnCancelOnPress: () {},
-              btnCancelText: "修正",
-              btnOkText: "作成")
+              btnCancelText: "戻る",
+              btnOkText: "OK")
           .show();
     }
   }
@@ -175,7 +182,10 @@ class EventCreateScreenState extends State<EventCreateScreen> {
     var _error = await Navigator.of(context).push(
       MaterialPageRoute(
         settings: const RouteSettings(name: "/Advertisement"),
-        builder: (context) => AdvertisementScreen(stationCode: _station.code, event: event),
+        builder: (context) => _mode == register
+            ? AdvertisementScreen(mode: _mode, stationCode: _station.code, event: event)
+            : AdvertisementScreen(
+                mode: _mode, stationCode: _station.code, event: event, oldEvent: widget.event),
         fullscreenDialog: true,
       ),
     );
@@ -234,11 +244,11 @@ class EventCreateScreenState extends State<EventCreateScreen> {
   Widget _prefPicker() {
     //県Pickerが選択された時の処理メソッド
     void _prefChange() {
-      changePref = changed;
+      _changePref = changed;
       //県、路線、駅、組み合わせ矛盾チェック
-      if (changeLine != init || changeStation != init) {
-        changeLine = error;
-        changeStation = error;
+      if (_changeLine != init || _changeStation != init) {
+        _changeLine = error;
+        _changeStation = error;
       }
     }
 
@@ -274,7 +284,11 @@ class EventCreateScreenState extends State<EventCreateScreen> {
               borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
             ),
           ),
-          validator: (value) => changePref == error ? "再選択してください" : null,
+          validator: (value) {
+            if (_changePref == error) return "再選択してください";
+            if (value == null) return "選択してください";
+            return null;
+          },
         ),
       ),
     );
@@ -285,17 +299,17 @@ class EventCreateScreenState extends State<EventCreateScreen> {
     //路線チェンジ用
     void _lineChange() {
       //県、路線、駅、組み合わせ矛盾チェック
-      switch (changeLine) {
+      switch (_changeLine) {
         case init:
-          changeLine = changed; // 選択済み
+          _changeLine = changed; // 選択済み
           break;
         case changed:
-          if (changeStation == changed) changeStation = error; // 駅が選択済みなら駅再選択
+          if (_changeStation == changed) _changeStation = error; // 駅が選択済みなら駅再選択
           break;
         case error:
-          if (changePref == changed) {
-            changeLine = changed; // 県が選択済みなら選択OK
-            if (changeStation == changed) changeStation = error; // 駅が選択済みなら駅再選択
+          if (_changePref == changed) {
+            _changeLine = changed; // 県が選択済みなら選択OK
+            if (_changeStation == changed) _changeStation = error; // 駅が選択済みなら駅再選択
           }
           break;
       }
@@ -355,7 +369,11 @@ class EventCreateScreenState extends State<EventCreateScreen> {
           borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
         ),
       ),
-      validator: (value) => changeLine == error ? "再選択してください" : null,
+      validator: (value) {
+        if (_changeLine == error) return "再選択してください";
+        if (value == null) return "選択してください";
+        return null;
+      },
     );
   }
 
@@ -388,7 +406,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
                       if (newData != _stationController.text && newData != " ") {
                         _selectStationIndex = picker.selecteds[0];
                         _station.code = _stationMap[newData];
-                        changeStation = 1;
+                        _changeStation = 1;
                         setState(() => _stationController.text = newData);
                       }
                     },
@@ -415,7 +433,11 @@ class EventCreateScreenState extends State<EventCreateScreen> {
             borderRadius: BorderRadius.circular(1.0),
             borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
       ),
-      validator: (value) => changeStation == error ? "再選択してください" : null,
+      validator: (value) {
+        if (_changeStation == error) return "再選択してください";
+        if (value == null) return "選択してください";
+        return null;
+      },
     );
   }
 
@@ -440,19 +462,22 @@ class EventCreateScreenState extends State<EventCreateScreen> {
       },
       child: AbsorbPointer(
         child: new TextFormField(
-          style: TextStyle(color: _parts.pointColor),
-          enableInteractiveSelection: false,
-          controller: _startingController,
-          decoration: InputDecoration(
-            icon: Icon(Icons.calendar_today, color: _parts.fontColor),
-            enabledBorder: UnderlineInputBorder(
-                borderRadius: BorderRadius.circular(1.0),
-                borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
-            labelText: '*開始日時',
-            labelStyle: TextStyle(color: _parts.fontColor),
-          ),
-          validator: (String value) => value.isEmpty ? '開始時間が未選択です' : null,
-        ),
+            style: TextStyle(color: _parts.pointColor),
+            enableInteractiveSelection: false,
+            controller: _startingController,
+            decoration: InputDecoration(
+              icon: Icon(Icons.calendar_today, color: _parts.fontColor),
+              enabledBorder: UnderlineInputBorder(
+                  borderRadius: BorderRadius.circular(1.0),
+                  borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
+              labelText: '*開始日時',
+              labelStyle: TextStyle(color: _parts.fontColor),
+            ),
+            validator: (String value) {
+              if (value.isEmpty) return '開始時間が未選択です';
+              if (_start.isBefore(DateTime.now())) return '開始時間が現在時刻より前です';
+              return null;
+            }),
       ),
     );
   }
@@ -468,7 +493,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
                   yearSuffix: "年",
                   monthSuffix: "月",
                   daySuffix: "日",
-                  value: _start ?? DateTime.now()),
+                  value: _end ?? DateTime.now()),
               onConfirm: (picker, _) {
                 _end = DateTime.parse(picker.adapter.toString());
                 _endingController.text = formatter.format(_end);
@@ -491,11 +516,8 @@ class EventCreateScreenState extends State<EventCreateScreen> {
           ),
           validator: (String value) {
             if (value.isEmpty) return '終了時間が未選択です';
-            if (_start != null && _start.isBefore(_end)) {
-              return null;
-            } else {
-              return '設定時間が不正です';
-            }
+            if (_start != null && _start.isAfter(_end)) return '開始時間より前です';
+            return null;
           },
         ),
       ),

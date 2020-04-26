@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
-import 'package:flutter_app2/SystemError.dart';
+import 'package:flutter_app2/Common/SystemError.dart';
 import 'package:http/http.dart' as http;
 
 /*----------------------------------------------
@@ -44,10 +44,15 @@ class EventRepository {
   }
 
   //イベント修正
-  modifyEvent(String stationCode, EventDetail event) async {
+  modifyEvent(String oldPrefName, oldStationName, stationCode, EventDetail event) async {
     String prefName = await getPrefName(stationCode);
     event.pref = prefName;
-    _eventReference.child(prefName).child(event.station).child(event.eventId).set(event.toJson());
+    await _eventReference.child("$oldPrefName/$oldStationName").child(event.eventId).remove().then(
+        (_) => _eventReference
+            .child("$prefName/${event.station}")
+            .child(event.eventId)
+            .set(event.toJson()));
+    return true;
   }
 
   //駅の所在都道府県を取得
@@ -61,30 +66,30 @@ class EventRepository {
     return prefName;
   }
 
-  //期限切れイベント削除
-  /*
-  Future<void> _delete() async {
+  //イベント削除
+  _delete(EventDetail event) async {
     try {
-      DateTime now = DateTime.now();
-      await _eventReference.once().then((DataSnapshot snapshot) {
-        Map<dynamic, dynamic> values = snapshot.value;
-        values.forEach((k, v) {
-          v.forEach((k1, v1) {
-            v1.forEach((k2, v2) {
-              if (DateTime.fromMillisecondsSinceEpoch(v2["endingTime"]).isBefore(now)) {
-                _eventReference.child(k).child(k1).child(k2).remove();
-                printMap("remove", v2);
-              }
-            });
-          });
-        });
-      });
+      await _eventReference.child("${event.pref}/${event.station}").child(event.eventId).remove();
+      //期限切れ削除
+//      DateTime now = DateTime.now();
+//      await _eventReference.once().then((DataSnapshot snapshot) {
+//        Map<dynamic, dynamic> values = snapshot.value;
+//        values.forEach((k, v) {
+//          v.forEach((k1, v1) {
+//            v1.forEach((k2, v2) {
+//              if (DateTime.fromMillisecondsSinceEpoch(v2["endingTime"]).isBefore(now)) {
+//                _eventReference.child(k).child(k1).child(k2).remove();
+//                printMap("remove", v2);
+//              }
+//            });
+//          });
+//        });
+//      });
     } catch (e, stackTrace) {
       print(e);
       print(stackTrace);
     }
   }
-  */
 
   //イベント検索メソッド
   searchEvent(EventSearch e) async {

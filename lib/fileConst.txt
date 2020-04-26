@@ -1,0 +1,63 @@
+
+lib
+├── Bloc
+│   ├── EventManageBloc.dart    // イベント管理BLoc
+│   ├── EventSearchBloc.dart    // イベント検索BLoc
+│   ├── LocalDataBloc.dart      // ローカルデータ管理BLoc
+│   ├── LoginBloc.dart          // ログイン処理Bloc
+│   ├── TalkBloc.dart           // トーク(チャット)Bloc
+│   └── TalkRoomBloc.dart       // トークルームBloc
+├── CommonData.dart              // 共通データ(Map)
+├── Entity
+│   ├── AuthStatus.dart         // 認証状態(修正予定)
+│   ├── EventDetail.dart        // イベント
+│   ├── EventPlace.dart         // 県,路線,駅
+│   ├── EventSearch.dart        // イベント検索条件
+│   ├── MahjongHand.dart        // 麻雀役
+│   ├── Score.dart              // スコア,スコア分析
+│   ├── Talk.dart               // トーク
+│   ├── TalkRoom.dart           // トークルーム
+│   └── User.dart               // ユーザー
+├── PageParts.dart
+├── Repository
+│   ├── EventRepository.dart        // イベント firebase
+│   ├── LocalDataRepository.dart    // ローカルデータ sharedPreference
+│   ├── LoginRepository.dart        // ログイン firebase
+│   ├── TalkRepository.dart         // トーク firebase
+│   ├── TalkRoomRepository.dart     // トークルーム firebase
+│   └── UserDataRepository.dart     // ローカルデータ firebase
+├── Screen
+│   ├── Event
+│   │   ├── AdvertisementScreen.dart        // イベント作成完了
+│   │   ├── EventCreateScreen.dart          // イベント作成・変更
+│   │   ├── EventDetailScreen.dart          // イベント詳細
+│   │   ├── EventSearchResultScreen.dart    // イベント検索結果
+│   │   └── EventSearchScreen.dart          // イベント検索
+│   ├── Home
+│   │   ├── HomeScreen.dart         // ホーム
+│   │   ├── HomeScreenElement.dart  // ホーム画面Widget
+│   │   └── NoticeScreen.dart       // 通知(お知らせ)
+│   ├── Login
+│   │   ├── AccountRegisterScreen.dart  // アカウント登録画面
+│   │   └── LoginScreen.dart            // ログイン画面
+│   ├── MahjongHandScreen.dart           // How to 役
+│   ├── ProfileScreen.dart               // プロフィール詳細
+│   ├── RankPieChartScreen.dart          // ランク詳細
+│   ├── ReturnTopScreen.dart             // トップに戻る
+│   ├── Score
+│   │   ├── Parts
+│   │   │   └── AnalyzeScreenParts.dart // スコア分析Widget
+│   │   ├── ScoreInputScreen.dart       // スコア入力
+│   │   └── ScoreManagePage.dart        // スコア確認・分析
+│   ├── Setting
+│   │   ├── PrivacyPolicyScreen.dart    // プライバシーポリシー
+│   │   ├── SettingScreen.dart          // 設定
+│   │   └── TermsOfServiceScreen.dart   // 利用規約
+│   └── Talk
+│       ├── TalkRoomScreen.dart         // トークルーム
+│       └── TalkScreen.dart             //
+├── SplashScreen.dart                    // スプラッシュ
+├── SystemError.dart                     // システムエラー
+└── main.dart                            // 起動ファイル
+
+
