@@ -45,12 +45,13 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: _parts.appBar(title: "スコア入力"),
+      appBar: _parts.appBar(title: "スコア入力"),
       backgroundColor: _parts.backGroundColor,
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 40.0),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               dateField(),
               rankingField(),
@@ -58,7 +59,8 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
               totalField(),
               rateField(),
               balanceField(),
-              _parts.iconButton(message: "記録する", icon: Icons.send, onPressed: () => submit())
+              _parts.iconButton(message: "登録", icon: Icons.send, onPressed: () => submit()),
+              _parts.backButton(context)
             ],
           ),
         ),
@@ -75,6 +77,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         int.parse(rateController.text),
         int.parse(balanceController.text));
     repository.addScore(score);
+    Navigator.pop(context);
   }
 
   Widget dateField() {

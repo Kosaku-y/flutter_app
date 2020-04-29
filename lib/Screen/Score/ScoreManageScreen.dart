@@ -6,10 +6,11 @@ import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'ScoreInputScreen.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'Parts/AnalyzeScreenParts.dart';
+import 'ScoreInputScreen.dart';
 
 /*----------------------------------------------
 
@@ -29,7 +30,6 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
   TabController _tabController;
   final PageParts _parts = new PageParts();
   CalendarController _calendarController;
-  SolidController _solidController = SolidController();
   Map<DateTime, List<Score>> _events;
   List<Score> _selectedEvents;
   Map<DateTime, dynamic> scoreMap;
@@ -81,11 +81,12 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
           IconButton(icon: Icon(Icons.menu), onPressed: () => _showModalBottomSheet())
         ],
         bottom: TabBar(
-            //isScrollable: true,
-            tabs: tabs,
-            controller: _tabController,
-            unselectedLabelColor: Colors.grey,
-            labelColor: _parts.pointColor),
+          //isScrollable: true,
+          tabs: tabs,
+          controller: _tabController,
+          unselectedLabelColor: Colors.grey,
+          labelColor: _parts.pointColor,
+        ),
       ),
       backgroundColor: _parts.backGroundColor,
       body: TabBarView(controller: _tabController, children: <Widget>[
@@ -95,27 +96,23 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
       floatingActionButton: _parts.floatButton(
         icon: Icons.add,
         onPressed: () {
-          _solidController.isOpened ? _solidController.hide() : _solidController.show();
+          showBarModalBottomSheet(
+              context: context,
+              builder: (context, scrollController) {
+                return ScoreInputScreen();
+              });
         },
       ),
-      bottomSheet: SolidBottomSheet(
-          headerBar: Container(),
-          canUserSwipe: true,
-          draggableBody: true,
-          controller: _solidController,
-          maxHeight: 500,
-          body: ScoreInputScreen()),
     );
   }
 
   /*---------記録---------*/
   Widget _record() {
     return Container(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.only(top: 10.0, right: 20.0, left: 20.0, bottom: 100.0),
       child: Column(
         children: <Widget>[
           _calendar(),
-          const SizedBox(height: 8.0),
           Expanded(child: _buildEventList()),
         ],
       ),
@@ -128,34 +125,92 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
     return Container(
       padding: const EdgeInsets.all(10.0),
       child: _events.length == 0
-          ? Text("No Data")
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text("総得点の推移", style: textStyle),
-                totalLineGraph(),
-                rankPercentage(),
-                aboutRankingRate()
-//                Container(
-//                  decoration: BoxDecoration(
-//                    border: new Border.all(color: _parts.fontColor),
-//                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-//                  ),
-//                  child: Column(children: <Widget>[rankPercentage()]),
-//                ),
-//                Container(
-//                  decoration: BoxDecoration(
-//                    border: new Border.all(color: _parts.fontColor),
-//                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-//                  ),
-//                  child: aboutRankingRate(),
-//                ),
-              ],
+          ? Container(
+              padding: const EdgeInsets.all(40.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(child: Center(child: Text("データがありません", style: _parts.guideWhite))),
+                ],
+              ),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+//                  Text("総得点の推移", style: textStyle),
+//                  totalLineGraph(),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: new Border.all(color: _parts.pointColor),
+                      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    child: SizedBox(
+                      width: 400,
+                      height: 200,
+                      child: PointsLineChart.withSampleData(),
+                    ),
+                  ),
+                  Row(children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: new Border.all(color: _parts.pointColor),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              padding: const EdgeInsets.all(7.0),
+                              child: Text("着順", style: _parts.basicWhite)),
+                          SizedBox(
+                              width: 190,
+                              height: 200,
+                              child: RankPieChart.withSampleData(analyze.rankingList)),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: new Border.all(color: _parts.pointColor),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              padding: const EdgeInsets.all(7.0),
+                              child: Text("着順", style: _parts.basicWhite)),
+                          SizedBox(
+                              width: 190,
+                              height: 200,
+                              child: RankPieChart.withSampleData(analyze.rankingList)),
+                        ],
+                      ),
+                    ),
+                  ]),
+                  //rankPercentage(),
+                  aboutRankingRate()
+                ],
+              ),
             ),
     );
   }
 
   Widget _calendar() {
+    Widget _buildEventsMarker(DateTime date, List events, CalendarController controller) {
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        decoration: BoxDecoration(shape: BoxShape.rectangle, color: Color(0xff7e57c2)),
+        width: 16.0,
+        height: 16.0,
+        child: Center(
+          child: Text('${events.length}',
+              style: TextStyle().copyWith(color: Colors.white, fontSize: 12.0)),
+        ),
+      );
+    }
+
     return Container(
       child: Card(
         color: _parts.pointColor,
@@ -163,9 +218,7 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
           locale: 'ja_JP',
           events: _events,
           calendarController: _calendarController,
-          calendarStyle: CalendarStyle(
-            markersColor: _parts.fontColor,
-          ),
+          calendarStyle: CalendarStyle(markersColor: _parts.fontColor),
           onDaySelected: (date, events) {
             if (events.isNotEmpty) {
               setState(() {
@@ -178,12 +231,10 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
             markersBuilder: (context, date, events, holidays) {
               final children = <Widget>[];
               if (events.isNotEmpty) {
-                children.add(
-                  Positioned(
-                      right: 1,
-                      bottom: 1,
-                      child: _buildEventsMarker(date, events, _calendarController)),
-                );
+                children.add(Positioned(
+                    right: 1,
+                    bottom: 1,
+                    child: _buildEventsMarker(date, events, _calendarController)));
               }
               return children;
             },
@@ -193,11 +244,12 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
     );
   }
 
+  //イベントリスト
   Widget _buildEventList() {
-    int i = 0;
+    int dayIndex = 0;
     return ListView(
       children: _selectedEvents.map((event) {
-        i++;
+        dayIndex++;
         return Container(
           decoration: BoxDecoration(
             border: Border.all(width: 0.8),
@@ -206,7 +258,8 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
           ),
           margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
           child: ListTile(
-            title: Text("$i　ポイント:${event.total} チップ:${event.chip} 収支:${event.balance}"),
+            leading: Text("$dayIndex"),
+            title: Text("ポイント:${event.total} チップ:${event.chip} 収支:${event.balance}"),
             onTap: () {
               print('$event tapped!');
             },
@@ -216,32 +269,16 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
     );
   }
 
-  Widget _buildEventsMarker(DateTime date, List events, CalendarController controller) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      decoration: BoxDecoration(shape: BoxShape.rectangle, color: Color(0xff7e57c2)),
-      width: 16.0,
-      height: 16.0,
-      child: Center(
-        child: Text('${events.length}',
-            style: TextStyle().copyWith(color: Colors.white, fontSize: 12.0)),
-      ),
-    );
-  }
-
   List<FlSpot> dataCleansing() {
     _lineData = [];
     int yAxis = 1;
     int sum = 0;
     _events.forEach((key, value) {
-      value.forEach((element) {
-        sum += element.total;
-      });
+      value.forEach((element) => sum += element.total);
       _lineData.add(FlSpot(yAxis.toDouble(), sum.toDouble()));
       yAxis++;
     });
     grid = (analyze.maxPoint - analyze.minPoint) ~/ 5;
-
     return _lineData;
   }
 
@@ -251,11 +288,7 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
         AspectRatio(
           aspectRatio: 1.70,
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(18),
-              ),
-            ),
+            decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(18))),
             child: Padding(
               padding: const EdgeInsets.only(right: 18.0, left: 12.0, top: 24, bottom: 12),
               child: LineChart(
@@ -330,17 +363,6 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
     );
   }
 
-  Widget rankPercentage() {
-    return PieChart(
-      PieChartData(
-          borderData: FlBorderData(show: false),
-          sectionsSpace: 0,
-          centerSpaceRadius: 30,
-          startDegreeOffset: -90,
-          sections: showingSections()),
-    );
-  }
-
   Widget aboutRankingRate() {
     double avoidFourthPercent = (analyze.avoidFourthRate * 10000).roundToDouble() / 10000;
     double associationPercent = (analyze.associationRate * 10000).roundToDouble() / 10000;
@@ -382,24 +404,7 @@ class ScoreManageScreenState extends State<ScoreManageScreen> with TickerProvide
     );
   }
 
-  List<PieChartSectionData> showingSections() {
-    final double fontSize = 16;
-    final double radius = 50;
-    final TextStyle _label =
-        TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: _parts.pointColor);
-    _element(int ranking) {
-      double rate = analyze.rankingList[ranking] * 100 / analyze.games * 10.roundToDouble() / 10;
-      return PieChartSectionData(
-          color: Color(0xff6200ea),
-          value: rate,
-          title: rate != 0 ? '${ranking + 1}着' : '',
-          radius: radius,
-          titleStyle: _label);
-    }
-
-    return List.generate(4, (i) => _element(i));
-  }
-
+  //メニュー
   void _showModalBottomSheet() {
     showModalBottomSheet<void>(
       context: context,

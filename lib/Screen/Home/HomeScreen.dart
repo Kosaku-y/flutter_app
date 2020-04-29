@@ -6,7 +6,7 @@ import 'package:flutter_app2/Screen/Home/HomeScreenElement.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../RankPieChartScreen.dart';
 import '../MahjongHandScreen.dart';
-import '../Score/ScoreManagePage.dart';
+import '../Score/ScoreManageScreen.dart';
 import 'NoticeScreen.dart';
 
 /*----------------------------------------------
@@ -175,33 +175,32 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             _buildTile(
-              //開発中
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text('一言コメント欄', style: explainStyle),
-                          Text('開発中', style: titleStyle)
-                        ],
-                      ),
-                      Material(
-                          color: _parts.fontColor,
-                          borderRadius: BorderRadius.circular(24.0),
-                          child: Center(
-                              child: Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: Icon(Icons.store, color: Colors.white, size: 30.0),
-                          )))
-                    ]),
-              ),
-              //onTap: () => Navigator.of(context).push(),
-            )
+                //開発中
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('一言コメント欄', style: explainStyle),
+                            Text('開発中', style: titleStyle)
+                          ],
+                        ),
+                        Material(
+                            color: _parts.fontColor,
+                            borderRadius: BorderRadius.circular(24.0),
+                            child: Center(
+                                child: Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: Icon(Icons.store, color: Colors.white, size: 30.0),
+                            )))
+                      ]),
+                ),
+                onTap: () {})
           ],
           staggeredTiles: [
             StaggeredTile.extent(2, 40.0), //メッセージ部

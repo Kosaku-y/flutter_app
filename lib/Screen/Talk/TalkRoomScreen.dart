@@ -72,6 +72,7 @@ class TalkRoomScreen extends StatelessWidget {
           child: ListTile(
             leading: CircleAvatar(
                 //backgroundImage: NetworkImage(entry.userImageUrl),
+                backgroundColor: _parts.iconColor,
                 child: Text(room.userName[0])),
             title: Text(room.userName, style: TextStyle(fontSize: 20.0, color: _parts.pointColor)),
           ),

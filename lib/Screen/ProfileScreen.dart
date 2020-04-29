@@ -26,7 +26,6 @@ class ProfileScreen extends StatelessWidget {
         child: new Column(
           children: <Widget>[
             Center(child: _avatarLayout()),
-            //_titleArea(context),
             Divider(color: _parts.pointColor),
             _listElement("名前", userName),
             _parts.backButton(context)
@@ -52,6 +51,7 @@ class ProfileScreen extends StatelessWidget {
     return InkWell(
       child: CircleAvatar(
         radius: 50.0,
+        backgroundColor: _parts.iconColor,
         //backgroundImage: NetworkImage(entry.userImageUrl),
         child: Text(userName[0], style: TextStyle(fontSize: 30)),
       ),

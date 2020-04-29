@@ -35,7 +35,6 @@ class EventManageScreenState extends State<EventManageScreen> {
   Pref pref;
   Line line;
   Station station;
-  String _eventId;
   int changePref = init;
   int changeLine = init;
   int changeStation = init;

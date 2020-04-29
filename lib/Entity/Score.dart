@@ -44,7 +44,7 @@ class ScoreAnalyze {
   double totalBalance = 0; //トータル収支
   double associationRate = 0.0; //連対率
   double avoidFourthRate = 0.0; //4着回避率
-  List<double> rankingList = [0, 0, 0, 0]; //順位回数rankingList[0] -> 1着回数
+  List<int> rankingList = [0, 0, 0, 0]; //順位回数rankingList[0] -> 1着回数
 
   ScoreAnalyze.fromMap(Map<DateTime, List<Score>> map) {
     map.forEach((key, value) {

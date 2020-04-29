@@ -21,10 +21,9 @@ class EventRepository {
 
   //新規イベント作成メソッド
   createEvent(String stationCode, EventDetail event) async {
-    String newId; //採番用
-    String newRoomId;
+    String newId; // 採番用
     final _eventManagerReference = FirebaseDatabase.instance.reference().child("EventManager");
-    //新規EventId取得
+    // 新規EventId取得
     await _eventManagerReference.once().then((DataSnapshot snapshot) {
       newId = snapshot.value["eventId"];
     });

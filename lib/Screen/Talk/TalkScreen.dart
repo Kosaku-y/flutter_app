@@ -192,6 +192,7 @@ class TalkScreenState extends State<TalkScreen> {
     return InkWell(
       child: CircleAvatar(
           //backgroundImage: NetworkImage(entry.userImageUrl),
+          backgroundColor: _parts.iconColor,
           child: Text(talk.fromUserName[0])),
       onTap: () => Navigator.of(context).push<Widget>(
         MaterialPageRoute(
@@ -217,7 +218,6 @@ class TalkScreenState extends State<TalkScreen> {
           onPressed: () {
             var talk = Talk(widget.user.userId, widget.user.name, _textEditController.text);
             bloc.callSendMessage(talk);
-            print("send message :${_textEditController.text}");
             _textEditController.clear();
             // キーボードを閉じる
             FocusScope.of(context).requestFocus(new FocusNode());

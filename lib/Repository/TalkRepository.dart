@@ -23,7 +23,7 @@ class TalkRepository {
   final _roomReference = FirebaseDatabase.instance.reference().child("Room");
   List<Talk> talkList = [];
 
-  //新規room用コンストラクタ
+  // 新規room用コンストラクタ
   TalkRepository.forNewRoom(this.user, this.toUserId, this.toUserName);
 
   TalkRepository(this.roomId) {
@@ -34,17 +34,18 @@ class TalkRepository {
     });
   }
 
-  //メッセージ送信
+  // メッセージ送信
   sendMessage(String roomId, Talk talk) async {
     var json = talk.toJson();
     await _messagesReference.child(roomId).push().set(json);
     return true;
   }
 
-  //システムメッセージ送信
+  // システムメッセージ送信
   void sendSystemMessage(String roomId, String message) async {
     var talk = Talk("system", "system", message);
     var json = talk.toJson();
+    print(message);
     await _messagesReference.child(roomId).push().set(json);
   }
 
@@ -72,7 +73,7 @@ class TalkRepository {
     return newRoomId;
   }
 
-  //新規room作成
+  // 新規room作成
   getNewRoomId() async {
     String newRoomId = await makeNewRoomId(); //roomID生成
     //ユーザー情報に追加(送信者)
@@ -100,7 +101,7 @@ class TalkRepository {
     return newRoomId;
   }
 
-  //roomIdの採番
+  // roomIdの採番
   makeNewRoomId() async {
     final talkRoomManager = FirebaseDatabase.instance.reference().child("TalkRoomManager");
     int newId; //採番
