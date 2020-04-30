@@ -23,9 +23,6 @@ class EventSearchResultScreen extends StatelessWidget {
   EventSearchResultScreen({Key key, this.user, this.eventSearch}) : super(key: key);
   final PageParts _parts = new PageParts();
 
-  final formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分'); // 日時を指定したフォーマットで指定するためのフォーマッター
-  final EventRepository eventRepository = new EventRepository();
-
   @override
   Widget build(BuildContext context) {
     EventSearchBloc bloc = EventSearchBloc();
@@ -39,7 +36,7 @@ class EventSearchResultScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasError)
             return Center(
-                child: Text("エラーが発生しました${snapshot.error.toString()}", style: _parts.guideWhite));
+                child: Text("エラーが発生しました\n${snapshot.error.toString()}", style: _parts.guideWhite));
           if (snapshot.connectionState != ConnectionState.active)
             return Center(child: _parts.indicator);
           if (!snapshot.hasData || snapshot.data.isEmpty) {
@@ -49,8 +46,7 @@ class EventSearchResultScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Expanded(
-                    child: Center(child: Text("指定の条件では見つかりませんでした。", style: _parts.guideWhite)),
-                  ),
+                      child: Center(child: Text("指定の条件では見つかりませんでした。", style: _parts.guideWhite))),
                   _parts.backButton(context),
                 ],
               ),
@@ -64,9 +60,8 @@ class EventSearchResultScreen extends StatelessWidget {
                   Text("${eventList.length.toString()}件見つかりました。", style: _parts.guideWhite),
                   Expanded(
                     child: ListView.builder(
-                      itemBuilder: (BuildContext context, int index) {
-                        return _buildRow(context, eventList[index]);
-                      },
+                      itemBuilder: (BuildContext context, int index) =>
+                          _buildRow(context, eventList[index]),
                       itemCount: eventList.length,
                     ),
                   ),

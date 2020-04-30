@@ -42,7 +42,6 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 -路線検索ができない
 	→路線検索：駅の路線APIを使えば、なんとかなりそう
 -別の認証間で同じIDは？(.->[dot]はエスケープ処理いらないかもしれないからそのままでいいかも)
--戦績管理(Preferenceshared)
 -DBルール制約
 -プッシュ通知
 -firebase 複数クエリのトランザクション、ロールバック

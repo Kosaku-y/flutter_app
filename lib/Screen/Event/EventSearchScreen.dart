@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Bloc/EventManageBloc.dart';
-import 'package:flutter_app2/Entity/EventPlace.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
 import 'package:flutter_app2/PageParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
@@ -32,12 +31,9 @@ class EventManageScreenState extends State<EventManageScreen> {
   static const int changed = 1;
   static const int error = 2;
 
-  Pref pref;
-  Line line;
-  Station station;
-  int changePref = init;
-  int changeLine = init;
-  int changeStation = init;
+  int _changePref = init;
+  int _changeLine = init;
+  int _changeStation = init;
   Map _lineMap = Map<String, String>();
   Map _stationMap = Map<String, String>();
   EventManageBloc _bloc = EventManageBloc();
@@ -111,11 +107,11 @@ class EventManageScreenState extends State<EventManageScreen> {
   Widget _prefPicker() {
     //県Pickerが選択された時の処理メソッド
     void _prefChange() {
-      changePref = changed;
+      _changePref = changed;
       //県、路線、駅、組み合わせ矛盾チェック
-      if (changeLine != init || changeStation != init) {
-        changeLine = error;
-        changeStation = error;
+      if (_changeLine != init || _changeStation != init) {
+        _changeLine = error;
+        _changeStation = error;
       }
     }
 
@@ -151,7 +147,7 @@ class EventManageScreenState extends State<EventManageScreen> {
                 borderRadius: BorderRadius.circular(1.0),
                 borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
           ),
-          validator: (value) => changePref == error ? "再選択してください" : null,
+          validator: (value) => _changePref == error ? "再選択してください" : null,
         ),
       ),
     );
@@ -162,17 +158,17 @@ class EventManageScreenState extends State<EventManageScreen> {
     //路線チェンジ用
     void _lineChange() {
       //県、路線、駅、組み合わせ矛盾チェック
-      switch (changeLine) {
+      switch (_changeLine) {
         case init:
-          changeLine = changed; // 選択済み
+          _changeLine = changed; // 選択済み
           break;
         case changed:
-          if (changeStation == changed) changeStation = error; // 駅が選択済みなら駅再選択
+          if (_changeStation == changed) _changeStation = error; // 駅が選択済みなら駅再選択
           break;
         case error:
-          if (changePref == changed) {
-            changeLine = changed; // 県が選択済みなら選択OK
-            if (changeStation == changed) changeStation = error; // 駅が選択済みなら駅再選択
+          if (_changePref == changed) {
+            _changeLine = changed; // 県が選択済みなら選択OK
+            if (_changeStation == changed) _changeStation = error; // 駅が選択済みなら駅再選択
           }
           break;
       }
@@ -228,14 +224,14 @@ class EventManageScreenState extends State<EventManageScreen> {
           borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
         ),
       ),
-      validator: (value) => changeLine == error ? "再選択してください" : null,
+      validator: (value) => _changeLine == error ? "再選択してください" : null,
     );
   }
 
   //駅Picker
   Widget _stationPicker() {
     //路線チェンジ用
-    void _stationChange() => changeStation = changed;
+    void _stationChange() => _changeStation = changed;
 
     List _stationData = [""];
     return StreamBuilder<Map<String, String>>(
@@ -285,7 +281,7 @@ class EventManageScreenState extends State<EventManageScreen> {
             borderRadius: BorderRadius.circular(1.0),
             borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
       ),
-      validator: (value) => changeStation == error ? "再選択してください" : null,
+      validator: (value) => _changeStation == error ? "再選択してください" : null,
     );
   }
 

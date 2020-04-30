@@ -13,32 +13,31 @@ import 'package:http/http.dart' as http;
 ----------------------------------------------*/
 
 class EventRepository {
-  final _eventReference = FirebaseDatabase.instance.reference().child("Events");
+  final _eventReference = FirebaseDatabase.instance.reference().child("Event");
   final String _apiKey = "LE_UaP7Vyjs3wQPa"; // 駅すぱあとAPIキー(フリープラン)
 
-  //既存イベント更新メソッド
-  Future<void> changeEvent(String pref, String line, EventDetail event) async {}
-
-  //新規イベント作成メソッド
+  //新規イベント作成
   createEvent(String stationCode, EventDetail event) async {
-    String newId; // 採番用
+    String receiveId;
+    int returnId;
     final _eventManagerReference = FirebaseDatabase.instance.reference().child("EventManager");
     // 新規EventId取得
     await _eventManagerReference.once().then((DataSnapshot snapshot) {
-      newId = snapshot.value["eventId"];
+      receiveId = snapshot.value["eventId"];
     });
 
-    if (newId.isEmpty) throw FirebaseError(); //データ取得エラー処理
+    if (receiveId.isEmpty) throw FirebaseError(); //データ取得エラー処理
     String prefName = await getPrefName(stationCode); //駅の所在する都道府県検索
     event.pref = prefName;
-    event.eventId = newId + "E";
+    event.eventId = receiveId + "E";
+    returnId = int.parse(receiveId) + 1;
 
     //新規IDセット処理＋イベント作成
-    await _eventManagerReference.set({"eventId": (int.parse(newId) + 1).toString()}).then((_) =>
-        _eventReference
-            .child(prefName)
-            .child("${event.station}/${event.eventId}")
-            .set(event.toJson()));
+    await _eventManagerReference.set({"eventId": returnId.toString()}).then((_) => _eventReference
+        .child(prefName)
+        .child("${event.station}/${event.eventId}")
+        .set(event.toJson()));
+
     return true;
   }
 
@@ -66,10 +65,9 @@ class EventRepository {
   }
 
   //イベント削除
-  _delete(EventDetail event) async {
-    try {
-      await _eventReference.child("${event.pref}/${event.station}").child(event.eventId).remove();
-      //期限切れ削除
+//  _delete(EventDetail event) async {
+//      await _eventReference.child("${event.pref}/${event.station}").child(event.eventId).remove();
+//      //期限切れ削除
 //      DateTime now = DateTime.now();
 //      await _eventReference.once().then((DataSnapshot snapshot) {
 //        Map<dynamic, dynamic> values = snapshot.value;
@@ -84,16 +82,11 @@ class EventRepository {
 //          });
 //        });
 //      });
-    } catch (e, stackTrace) {
-      print(e);
-      print(stackTrace);
-    }
-  }
+//  }
 
   //イベント検索メソッド
   searchEvent(EventSearch e) async {
     List<EventDetail> eventList = List();
-    //if (true) throw FirebaseError(); //データ取得エラー処理
     if (e.pref != null && e.line == null && e.station == null) {
       //都道府県検索
       await _eventReference.child(e.pref).once().then((DataSnapshot result) {
@@ -108,15 +101,15 @@ class EventRepository {
       //路線検索
       return null;
     } else if (e.pref != null && e.line != null && e.station != null) {
-      //駅名検索
+      // 駅名検索
       await _eventReference.child("${e.pref}/${e.station}").once().then((DataSnapshot result) {
         if (result.value == null) return null;
         result.value.forEach((k, v) {
           eventList.add(new EventDetail.fromMap(v));
         });
       });
-    } else if (e.pref == null && e.line == null && e.station == null) {
-      //全件検索
+    } else {
+      // 全件検索
       await _eventReference.once().then((DataSnapshot result) {
         if (result.value == null) return null;
         result.value.forEach((k, v) {
@@ -134,8 +127,8 @@ class EventRepository {
   //路線Picker作成
   createLineMap(String prefCode) async {
     //APIコール
-    var url = "http://api.ekispert.jp/v1/json/operationLine?prefectureCode=" +
-        "$prefCode&offset=1&limit=100&gcs=tokyo&key=$_apiKey";
+    var url =
+        "http://api.ekispert.jp/v1/json/operationLine?prefectureCode=$prefCode&offset=1&limit=100&gcs=tokyo&key=$_apiKey";
     http.Response response = await http.get(url);
     var body = response.body;
     //レスポンス受信用Map

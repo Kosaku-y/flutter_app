@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_app2/Common/SystemError.dart';
 import 'package:flutter_app2/Entity/Talk.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:rxdart/rxdart.dart';
@@ -104,14 +105,15 @@ class TalkRepository {
   // roomIdの採番
   makeNewRoomId() async {
     final talkRoomManager = FirebaseDatabase.instance.reference().child("TalkRoomManager");
-    int newId; //採番
-    String newRoomId;
+    String _receiveId;
+    int _returnRoomId;
+
     await talkRoomManager.once().then((DataSnapshot snapshot) {
-      newId = snapshot.value["roomId"];
+      _receiveId = snapshot.value["roomId"];
     });
-    newRoomId = "R" + newId.toString();
-    newId++;
-    await talkRoomManager.set({"roomId": newId});
-    return newRoomId;
+    if (_receiveId.isEmpty) throw FirebaseError(); //データ取得エラー処理
+    _returnRoomId = int.parse(_receiveId) + 1;
+    await talkRoomManager.set({"roomId": _returnRoomId.toString()});
+    return "R" + _receiveId;
   }
 }

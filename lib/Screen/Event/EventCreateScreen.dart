@@ -35,10 +35,8 @@ class EventCreateScreenState extends State<EventCreateScreen> {
   static const int loaded = 2;
 
   // 日時を指定したフォーマットで指定するためのフォーマッター
-  var formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
+  var _formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
   EventManageBloc _bloc = EventManageBloc();
-  List lineData = [""];
-  List stationData = [""];
 
   //validate用
   static const int init = 0;
@@ -66,6 +64,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
   DateTime _start;
   DateTime _end;
 
+  //Pickerの初期選択位置
   int _selectMemberIndex = 0;
   int _selectPrefIndex = 0;
   int _selectLineIndex = 0;
@@ -93,9 +92,9 @@ class EventCreateScreenState extends State<EventCreateScreen> {
       _changeLine = changed;
       _changeStation = changed;
       _startingController =
-          TextEditingController(text: formatter.format(widget.event.startingTime));
+          TextEditingController(text: _formatter.format(widget.event.startingTime));
       _start = widget.event.startingTime;
-      _endingController = TextEditingController(text: formatter.format(widget.event.endingTime));
+      _endingController = TextEditingController(text: _formatter.format(widget.event.endingTime));
       _end = widget.event.endingTime;
       _memberController = TextEditingController(text: widget.event.recruitMember);
       _prefController = TextEditingController(text: widget.event.pref);
@@ -164,8 +163,8 @@ class EventCreateScreenState extends State<EventCreateScreen> {
                     Text("募集人数：${event.recruitMember}", style: _parts.guideBlack),
                     Text("路線　　：${event.line}", style: _parts.guideBlack),
                     Text("駅　　　：${event.station}", style: _parts.guideBlack),
-                    Text("開始時間：${formatter.format(event.startingTime)}", style: _parts.guideBlack),
-                    Text("終了時間：${formatter.format(event.endingTime)}", style: _parts.guideBlack),
+                    Text("開始時間：${_formatter.format(event.startingTime)}", style: _parts.guideBlack),
+                    Text("終了時間：${_formatter.format(event.endingTime)}", style: _parts.guideBlack),
                     Text("コメント：${event.comment}", style: _parts.guideBlack),
                   ],
                 ),
@@ -455,7 +454,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
                   value: _start ?? DateTime.now()),
               onConfirm: (picker, _) {
                 _start = DateTime.parse(picker.adapter.toString());
-                _startingController.text = formatter.format(_start);
+                _startingController.text = _formatter.format(_start);
               },
             )
             .showModal(this.context);
@@ -496,7 +495,7 @@ class EventCreateScreenState extends State<EventCreateScreen> {
                   value: _end ?? DateTime.now()),
               onConfirm: (picker, _) {
                 _end = DateTime.parse(picker.adapter.toString());
-                _endingController.text = formatter.format(_end);
+                _endingController.text = _formatter.format(_end);
               },
             )
             .showModal(this.context);

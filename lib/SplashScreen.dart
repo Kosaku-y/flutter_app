@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final int mode = 0;
+  final int mode = 1;
   /*
   * 実機 0
   * ログインスルー 1
