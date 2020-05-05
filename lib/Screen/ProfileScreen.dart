@@ -10,11 +10,11 @@ import 'package:flutter_app2/Entity/User.dart';
 ----------------------------------------------*/
 
 class ProfileScreen extends StatelessWidget {
-  ProfileScreen({Key key, @required this.user, this.userId, this.userName}) : super(key: key);
-
   final User user;
   final String userId;
   final String userName;
+  ProfileScreen({Key key, @required this.user, this.userId, this.userName}) : super(key: key);
+
   final PageParts _parts = PageParts();
 
   @override
@@ -23,10 +23,11 @@ class ProfileScreen extends StatelessWidget {
       appBar: _parts.appBar(title: "プロフィール詳細"),
       backgroundColor: _parts.backGroundColor,
       body: Container(
-        child: new Column(
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
+        child: Column(
           children: <Widget>[
-            Center(child: _avatarLayout()),
-            Divider(color: _parts.pointColor),
+            Center(child: _avatarLayout(), heightFactor: 1.5),
+            Divider(color: _parts.pointColor, height: 4.0),
             _listElement("名前", userName),
             _parts.backButton(context)
           ],
@@ -50,7 +51,7 @@ class ProfileScreen extends StatelessWidget {
   Widget _avatarLayout() {
     return InkWell(
       child: CircleAvatar(
-        radius: 50.0,
+        radius: 60.0,
         backgroundColor: _parts.iconColor,
         //backgroundImage: NetworkImage(entry.userImageUrl),
         child: Text(userName[0], style: TextStyle(fontSize: 30)),

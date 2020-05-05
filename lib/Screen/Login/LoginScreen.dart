@@ -46,9 +46,9 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    loginBloc.stateSink.add(null);
+    loginBloc.callCurrentStatus();
     loginBloc.currentTempUserStream.listen((user) async {
-      //サインイン完了でマイページへ
+      // サインイン完了でマイページへ
       if (user != null) {
         if (user.status == AuthStatus.signedIn) {
           print("自動ログイン完了");
@@ -58,7 +58,7 @@ class LoginScreenState extends State<LoginScreen> {
               builder: (context) => MainScreen(user: user, message: "ログインしました"),
             ),
           );
-          //初回登録フォームへ
+          // 初回登録フォームへ
         } else if (user.status == AuthStatus.signedUp) {
           print("ユーザー情報が見つかりませんでした");
           Navigator.of(context).pushReplacement(
@@ -84,21 +84,17 @@ class LoginScreenState extends State<LoginScreen> {
           stream: loginBloc.currentTempUserStream,
           builder: (context, snapshot) {
             print("loginBloc.currentStatusStream");
+            if (snapshot.hasError) return Text("エラーが発生しました" + snapshot.error.toString());
             if (snapshot.hasData) {
-              return Center(
-                child: const CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError)
-              return Text("エラーが発生しました" + snapshot.error.toString());
-            else {
-              //if (snapshot.data.status == AuthStatus.notSignedIn) {
+              return Center(child: const CircularProgressIndicator());
+            } else {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   SignInButton(
                     Buttons.Google,
                     text: "Login with Google",
-                    onPressed: () => loginBloc.googleLoginSink.add(null),
+                    onPressed: () => loginBloc.callGoogleLogin(),
                   ),
                   SignInButton(Buttons.Twitter, text: "Login with Twitter", onPressed: () => null),
                   SignInButton(Buttons.Apple, text: "Login with Apple", onPressed: () => null),

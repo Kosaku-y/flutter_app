@@ -14,9 +14,7 @@ import 'package:intl/intl.dart';
 
 class ScoreInputScreen extends StatefulWidget {
   ScoreInputScreen({Key key}) : super(key: key);
-  State<StatefulWidget> createState() {
-    return new ScoreInputScreenState();
-  }
+  State<StatefulWidget> createState() => ScoreInputScreenState();
 }
 
 class ScoreInputScreenState extends State<ScoreInputScreen> {
@@ -51,7 +49,6 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 40.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               dateField(),
               rankingField(),
@@ -81,7 +78,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
   }
 
   Widget dateField() {
-    return new InkWell(
+    return InkWell(
       onTap: () {
         Picker(
           itemExtent: 40.0,
@@ -94,13 +91,12 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
           cancelTextStyle: TextStyle(color: _parts.pointColor, fontSize: 15.0),
           confirmTextStyle: TextStyle(color: _parts.pointColor, fontSize: 15.0),
           adapter: DateTimePickerAdapter(
-            type: PickerDateTimeType.kYMD,
-            isNumberMonth: true,
-            yearSuffix: "年",
-            monthSuffix: "月",
-            daySuffix: "日",
-            value: _date ?? DateTime.now(),
-          ),
+              type: PickerDateTimeType.kYMD,
+              isNumberMonth: true,
+              yearSuffix: "年",
+              monthSuffix: "月",
+              daySuffix: "日",
+              value: _date ?? DateTime.now()),
           onConfirm: (picker, _) {
             _date = DateTime.parse(picker.adapter.toString());
             dateController.text = formatter.format(_date);
@@ -108,15 +104,16 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         ).showModal(this.context);
       },
       child: AbsorbPointer(
-        child: new TextFormField(
+        child: TextFormField(
             style: TextStyle(color: _parts.pointColor),
             enableInteractiveSelection: false,
             controller: dateController,
             decoration: InputDecoration(
               icon: Icon(Icons.calendar_today, color: _parts.fontColor),
               enabledBorder: UnderlineInputBorder(
-                  borderRadius: BorderRadius.circular(1.0),
-                  borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
+                borderRadius: BorderRadius.circular(1.0),
+                borderSide: BorderSide(color: _parts.fontColor, width: 3.0),
+              ),
               hintText: 'Choose a starting Time',
               labelText: '*日時',
               labelStyle: TextStyle(color: _parts.fontColor),
@@ -127,7 +124,7 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
   }
 
   Widget rankingField() {
-    return new InkWell(
+    return InkWell(
       onTap: () {
         _parts
             .picker(
@@ -176,8 +173,8 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
             borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
-        hintText: 'Choose a number of recruiting member',
-        hintStyle: TextStyle(color: _parts.fontColor),
+        hintText: '例, 10 -> 10枚 / -10 -> -10枚',
+        hintStyle: TextStyle(color: _parts.hintColor),
         labelText: '*チップ',
         labelStyle: TextStyle(color: _parts.fontColor),
       ),
@@ -196,8 +193,8 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
             borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
-        hintText: 'Choose a number of recruiting member',
-        hintStyle: TextStyle(color: _parts.fontColor),
+        hintText: '100 -> +100pt / -100 -> -100pt',
+        hintStyle: TextStyle(color: _parts.hintColor),
         labelText: '*トータル',
         labelStyle: TextStyle(color: _parts.fontColor),
       ),
@@ -216,8 +213,8 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
             borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
-        hintText: 'Choose a number of recruiting member',
-        hintStyle: TextStyle(color: _parts.fontColor),
+        hintText: '例, 10 -> 1000点/10円',
+        hintStyle: TextStyle(color: _parts.hintColor),
         labelText: '*レート',
         labelStyle: TextStyle(color: _parts.fontColor),
       ),
@@ -232,15 +229,12 @@ class ScoreInputScreenState extends State<ScoreInputScreen> {
       controller: balanceController,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
-        icon: Icon(
-          Icons.people,
-          color: _parts.fontColor,
-        ),
+        icon: Icon(Icons.people, color: _parts.fontColor),
         enabledBorder: UnderlineInputBorder(
             borderRadius: BorderRadius.circular(1.0),
             borderSide: BorderSide(color: _parts.fontColor, width: 3.0)),
-        hintText: 'Choose a number of recruiting member',
-        hintStyle: TextStyle(color: _parts.fontColor),
+        hintText: '2000　-> +2000円',
+        hintStyle: TextStyle(color: _parts.hintColor),
         labelText: '*収支',
         labelStyle: TextStyle(color: _parts.fontColor),
       ),

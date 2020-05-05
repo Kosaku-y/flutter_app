@@ -2,11 +2,8 @@
 
 
 #最優先バグ事項
--未登録ユーザーがログインしようとすると落ちる
-->ログインプロセスの見直し
-LoginBloc
-var user = await repository.checkFireBaseLogin(fireBaseUser);
--トーク処理
+1.未登録ユーザーがログインしようとすると落ちる
+2.トーク処理
 
 
 #To do
@@ -21,46 +18,40 @@ var user = await repository.checkFireBaseLogin(fireBaseUser);
 *キーボードタイプ
 
 
-~~-DateTimePickerの受け取り型と渡し型~~
-~~-flutter_datetime_pickerのパッケージビルドエラー~~
-~~-Home画面の遷移後の snackBar~~
-->無理そう
-~~-piechart stateless化~~
-~~-カレンダーの当日イベントが表示されない~~
-~~api変更~~
-~~-Picker 都道府県->路線->都道府県 エラー(validate)~~
-~~-駅すぱあとapiコール時差問題~~
-~~-eventのdateTime型~~
--APIコールしている間のWidget
--スコア作成画面
--トーク2重コール(初回のみ)
--NewHomeの改善
--自身のイベント管理
--themeでレイアウト色管理
--google admob
--イベント作成ページの画面遷移
--路線検索ができない
-	→路線検索：駅の路線APIを使えば、なんとかなりそう
--別の認証間で同じIDは？(.->[dot]はエスケープ処理いらないかもしれないからそのままでいいかも)
--DBルール制約
--プッシュ通知
--firebase 複数クエリのトランザクション、ロールバック
--bottomNavigation バッジ
--There was an error uploading events:   通信エラー常時
+~~1.DateTimePickerの受け取り型と渡し型~~
+~~2.flutter_datetime_pickerのパッケージビルドエラー~~
+3.Home画面の遷移後の snackBar
+~~4.piechart stateless化~~
+~~5.カレンダーの当日イベントが表示されない~~
+~~6.api変更~~
+~~7.Picker 都道府県->路線->都道府県 エラー(validate)~~
+~~8.駅すぱあとapiコール時差問題~~
+~~9.eventのdateTime型~~
+10.APIコールしている間のWidget(フルスクリーンIndicator)
+11.スコア作成画面
+12.トーク2重コール(初回のみ)
+13.NewHomeの改善
+14.自身のイベント管理
+15.themeでレイアウト色管理
+16.google admob
+17.イベント作成ページの画面遷移
+18.路線検索ができない → 路線検索：駅の路線APIを使えば、なんとかなりそう
+19.別の認証間で同じIDは？(.->[dot]はエスケープ処理いらないかもしれないからそのままでいいかも)
+20.DBルール制約
+21.プッシュ通知
+22.firebase 複数クエリのトランザクション、ロールバック
+23.bottomNavigation バッジ
+24.There was an error uploading events:   通信エラー常時
 
            
 
-覚え書き
-
+#覚え書き
 -a ??= b 
 --aがnullならb代入
 
 -b = a ?? b
 --aがnullでなければa nullであればbを代入
 
-
-
- 
 --変数の変化(状態の変化)によってwidgetが変わる場合setState呼んで値を変える
 ->bloc を使ったり、providerやInheritedWidgetを使うことによって回避できる
 
@@ -72,7 +63,8 @@ Future
 Stream
 非同期処理
 ストリームが開いている間、ずっと値が流れてくる
---
+
+
 ```dart
 //ベースContainer
 Widget build(BuildContext){

@@ -8,6 +8,7 @@ import 'Screen/Home/HomeScreen.dart';
 import 'Screen/Setting/SettingScreen.dart';
 import 'Screen/Talk/TalkRoomScreen.dart';
 import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 
 //ホーム画面のrun
 void main() {
@@ -36,16 +37,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   TabItem _currentTab = TabItem.Home;
   List<Widget> tabs;
-  PageParts set = PageParts();
-  bool once = true;
-//  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-//
-//  void _showSnackBar() {
-//    if (once) {
-//      _scaffoldKey.currentState.showSnackBar(new SnackBar(content: Text(widget.message)));
-//      once = false;
-//    }
-//  }
 
   Map<TabItem, GlobalKey<NavigatorState>> _navigatorKeys = {
     TabItem.Home: GlobalKey<NavigatorState>(),
@@ -68,14 +59,33 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+//    _firebaseMessaging.requestNotificationPermissions(
+//      const IosNotificationSettings(
+//        sound: true,
+//        badge: true,
+//        alert: true,
+//      ),
+//    );
+//    _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings setting) {
+//      print('Settings registered: $setting');
+//    });
     tabs = [
       HomeScreen(user: widget.user),
       EventManageScreen(user: widget.user),
       TalkRoomScreen(widget.user),
       SettingScreen(user: widget.user),
     ];
+
     //_showSnackBar();
   }
+
+//  Future<void> pushNotifyLaunch(BuildContext context) async {
+//    _firebaseMessaging.configure(
+//      onMessage: (Map<String, dynamic> message) async {},
+//      onResume: (Map<String, dynamic> message) async {},
+//      onLaunch: (Map<String, dynamic> message) async {},
+//    );
+//  }
 
   Future<bool> onWillPop() async {
     final isFirstRoute = !await _navigatorKeys[_currentTab].currentState.maybePop();
@@ -176,12 +186,7 @@ BottomNavigationBar定義 enum
 
 ----------------------------------------------*/
 
-enum TabItem {
-  Home,
-  EventManage,
-  Room,
-  Setting,
-}
+enum TabItem { Home, EventManage, Room, Setting }
 
 /*----------------------------------------------
 
@@ -193,7 +198,7 @@ const tabTitle = <TabItem, String>{
   TabItem.Home: 'ホーム',
   TabItem.EventManage: 'イベント',
   TabItem.Room: 'トーク',
-  TabItem.Setting: '設定',
+  TabItem.Setting: '設定'
 };
 const tabIcon = <TabItem, IconData>{
   TabItem.Home: Icons.home,

@@ -16,20 +16,18 @@ class LoginRepository {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
 
-  LoginRepository({FirebaseAuth firebaseAuth, GoogleSignIn googleSignin})
+  LoginRepository({FirebaseAuth firebaseAuth, GoogleSignIn googleSignIn})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignin ?? GoogleSignIn();
-  //コンストラクタ引数の{}は名前付き任意引数で、生成時に指定できる。(しない場合はnullで生成される)
+        _googleSignIn = googleSignIn ?? GoogleSignIn();
+  // コンストラクタ引数の{}は名前付き任意引数で、生成時に指定できる。(しない場合はnullで生成される)
   // ??はnull判定(if null)
 
-  //Googleサインイン部分
+  //Googleサインイン
   Future<FirebaseUser> signInWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+        accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
     await _firebaseAuth.signInWithCredential(credential);
     return _firebaseAuth.currentUser();
   }
@@ -55,6 +53,7 @@ class LoginRepository {
     }
   }
 
+  //現在ログイン済みかどうか判定
   isSignedIn() async {
     try {
       final currentUser = await _firebaseAuth.currentUser();

@@ -25,6 +25,7 @@ class NoticeScreen extends StatelessWidget {
       body: Container(
         child: ListView(
           children: <Widget>[
+            Divider(color: _parts.pointColor, height: 4.0),
             _listElement(title: "ver1.0がリリースされました"),
           ],
         ),

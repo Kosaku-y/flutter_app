@@ -96,10 +96,7 @@ class SettingScreen extends StatelessWidget {
   Widget _listElement({String title, Function() onTap}) {
     return Column(
       children: <Widget>[
-        ListTile(
-            title: Text(title, style: TextStyle(color: _parts.pointColor)),
-            trailing: Icon(Icons.arrow_forward, color: _parts.pointColor),
-            onTap: onTap),
+        ListTile(title: Text(title, style: TextStyle(color: _parts.pointColor)), onTap: onTap),
         Divider(color: _parts.pointColor, height: 4.0),
       ],
     );

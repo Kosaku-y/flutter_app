@@ -18,6 +18,7 @@ class PageParts {
   final Color startGradient = Color(0xff8e24aa);
   final Color endGradient = Color(0xff311b92);
   final Color iconColor = Color(0xff7c4dff);
+  final Color hintColor = Colors.grey;
 
   final ThemeData defaultTheme = ThemeData(
     backgroundColor: Color(0xff00152d),
@@ -73,7 +74,7 @@ class PageParts {
       decoration: ShapeDecoration(
         color: fontColor,
         shape:
-            CircleBorder(side: BorderSide(color: fontColor, width: 1.0, style: BorderStyle.solid)),
+            CircleBorder(side: BorderSide(color: pointColor, width: 1.0, style: BorderStyle.solid)),
       ),
       child: IconButton(
           icon: Icon(icon, color: pointColor), color: Colors.white, onPressed: onPressed),

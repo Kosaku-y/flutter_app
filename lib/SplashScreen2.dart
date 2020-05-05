@@ -11,13 +11,13 @@ import 'main.dart';
 SplashScreenクラス
 
 ----------------------------------------------*/
-class SplashScreen extends StatefulWidget {
+class SplashScreen2 extends StatefulWidget {
   @override
-  _SplashScreenState createState() => new _SplashScreenState();
+  _SplashScreenState2 createState() => new _SplashScreenState2();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  final int mode = 0;
+class _SplashScreenState2 extends State<SplashScreen2> {
+  final int mode = 1;
   /*
   * 実機 0
   * ログインスルー 1

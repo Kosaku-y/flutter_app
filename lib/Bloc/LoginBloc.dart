@@ -9,53 +9,51 @@ import 'package:flutter_app2/Repository/LoginRepository.dart';
 
 ----------------------------------------------*/
 class LoginBloc {
-  final _currentTempUserController = BehaviorSubject<User>.seeded(null);
-  //loginPage側で現在のTmpUserを流す用のStream
+  // Googleログインの結果を流すStream
   final _googleLoginController = StreamController();
-  //loginRepositoryからGoogleログイン受け取るためのStream
-  final _stateController = StreamController();
 
-  Sink get googleLoginSink => _googleLoginController.sink;
-  Sink get stateSink => _stateController.sink;
+  // 現在の状態を流すStream
+  final _currentTempUserController = BehaviorSubject<User>.seeded(null);
+  get currentTempUserStream => _currentTempUserController.stream;
 
-  ValueObservable<User> get currentTempUserStream => _currentTempUserController.stream;
-  Stream get googleLoginStream => _googleLoginController.stream;
+  final LoginRepository _repository = LoginRepository();
 
-  final repository = LoginRepository();
+  LoginBloc();
 
-  LoginBloc() {
-    //現在のステータス確認,毎回コールされる
-    _stateController.stream.listen((onData) async {
-      try {
-        var currentUser = await repository.isSignedIn();
-        if (currentUser != null) {
-          var user = await repository.checkFireBaseLogin(currentUser);
-          _currentTempUserController.add(user);
-          print("firebaseログイン完了:bloc");
-        } else {
-          print("firebaseログイン失敗:bloc");
-        }
-      } catch (_) {}
-    });
+  // Googleログイン手続き
+  callGoogleLogin() async {
+    try {
+      await _repository.signOut();
+      var fireBaseUser = await _repository.signInWithGoogle();
+      if (fireBaseUser != null) {
+        var user = await _repository.checkFireBaseLogin(fireBaseUser);
+        _currentTempUserController.add(user);
+        print("googleログイン完了:bloc");
+      } else {
+        print("googleログイン失敗:bloc");
+      }
+    } catch (e) {
+      _currentTempUserController.addError(e);
+    }
+  }
 
-    //Googleログインが必要な時にコールされる
-    _googleLoginController.stream.listen((onData) async {
-      try {
-        await repository.signOut();
-        var fireBaseUser = await repository.signInWithGoogle();
-        if (fireBaseUser != null) {
-          var user = await repository.checkFireBaseLogin(fireBaseUser);
-          _currentTempUserController.add(user);
-          print("googleログイン完了:bloc");
-        } else {
-          print("googleログイン失敗:bloc");
-        }
-      } catch (_) {}
-    });
+  // 現在のステータス
+  callCurrentStatus() async {
+    try {
+      var currentUser = await _repository.isSignedIn();
+      if (currentUser != null) {
+        var user = await _repository.checkFireBaseLogin(currentUser);
+        _currentTempUserController.add(user);
+        print("firebaseログイン完了:bloc");
+      } else {
+        print("firebaseログイン失敗:bloc");
+      }
+    } catch (e) {
+      _currentTempUserController.addError(e);
+    }
   }
 
   void dispose() {
-    _stateController.close();
     _googleLoginController.close();
     _currentTempUserController.close();
   }
