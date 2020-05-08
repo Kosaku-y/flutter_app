@@ -91,13 +91,10 @@ class LoginScreenState extends State<LoginScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  SignInButton(
-                    Buttons.Google,
-                    text: "Login with Google",
-                    onPressed: () => loginBloc.callGoogleLogin(),
-                  ),
-                  SignInButton(Buttons.Twitter, text: "Login with Twitter", onPressed: () => null),
-                  SignInButton(Buttons.Apple, text: "Login with Apple", onPressed: () => null),
+                  SignInButton(Buttons.Google,
+                      text: "Signin with Google", onPressed: () => loginBloc.callGoogleLogin()),
+                  SignInButton(Buttons.Twitter, text: "Signin with Twitter", onPressed: () => null),
+                  SignInButton(Buttons.Apple, text: "Signin with Apple", onPressed: () => null),
                 ],
               );
             }

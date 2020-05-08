@@ -1,3 +1,4 @@
+import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Bloc/TalkBloc.dart';
@@ -29,6 +30,8 @@ class TalkScreen extends StatefulWidget {
 class TalkScreenState extends State<TalkScreen> {
   final PageParts _parts = PageParts();
   final _textEditController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
   var formatter = new DateFormat('yyyy/M/d/ HH:mm');
   String roomId;
   String opponentUserName;
@@ -126,6 +129,7 @@ class TalkScreenState extends State<TalkScreen> {
                     padding: const EdgeInsets.all(16.0),
                     itemBuilder: (BuildContext context, int index) => _buildRow(talkList[index]),
                     itemCount: talkList.length,
+                    controller: _scrollController,
                   ),
                 ),
                 Divider(height: 4.0),
@@ -158,6 +162,12 @@ class TalkScreenState extends State<TalkScreen> {
   }
 
   Widget _currentUserCommentRow(Talk talk) {
+    BubbleStyle styleCurrentUser = BubbleStyle(
+      nip: BubbleNip.rightTop,
+      color: Color.fromARGB(255, 225, 255, 199),
+      margin: BubbleEdges.only(top: 8.0, left: 50.0),
+      alignment: Alignment.topRight,
+    );
     return Row(children: <Widget>[
       Container(child: _avatarLayout(talk)),
       SizedBox(width: 16.0),
@@ -166,6 +176,13 @@ class TalkScreenState extends State<TalkScreen> {
   }
 
   Widget _otherUserCommentRow(Talk talk) {
+    BubbleStyle styleOtherUser = BubbleStyle(
+      nip: BubbleNip.leftTop,
+      color: Colors.white,
+      margin: BubbleEdges.only(top: 8.0, right: 50.0),
+      alignment: Alignment.topLeft,
+    );
+
     return Row(children: <Widget>[
       new Expanded(child: _messageLayout(talk, CrossAxisAlignment.end)),
       SizedBox(width: 16.0),
@@ -212,7 +229,15 @@ class TalkScreenState extends State<TalkScreen> {
     return Row(
       children: <Widget>[
         SizedBox(width: 16.0),
-        Expanded(child: TextField(controller: _textEditController)),
+        Expanded(
+          child: TextField(
+            controller: _textEditController,
+            decoration: InputDecoration.collapsed(
+              hintText: 'メッセージを入力',
+              hintStyle: TextStyle(color: _parts.hintColor),
+            ),
+          ),
+        ),
         CupertinoButton(
           child: Icon(Icons.send, color: _parts.baseColor),
           onPressed: () {
