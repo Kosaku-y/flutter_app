@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Bloc/TalkBloc.dart';
 import 'package:flutter_app2/Entity/Talk.dart';
 import 'package:flutter_app2/Entity/TalkRoom.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
@@ -28,7 +28,7 @@ class TalkScreen extends StatefulWidget {
 }
 
 class TalkScreenState extends State<TalkScreen> {
-  final PageParts _parts = PageParts();
+  final ScreenParts _parts = ScreenParts();
   final _textEditController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 

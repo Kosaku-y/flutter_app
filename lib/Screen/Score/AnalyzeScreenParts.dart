@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
-import '../../../PageParts.dart';
+import '../../Util/ScreenParts.dart';
 
 class AnalyzeScreenParts {
-  final PageParts _parts = PageParts();
+  final ScreenParts _parts = ScreenParts();
 
   //パーセンテージを表すメーター
   Widget percentIndicator(String text, double percentage) {

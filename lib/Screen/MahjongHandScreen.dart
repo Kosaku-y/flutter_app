@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/MahjongHand.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:async';
@@ -11,7 +11,7 @@ import 'dart:async';
 
 ----------------------------------------------*/
 class MahjongHandScreen extends StatelessWidget {
-  final PageParts _parts = PageParts();
+  final ScreenParts _parts = ScreenParts();
 
   //画面全体のビルド
   @override

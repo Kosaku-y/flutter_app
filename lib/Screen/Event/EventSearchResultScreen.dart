@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Bloc/EventSearchBloc.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/EventRepository.dart';
 import 'package:intl/intl.dart';
@@ -21,7 +21,7 @@ class EventSearchResultScreen extends StatelessWidget {
   final User user;
   final EventSearch eventSearch;
   EventSearchResultScreen({Key key, this.user, this.eventSearch}) : super(key: key);
-  final PageParts _parts = new PageParts();
+  final ScreenParts _parts = new ScreenParts();
 
   @override
   Widget build(BuildContext context) {

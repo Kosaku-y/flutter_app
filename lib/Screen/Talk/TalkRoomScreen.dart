@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Bloc/TalkRoomBloc.dart';
 import 'package:flutter_app2/Entity/TalkRoom.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 
 import 'TalkScreen.dart';
@@ -14,7 +14,7 @@ import 'TalkScreen.dart';
 ----------------------------------------------*/
 class TalkRoomScreen extends StatelessWidget {
   final User user;
-  final PageParts _parts = PageParts();
+  final ScreenParts _parts = ScreenParts();
 
   TalkRoomScreen(this.user);
 

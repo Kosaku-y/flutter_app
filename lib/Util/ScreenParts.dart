@@ -3,13 +3,14 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 /*----------------------------------------------
 
 共通部品クラス
 
 ----------------------------------------------*/
-class PageParts {
+class ScreenParts {
   //案1
   final Color baseColor = Color(0xff160840);
   final Color backGroundColor = Color(0xff00152d);
@@ -144,5 +145,9 @@ class PageParts {
         Navigator.pop(context);
       },
     );
+  }
+
+  ModalProgressHUD modalProgress({Widget child, bool inAsyncCall}) {
+    return ModalProgressHUD(child: child, inAsyncCall: inAsyncCall, progressIndicator: indicator);
   }
 }

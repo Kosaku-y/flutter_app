@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_app2/Entity/LoginStatus.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_app2/Repository/LoginRepository.dart';
@@ -13,7 +14,7 @@ class LoginBloc {
   final _googleLoginController = StreamController();
 
   // 現在の状態を流すStream
-  final _currentTempUserController = BehaviorSubject<User>.seeded(null);
+  final _currentTempUserController = StreamController<LoginResult>();
   get currentTempUserStream => _currentTempUserController.stream;
 
   final LoginRepository _repository = LoginRepository();
@@ -42,11 +43,10 @@ class LoginBloc {
     try {
       var currentUser = await _repository.isSignedIn();
       if (currentUser != null) {
-        var user = await _repository.checkFireBaseLogin(currentUser);
-        _currentTempUserController.add(user);
-        print("firebaseログイン完了:bloc");
+        var status = await _repository.checkFireBaseLogin(currentUser);
+        _currentTempUserController.add(status);
       } else {
-        print("firebaseログイン失敗:bloc");
+        _currentTempUserController.add(LoginResult.notSignIn());
       }
     } catch (e) {
       _currentTempUserController.addError(e);

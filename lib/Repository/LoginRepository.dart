@@ -5,7 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_database/firebase_database.dart';
 //import 'package:flutter_twitter_login/flutter_twitter_login.dart';
 //import 'package:apple_sign_in/apple_sign_in.dart';
-import 'package:flutter_app2/Entity/AuthStatus.dart';
+import 'package:flutter_app2/Entity/LoginStatus.dart';
 
 /*----------------------------------------------
 
@@ -36,21 +36,17 @@ class LoginRepository {
   checkFireBaseLogin(FirebaseUser currentUser) async {
     final _mainReference = FirebaseDatabase.instance.reference().child("User");
     //メールアドレス正規化
-    var userId = makeUserId(currentUser.email);
-    User user;
-    try {
-      await _mainReference.child(userId).once().then((DataSnapshot result) async {
-        if (result.value == null || result.value == "") {
-          user = User.tmpUser(AuthStatus.signedUp, userId);
-        } else {
-          user = User.fromMap(userId, result.value);
-        }
-      });
-      return user;
-    } catch (e, stackTrace) {
-      print(e);
-      print(stackTrace);
-    }
+    var userId = currentUser.uid;
+    var userAddress = currentUser.email;
+    LoginResult status;
+    await _mainReference.child(userId).once().then((DataSnapshot result) async {
+      if (result.value == null) {
+        status = LoginResult.signUp(User.signUp(userId, userAddress));
+      } else {
+        status = LoginResult.signIn(User.signIn(userId, userAddress, result.value));
+      }
+    });
+    return status;
   }
 
   //現在ログイン済みかどうか判定
@@ -77,10 +73,10 @@ class LoginRepository {
     }
   }
 
-  String makeUserId(String key) {
-    String userId = key.replaceAll(RegExp(r'@[A-Za-z]+.[A-Za-z]+'), "");
-    return userId.replaceAll(".", "[dot]");
-  }
+//  String makeUserId(String key) {
+//    String userId = key.replaceAll(RegExp(r'@[A-Za-z]+.[A-Za-z]+'), "");
+//    return userId.replaceAll(".", "[dot]");
+//  }
 /* ------Twitterサインイン機能------
   final TwitterLogin twitterLogin = TwitterLogin(
     consumerKey: consumerKey,

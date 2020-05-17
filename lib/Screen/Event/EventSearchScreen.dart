@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app2/Bloc/EventManageBloc.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import '../../Common/CommonData.dart';
+import '../../Util/CommonData.dart';
 import 'EventCreateScreen.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'EventSearchResultScreen.dart';
@@ -23,7 +23,7 @@ class EventManageScreen extends StatefulWidget {
 }
 
 class EventManageScreenState extends State<EventManageScreen> {
-  final PageParts _parts = new PageParts();
+  final ScreenParts _parts = new ScreenParts();
   final _formKey = GlobalKey<FormState>();
 
   //validate用

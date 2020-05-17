@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Repository/LocalDataRepository.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 import 'package:flutter_app2/Entity/Score.dart';
 import 'package:flutter_picker/Picker.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -18,7 +18,7 @@ class ScoreInputScreen extends StatefulWidget {
 }
 
 class ScoreInputScreenState extends State<ScoreInputScreen> {
-  final PageParts _parts = PageParts();
+  final ScreenParts _parts = ScreenParts();
   Score score;
   List<Score> listScore;
   DateTime _date;

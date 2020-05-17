@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Screen/Home/HomeScreenElement.dart';
-import '../PageParts.dart';
+import '../Util/ScreenParts.dart';
 
 class RankPieChartScreen extends StatelessWidget {
   final HomeScreenElement element = HomeScreenElement();
   final String rank;
-  final PageParts _parts = PageParts();
+  final ScreenParts _parts = ScreenParts();
   RankPieChartScreen({key, @required this.rank});
 
   Widget build(BuildContext context) {

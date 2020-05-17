@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app2/SplashScreen.dart';
-import 'PageParts.dart';
+import 'Util/ScreenParts.dart';
 import 'Entity/User.dart';
 import 'Screen/Event/EventSearchScreen.dart';
 import 'Screen/Home/HomeScreen.dart';
@@ -215,7 +215,7 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PageParts set = PageParts();
+    ScreenParts set = ScreenParts();
     return GradientBottomNavigationBar(
       backgroundColorStart: set.startGradient,
       backgroundColorEnd: set.endGradient,
@@ -231,7 +231,7 @@ class BottomNavigation extends StatelessWidget {
   }
 
   BottomNavigationBarItem bottomItem(BuildContext context, {TabItem tabItem}) {
-    PageParts set = PageParts();
+    ScreenParts set = ScreenParts();
     final color = currentTab == tabItem ? set.fontColor : Colors.white;
     return BottomNavigationBarItem(
       icon: Icon(tabIcon[tabItem], color: color),

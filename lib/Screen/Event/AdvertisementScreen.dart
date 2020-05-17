@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Bloc/EventManageBloc.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 
 /*----------------------------------------------
 
@@ -11,7 +11,7 @@ AdvertisementScreenクラス(Stateless)
 ----------------------------------------------*/
 
 class AdvertisementScreen extends StatelessWidget {
-  final PageParts _parts = PageParts();
+  final ScreenParts _parts = ScreenParts();
   final int mode;
   final EventDetail oldEvent;
   final EventDetail event;

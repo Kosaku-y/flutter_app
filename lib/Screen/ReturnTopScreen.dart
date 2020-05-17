@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 
 /*----------------------------------------------
 
@@ -9,7 +9,7 @@ import 'package:flutter_app2/PageParts.dart';
 ----------------------------------------------*/
 
 class ReturnTopScreen extends StatelessWidget {
-  final PageParts _parts = PageParts();
+  final ScreenParts _parts = ScreenParts();
   final String message;
   ReturnTopScreen({Key key, @required this.message}) : super(key: key);
 

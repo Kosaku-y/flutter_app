@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:intl/intl.dart';
 import 'EventCreateScreen.dart';
@@ -18,7 +18,7 @@ class EventDetailScreen extends StatelessWidget {
   final EventDetail event;
   final User user;
   EventDetailScreen({Key key, this.user, this.event}) : super(key: key);
-  final PageParts _parts = new PageParts();
+  final ScreenParts _parts = new ScreenParts();
   final _formatter = new DateFormat('yyyy年 M月d日(E) HH時mm分');
 
   Widget build(BuildContext context) {

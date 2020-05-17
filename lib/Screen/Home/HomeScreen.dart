@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
-import 'package:flutter_app2/Common/CommonData.dart';
+import 'package:flutter_app2/Util/CommonData.dart';
 import 'package:flutter_app2/Screen/Home/HomeScreenElement.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../RankPieChartScreen.dart';
@@ -18,7 +18,7 @@ import 'NoticeScreen.dart';
 class HomeScreen extends StatelessWidget {
   final User user;
   HomeScreen({Key key, this.user}) : super(key: key);
-  final PageParts _parts = new PageParts();
+  final ScreenParts _parts = new ScreenParts();
   final HomeScreenElement element = HomeScreenElement();
 
   @override

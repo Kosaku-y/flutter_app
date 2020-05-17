@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app2/PageParts.dart';
+import 'package:flutter_app2/Util/ScreenParts.dart';
 import 'package:flutter_app2/Entity/User.dart';
 import 'package:flutter_app2/Repository/LoginRepository.dart';
 import 'package:flutter_app2/Repository/UserDataRepository.dart';
@@ -24,7 +24,7 @@ class AccountRegisterScreen extends StatefulWidget {
 }
 
 class _AccountRegisterScreenState extends State<AccountRegisterScreen> {
-  final PageParts _parts = PageParts();
+  final ScreenParts _parts = ScreenParts();
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _nameInputController = new TextEditingController(text: '');

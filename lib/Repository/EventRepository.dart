@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app2/Entity/EventDetail.dart';
 import 'package:flutter_app2/Entity/EventSearch.dart';
-import 'package:flutter_app2/Common/SystemError.dart';
+import 'package:flutter_app2/Util/SystemError.dart';
 import 'package:http/http.dart' as http;
 
 /*----------------------------------------------
